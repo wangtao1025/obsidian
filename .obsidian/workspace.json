@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "2259faaf5b280927",
@@ -212,7 +213,7 @@
       "obshare:分享当前页面": false
     }
   },
-  "active": "cb91441585c55a5f",
+  "active": "24c1bc39e284a71c",
   "lastOpenFiles": [
     "Python/index.html",
     "index.html",
