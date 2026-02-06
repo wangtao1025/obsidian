@@ -783,7 +783,6 @@ print([s]) # 输出: [Student(name='Alice', score=95)]
     name = input_name or "Guest" 
     ```
     
-
 ### 6.4 进阶：自定义对象的真值
 
 Python 判断对象真值的优先级：
