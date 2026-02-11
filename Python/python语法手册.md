@@ -494,7 +494,7 @@ def convert_base(number_str, from_base, to_base):
 - **`else`**：当 `try` 块没有发生异常时执行（用于区分“成功执行”的逻辑）。
     
 - **`finally`**：无论是否发生异常都会执行（常用于关闭文件句柄、释放数据库连接等工业级清理操作）。
-## 四、 格式化输出 `(f-stirng` 与 `print)`
+## 四、 格式化输出 `(f-string` 与 `print)`
 ### `f-string`
 
 **格式说明符**：`{变量:填充字符对齐方式宽度.精度类型}`
@@ -528,7 +528,7 @@ def convert_base(number_str, from_base, to_base):
 ### [`print`](https://study.renshengtech.com/course/cmgg0mka10000p679mwure0bd/chapter/cmggr75in0003p6wd7qe8t4rd/section/cmgmhib3w003fp602jx862r1h)
 #### 4.7  基本语法
 ```python
-print(*objects, sep=' ', end='\n', file=sys.stdout, Flush=False)
+print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
 ```
 ##### 4.7.1 参数说明
 
@@ -538,7 +538,7 @@ print(*objects, sep=' ', end='\n', file=sys.stdout, Flush=False)
 | `sep`      | `' ' `       | 多个对象之间的分隔符      | `print("A", "B", sep="-")` → `A-B`         |
 | `end`      | `'\n'`       | 输出结束时添加的字符      | `print("Hi", end="!")` → `Hi!`             |
 | `file`     | `sys.stdout` | 输出目标（文件对象或者流）   | `print("text", file=open("log.txt", "w"))` |
-| `Flush`    | `False`      | 是否强制刷新缓存区       |                                            |
+| `flush`    | `False`      | 是否强制刷新缓存区       |                                            |
 - **`*objects`**：想打印什么就传什么，可以传多个，自动用空格连接
 - **`sep`**：改变多个对象之间的连接符号
 - **`end`**：改变打印完后添加什么（默认是换行）
@@ -973,7 +973,7 @@ binary_str = bin(decimal_val)    # 255 -> '0b11111111'
 - `stop`参数是一个限定值，序列不包含此值
 - `start`参数定义了序列的起始值（默认为`0`）
 - `step`参数表示序列中相邻数字之间的步长（默认为`1`）
-#### 10.1.12 高级特性
+#### 10.1.2 高级特性
 - range对象与列表的转换
 	- `range()`函数生成的是一个`range`对象，而不是一个实际的列表。`range`对象是可迭代的，但它并不会在内存中立即生成所有数字。如果需要将其转换为列表，可以使用`list()`函数。
 	```python

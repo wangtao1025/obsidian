@@ -64,7 +64,9 @@
   },
   "locale": "zh-CN",
   "claudeCliPath": "",
-  "claudeCliPathsByHost": {},
+  "claudeCliPathsByHost": {
+    "MacBook-Pro.local": "/Users/wangtao/.nvm/versions/node/v20.15.1/bin/claude"
+  },
   "loadUserClaudeSettings": true,
   "lastClaudeModel": "sonnet",
   "lastCustomModel": "",

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Python/python语法手册.md",
+                "file": "Python/python 面试题.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "python语法手册"
+              "title": "python 面试题"
             }
           }
         ]
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/python语法手册.md",
+                "file": "Python/python 面试题.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "python语法手册 的大纲"
+              "title": "python 面试题 的大纲"
             }
           },
           {
@@ -166,26 +166,6 @@
             }
           },
           {
-            "id": "7f552f56211841a6",
-            "type": "leaf",
-            "state": {
-              "type": "calendar",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "calendar"
-            }
-          },
-          {
-            "id": "f1e89af51878bb3c",
-            "type": "leaf",
-            "state": {
-              "type": "advanced-tables-toolbar",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "advanced-tables-toolbar"
-            }
-          },
-          {
             "id": "92193a1beb28d667",
             "type": "leaf",
             "state": {
@@ -196,11 +176,11 @@
             }
           }
         ],
-        "currentTab": 7
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 357.5
+    "width": 501.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -225,10 +205,10 @@
   },
   "active": "24c1bc39e284a71c",
   "lastOpenFiles": [
+    "Python/python语法手册.md",
     "Python/index.html",
     "index.html",
     "Python/python 面试题.md",
-    "Python/python语法手册.md",
     "Work/工作记录.md",
     "[python 面试题.md",
     "未命名.md",
@@ -256,7 +236,6 @@
     "HomePage/temp/2024-04-13.md",
     "HomePage/temp",
     "2024-04-13.md",
-    "HomePage",
     "未命名.canvas"
   ]
 }
