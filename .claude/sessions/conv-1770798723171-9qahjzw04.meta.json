@@ -3,18 +3,18 @@
   "title": "你好请阅读我的文档发现错误",
   "titleGenerationStatus": "failed",
   "createdAt": 1770798723171,
-  "updatedAt": 1770800947924,
-  "lastResponseAt": 1770800947923,
+  "updatedAt": 1770802919342,
+  "lastResponseAt": 1770802919342,
   "sessionId": "661ff468-9088-4998-836f-82de73f9785c",
   "sdkSessionId": "661ff468-9088-4998-836f-82de73f9785c",
   "currentNote": "Python/python语法手册.md",
   "usage": {
-    "model": "sonnet",
-    "inputTokens": 372,
-    "cacheCreationInputTokens": 4293,
-    "cacheReadInputTokens": 46369,
+    "model": "opus",
+    "inputTokens": 93,
+    "cacheCreationInputTokens": 10009,
+    "cacheReadInputTokens": 76484,
     "contextWindow": 200000,
-    "contextTokens": 51034,
-    "percentage": 26
+    "contextTokens": 86586,
+    "percentage": 43
   }
 }
