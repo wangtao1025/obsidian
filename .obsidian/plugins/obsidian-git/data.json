@@ -1,7 +1,7 @@
 {
   "commitMessage": "vault backup: {{date}}",
   "commitDateFormat": "YYYY-MM-DD HH:mm:ss",
-  "autoSaveInterval": 2,
+  "autoSaveInterval": 1,
   "autoPushInterval": 0,
   "autoPullInterval": 10,
   "autoPullOnBoot": true,
@@ -17,7 +17,7 @@
   "autoBackupAfterFileChange": false,
   "treeStructure": false,
   "refreshSourceControl": true,
-  "basePath": "https://github.com/wangtao1025/obsidian/",
+  "basePath": "https://github.com/wangtao1025/obsidian",
   "differentIntervalCommitAndPush": false,
   "changedFilesInStatusBar": true,
   "showedMobileNotice": true,
