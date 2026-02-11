@@ -39,8 +39,8 @@
     ]
   },
   "permissionMode": "yolo",
-  "model": "sonnet",
-  "thinkingBudget": "low",
+  "model": "opus",
+  "thinkingBudget": "medium",
   "enableAutoTitleGeneration": true,
   "titleGenerationModel": "sonnet",
   "show1MModel": false,
@@ -68,7 +68,7 @@
     "MacBook-Pro.local": "/Users/wangtao/.nvm/versions/node/v20.15.1/bin/claude"
   },
   "loadUserClaudeSettings": true,
-  "lastClaudeModel": "sonnet",
+  "lastClaudeModel": "opus",
   "lastCustomModel": "",
   "lastEnvHash": "",
   "maxTabs": 3,
