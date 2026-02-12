@@ -24,5 +24,14 @@
   --vp-c-gray-1: #a1a1a1;
   --vp-c-gray-2: #525252;
   --vp-c-gray-3: #262626;
-  --vp-c-gray-soft: rgba(255, 255, 255, 0.06);
+  --vp-c-gray-soft: rgba(255, 255, 255, 0.08);
+
+  /* 代码块：略亮于主背景，便于区分 */
+  --vp-code-block-bg: #111111;
+  --vp-code-block-divider-color: #1a1a1a;
+  --vp-code-bg: rgba(255, 255, 255, 0.08);
+  --vp-code-line-highlight-color: rgba(255, 255, 255, 0.06);
+  --vp-code-copy-code-bg: #151515;
+  --vp-code-copy-code-hover-bg: #1a1a1a;
+  --vp-code-tab-bg: #111111;
 }
