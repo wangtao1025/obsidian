@@ -5,35 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="Python 全栈开发：核心语法查漏补缺手册与自测" />
     <title>Python 文档</title>
-    <!-- docsify-themeable：VitePress 风格（亮/暗随系统） -->
+    <!-- docsify-themeable：VitePress 风格 -->
     <link rel="stylesheet" media="(prefers-color-scheme: light)" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css" />
     <link rel="stylesheet" media="(prefers-color-scheme: dark)" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css" />
     <style>
-      /* 贴近 VitePress 默认主题：绿色强调、字体与间距 */
       :root {
         --theme-hue: 142;
         --base-font-size: 16px;
         --content-max-width: 48em;
+        --nav-height: 58px;
+        --sidebar-width: 260px;
+        --outline-width: 200px;
       }
+      /* 顶栏固定、VitePress 风格 */
+      body { padding-top: var(--nav-height) !important; }
+      .navbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; height: var(--nav-height); padding: 0 1.5rem; display: flex; align-items: center; box-shadow: 0 1px 0 var(--border-color); }
+      .navbar .app-name-link,
+      .navbar ul li:first-child { font-weight: 600; margin-right: auto; }
+      .navbar .navbar-nav,
+      .navbar .markdown-section ul,
+      .navbar ul { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+      .navbar .navbar-nav li,
+      .navbar .markdown-section li,
+      .navbar li { margin: 0; }
+      .navbar .navbar-nav a,
+      .navbar .markdown-section a,
+      .navbar a:not(.app-name-link) { padding: 0.4rem 0.6rem; border-radius: 6px; }
+      .navbar a:hover { background: var(--theme-color); color: var(--sidebar-bg) !important; opacity: 0.9; }
+      /* 左侧边栏 + 折叠 */
+      .sidebar { top: var(--nav-height) !important; padding-top: 12px !important; width: var(--sidebar-width) !important; }
+      .sidebar-toggle { position: fixed !important; left: calc(var(--sidebar-width) + 8px); top: calc(var(--nav-height) + 10px); z-index: 99; width: 28px; height: 28px; padding: 0; border-radius: 6px; border: 1px solid var(--border-color); background: var(--sidebar-bg); cursor: pointer; display: none; align-items: center; justify-content: center; }
+      .sidebar-toggle span { display: block; width: 14px; height: 2px; background: var(--text-color); box-shadow: 0 4px 0, 0 8px 0; }
+      @media (max-width: 768px) {
+        .sidebar-toggle { display: flex; left: 12px; }
+        body.sidebar-close .sidebar { transform: translateX(-100%); }
+        .sidebar { transition: transform 0.2s ease; }
+      }
+      /* 右侧大纲（本页目录）*/
+      #app-outline { position: fixed; top: var(--nav-height); right: 0; width: var(--outline-width); max-height: calc(100vh - var(--nav-height)); overflow-y: auto; padding: 16px 12px 24px; font-size: 13px; z-index: 10; }
+      #app-outline .outline-title { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-color); opacity: 0.8; margin-bottom: 12px; padding-left: 12px; }
+      #app-outline ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--border-color); padding-left: 12px; }
+      #app-outline li { margin: 4px 0; }
+      #app-outline a { color: var(--text-color); opacity: 0.85; text-decoration: none; display: block; padding: 2px 0; }
+      #app-outline a:hover, #app-outline a.active { color: var(--theme-color); opacity: 1; }
+      #app-outline li ul { margin-top: 4px; padding-left: 12px; }
+      /* 主内容区为三栏留出空间 */
+      .content { padding-top: 24px !important; padding-right: calc(var(--outline-width) + 24px) !important; }
+      @media (max-width: 1100px) {
+        #app-outline { display: none; }
+        .content { padding-right: 24px !important; }
+      }
+      /* 搜索框在顶栏右侧 */
+      .search { margin-left: 1rem; }
+      .search input { border-radius: 6px; padding: 6px 12px; }
     </style>
   </head>
   <body>
     <div id="app">正在加载...</div>
+    <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="折叠侧栏"><span></span></button>
+    <aside id="app-outline"><div class="outline-title">本页大纲</div><ul id="outline-list"></ul></aside>
     <script>
+      function buildOutline() {
+        var content = document.querySelector('.content');
+        var list = document.getElementById('outline-list');
+        if (!content || !list) return;
+        var headings = content.querySelectorAll('h2, h3');
+        var html = '', baseHash = location.hash.slice(1).split('#')[0] || '', prefix = baseHash ? '#/' + baseHash + '#' : '#/';
+        headings.forEach(function (h) {
+          var id = h.id || (h.innerText || '').replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fa5-]/g, '');
+          if (!id) return;
+          h.id = id;
+          var a = '<a href="' + prefix + id + '">' + (h.innerText || '').trim() + '</a>';
+          html += h.tagName.toLowerCase() === 'h2' ? '<li>' + a + '</li>' : '<li><ul><li>' + a + '</li></ul></li>';
+        });
+        list.innerHTML = html || '<li>无标题</li>';
+      }
       window.$docsify = {
         name: "Python 文档",
         homepage: "python语法手册.md",
         loadSidebar: true,
+        loadNavbar: true,
+        mergeNavbar: true,
         subMaxLevel: 3,
+        maxLevel: 3,
         search: "auto",
-        themeable: {
-          readyTransition: true,
-          responsiveTables: true,
-        },
+        topMargin: 70,
+        themeable: { readyTransition: true, responsiveTables: true },
+        plugins: [function (hook) { hook.doneEach(buildOutline); }],
       };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+    <script>
+      document.getElementById('sidebarToggle').onclick = function () {
+        document.body.classList.toggle('sidebar-close');
+      };
+    </script>
   </body>
 </html>
