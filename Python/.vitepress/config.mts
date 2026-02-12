@@ -30,5 +30,23 @@ export default defineConfig({
     ],
     outline: { level: [2, 3] },
     lastUpdated: { text: '最后更新于' },
+    // 本地搜索（基于 minisearch，无需后端）
+    search: {
+      provider: 'local',
+      options: {
+        locales: {
+          zh_CN: {
+            translations: {
+              button: { buttonText: '搜索文档', buttonAriaLabel: '搜索文档' },
+              modal: {
+                noResultsText: '无法找到相关结果',
+                resetButtonTitle: '清除查询',
+                footer: { closeText: '关闭', navigateText: '切换', selectText: '选择' },
+              },
+            },
+          },
+        },
+      },
+    },
   },
 })
