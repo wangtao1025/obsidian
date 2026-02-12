@@ -11,6 +11,7 @@ export default defineConfig({
   },
   srcExclude: ['_sidebar.md', '_navbar.md', 'index.html', 'README.md'],
   ignoreDeadLinks: 'localhostLinks',
+  appearance: 'dark',
 
   themeConfig: {
     nav: [

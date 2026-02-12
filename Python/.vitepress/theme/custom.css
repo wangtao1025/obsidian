@@ -1,0 +1,28 @@
+/**
+ * Next.js 风格纯黑主题
+ * 仅覆盖深色模式，主背景与侧栏为纯黑
+ */
+
+.dark {
+  /* 主背景：纯黑 */
+  --vp-c-bg: #000000;
+  --vp-c-bg-alt: #000000;
+  --vp-c-bg-elv: #0a0a0a;
+  --vp-c-bg-soft: #0a0a0a;
+
+  /* 分隔线 / 边框：极弱，避免刺眼 */
+  --vp-c-border: #262626;
+  --vp-c-divider: #171717;
+  --vp-c-gutter: #000000;
+
+  /* 文字：略偏灰白，保持可读 */
+  --vp-c-text-1: #ededed;
+  --vp-c-text-2: #a1a1a1;
+  --vp-c-text-3: #737373;
+
+  /* 灰色色板（用于 hover、代码块等）*/
+  --vp-c-gray-1: #a1a1a1;
+  --vp-c-gray-2: #525252;
+  --vp-c-gray-3: #262626;
+  --vp-c-gray-soft: rgba(255, 255, 255, 0.06);
+}
