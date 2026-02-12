@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import katex from 'markdown-it-katex'
 
 export default defineConfig({
   lang: 'zh-CN',
@@ -12,6 +13,23 @@ export default defineConfig({
   srcExclude: ['_sidebar.md', '_navbar.md', 'index.html', 'README.md'],
   ignoreDeadLinks: 'localhostLinks',
   appearance: 'dark',
+  
+  // 注入 Mermaid CSS
+  head: [
+    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.css' }],
+  ],
+
+  // Markdown 配置：代码块行号、数学公式、Mermaid 图表
+  markdown: {
+    lineNumbers: true, // 代码块默认显示行号
+    config: (md) => {
+      // 数学公式支持（KaTeX）
+      md.use(katex, { throwOnError: false, errorColor: '#cc0000' })
+      
+      // Mermaid 图表：通过代码块语言标识，客户端渲染
+      // 使用 ```mermaid 代码块即可，客户端会自动渲染
+    },
+  },
 
   themeConfig: {
     nav: [
@@ -31,6 +49,23 @@ export default defineConfig({
     ],
     outline: { level: [2, 3] },
     lastUpdated: { text: '最后更新于' },
+    docFooter: {
+      prev: '上一篇',
+      next: '下一篇',
+    },
+    footer: {
+      message: 'Python 全栈开发 · 核心语法查漏补缺',
+      copyright: '内容仅供学习参考',
+    },
+    // 编辑链接（如果托管在 GitHub，取消注释并填入你的仓库）
+    // editLink: {
+    //   pattern: 'https://github.com/你的用户名/你的仓库/edit/main/:path',
+    //   text: '在 GitHub 上编辑此页',
+    // },
+    // 社交链接（可选）
+    // socialLinks: [
+    //   { icon: 'github', link: 'https://github.com/你的用户名' },
+    // ],
     // 本地搜索（基于 minisearch，无需后端）
     search: {
       provider: 'local',

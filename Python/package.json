@@ -9,6 +9,9 @@
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
+    "katex": "^0.16.9",
+    "markdown-it-katex": "^2.0.3",
+    "mermaid": "^10.6.1",
     "vitepress": "^1.6.0"
   }
 }
