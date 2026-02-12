@@ -1,12 +1,21 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <title>我的文档</title>
-    <link
-      rel="stylesheet"
-      href="//cdn.jsdelivr.net/npm/docsify/themes/dark.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Python 全栈开发：核心语法查漏补缺手册与自测" />
+    <title>Python 文档</title>
+    <!-- docsify-themeable：VitePress 风格（亮/暗随系统） -->
+    <link rel="stylesheet" media="(prefers-color-scheme: light)" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css" />
+    <link rel="stylesheet" media="(prefers-color-scheme: dark)" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css" />
+    <style>
+      /* 贴近 VitePress 默认主题：绿色强调、字体与间距 */
+      :root {
+        --theme-hue: 142;
+        --base-font-size: 16px;
+        --content-max-width: 48em;
+      }
+    </style>
   </head>
   <body>
     <div id="app">正在加载...</div>
@@ -16,8 +25,15 @@
         homepage: "python语法手册.md",
         loadSidebar: true,
         subMaxLevel: 3,
+        search: "auto",
+        themeable: {
+          readyTransition: true,
+          responsiveTables: true,
+        },
       };
     </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
   </body>
 </html>
