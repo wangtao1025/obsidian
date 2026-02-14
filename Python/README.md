@@ -1,5 +1,23 @@
 # Python 文档（VitePress）
 
+## 目录结构（笔记与工程分离）
+
+```
+Python/
+├── .vitepress/          # VitePress 配置与主题（工程）
+├── docs/                # 笔记内容（仅 Markdown，可随意扩展）
+│   ├── python语法手册.md
+│   ├── Python核心语法自测试卷.md
+│   ├── python 面试题.md
+│   └── …                # 后续新增笔记都放这里
+├── package.json
+├── vercel.json
+└── README.md
+```
+
+- **工程文件**：根目录的 `package.json`、`.vitepress/`、`vercel.json` 等，用于构建与部署。
+- **笔记文件**：全部放在 `docs/` 下，新增笔记只需在 `docs/` 里加 `.md`，再在 `.vitepress/config.mts` 的 `sidebar` / `nav` 里加上链接即可。
+
 ## 本地开发
 
 ```bash

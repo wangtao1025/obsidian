@@ -3,50 +3,281 @@ import katex from 'markdown-it-katex'
 
 export default defineConfig({
   lang: 'zh-CN',
-  title: 'Python 文档',
-  description: 'Python 全栈开发：核心语法查漏补缺手册与自测',
+  title: '个人文档',
+  description: 'Python、AI、Linux、Docker 等分类笔记与文档',
 
-  // 首页显示语法手册（不新增 index.md）
+  // 笔记内容独立目录，与 VitePress 工程分离
+  srcDir: 'docs',
+
+  // 首页显示 Python 语法手册
   rewrites: {
-    'python语法手册.md': 'index.md',
+    'python/python语法手册.md': 'index.md',
   },
-  srcExclude: ['_sidebar.md', '_navbar.md', 'index.html', 'README.md'],
+  // 排除非文档文件（路径相对于 srcDir 即 docs/）
+  srcExclude: ['README.md'],
   ignoreDeadLinks: 'localhostLinks',
   appearance: 'dark',
   
   // 注入 Mermaid CSS
   head: [
-    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.css' }],
+    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.css' }],
   ],
 
-  // Markdown 配置：代码块行号、数学公式、Mermaid 图表
   markdown: {
-    lineNumbers: true, // 代码块默认显示行号
+    lineNumbers: true,
     config: (md) => {
-      // 数学公式支持（KaTeX）
       md.use(katex, { throwOnError: false, errorColor: '#cc0000' })
-      
-      // Mermaid 图表：通过代码块语言标识，客户端渲染
-      // 使用 ```mermaid 代码块即可，客户端会自动渲染
+      const defaultFence = md.renderer.rules.fence
+      md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+        const token = tokens[idx]
+        const lang = (token.info || '').trim().split(/\s/)[0]
+        if (lang === 'mermaid') {
+          const code = (token.content || '').trim()
+          return '<div class="mermaid-zoom-wrapper"><pre class="mermaid">' + code + '</pre></div>\n'
+        }
+        return defaultFence(tokens, idx, options, env, self)
+      }
     },
   },
 
   themeConfig: {
+    // 顶栏：按分类入口，不重复列单篇文档
     nav: [
-      { text: '语法手册', link: '/' },
-      { text: '自测试卷', link: '/Python核心语法自测试卷' },
-      { text: '面试题', link: '/python 面试题' },
+      { text: '学习路径', link: '/学习路径总览' },
+      { text: 'Python', link: '/python/' },
+      { text: 'AI', link: '/ai/' },
+      { text: 'Linux', link: '/linux/' },
+      { text: 'Docker', link: '/docker/' },
     ],
-    sidebar: [
-      {
-        text: '文档',
-        items: [
-          { text: 'Python 语法手册', link: '/' },
-          { text: '核心语法自测试卷', link: '/Python核心语法自测试卷' },
-          { text: 'Python 面试题', link: '/python 面试题' },
-        ],
-      },
-    ],
+    // 侧栏：按路径显示当前分类下的文档，避免与顶栏重复
+    sidebar: {
+      '/学习路径总览': [
+        {
+          text: '全站学习路径',
+          items: [
+            { text: '学习路径总览', link: '/学习路径总览' },
+            { text: 'Python 分类', link: '/python/' },
+            { text: 'AI 分类', link: '/ai/' },
+            { text: 'Linux 分类', link: '/linux/' },
+            { text: 'Docker 分类', link: '/docker/' },
+          ],
+        },
+      ],
+      '/': [
+        {
+          text: '入口',
+          items: [
+            { text: 'Python 首页', link: '/python/' },
+            { text: '语法手册总览', link: '/' },
+          ],
+        },
+        {
+          text: '语法手册（按章）',
+          items: [
+            { text: '第1章 变量与解包', link: '/python/python语法手册-01-变量与解包' },
+            { text: '第2章 内置数据结构', link: '/python/python语法手册-02-内置数据结构' },
+            { text: '第3章 异常', link: '/python/python语法手册-03-异常' },
+            { text: '第4章 格式化与输出', link: '/python/python语法手册-04-格式化与输出' },
+            { text: '第5章 内置函数', link: '/python/python语法手册-05-内置函数' },
+            { text: '第6章 逻辑与真值', link: '/python/python语法手册-06-逻辑与真值' },
+            { text: '第7章 身份与成员', link: '/python/python语法手册-07-身份与成员' },
+            { text: '第8章 数据处理', link: '/python/python语法手册-08-数据处理' },
+            { text: '第9章 字符编码', link: '/python/python语法手册-09-字符编码' },
+            { text: '第10章 循环', link: '/python/python语法手册-10-循环' },
+            { text: '第11章 标准库', link: '/python/python语法手册-11-标准库' },
+            { text: '语法手册完整版', link: '/python/python语法手册-完整版备份' },
+          ],
+        },
+        {
+          text: '标准库',
+          items: [
+            { text: '语法手册 · 第11章 标准库', link: '/python/python语法手册-11-标准库' },
+            { text: 'math 数学库', link: '/python/AI课程-math数学库' },
+            { text: 'typing 类型提示', link: '/python/AI课程-typing类型提示' },
+            { text: 'collections', link: '/python/AI课程-collections' },
+            { text: 'random', link: '/python/AI课程-random' },
+            { text: 'heapq 使用指南', link: '/python/heapq使用指南' },
+          ],
+        },
+        {
+          text: '第三方库（课程内）',
+          items: [
+            { text: 'jieba', link: '/python/AI课程-jieba' },
+            { text: 'BeautifulSoup4', link: '/python/AI课程-beautifulsoup4' },
+          ],
+        },
+        {
+          text: '自测与面试',
+          items: [
+            { text: '核心语法自测试卷', link: '/python/Python核心语法自测试卷' },
+            { text: 'Python 面试题', link: '/python/python 面试题' },
+          ],
+        },
+      ],
+      // Python 分类（/python/ 与 /python 均配置）
+      '/python/': [
+        {
+          text: '入口',
+          items: [
+            { text: 'Python 首页', link: '/python/' },
+            { text: '语法手册总览', link: '/' },
+          ],
+        },
+        {
+          text: '语法手册（按章）',
+          items: [
+            { text: '第1章 变量与解包', link: '/python/python语法手册-01-变量与解包' },
+            { text: '第2章 内置数据结构', link: '/python/python语法手册-02-内置数据结构' },
+            { text: '第3章 异常', link: '/python/python语法手册-03-异常' },
+            { text: '第4章 格式化与输出', link: '/python/python语法手册-04-格式化与输出' },
+            { text: '第5章 内置函数', link: '/python/python语法手册-05-内置函数' },
+            { text: '第6章 逻辑与真值', link: '/python/python语法手册-06-逻辑与真值' },
+            { text: '第7章 身份与成员', link: '/python/python语法手册-07-身份与成员' },
+            { text: '第8章 数据处理', link: '/python/python语法手册-08-数据处理' },
+            { text: '第9章 字符编码', link: '/python/python语法手册-09-字符编码' },
+            { text: '第10章 循环', link: '/python/python语法手册-10-循环' },
+            { text: '第11章 标准库', link: '/python/python语法手册-11-标准库' },
+            { text: '语法手册完整版', link: '/python/python语法手册-完整版备份' },
+          ],
+        },
+        {
+          text: '标准库',
+          items: [
+            { text: '语法手册 · 第11章 标准库', link: '/python/python语法手册-11-标准库' },
+            { text: 'math 数学库', link: '/python/AI课程-math数学库' },
+            { text: 'typing 类型提示', link: '/python/AI课程-typing类型提示' },
+            { text: 'collections', link: '/python/AI课程-collections' },
+            { text: 'random', link: '/python/AI课程-random' },
+            { text: 'heapq 使用指南', link: '/python/heapq使用指南' },
+          ],
+        },
+        {
+          text: '第三方库（课程内）',
+          items: [
+            { text: 'jieba', link: '/python/AI课程-jieba' },
+            { text: 'BeautifulSoup4', link: '/python/AI课程-beautifulsoup4' },
+          ],
+        },
+        {
+          text: '自测与面试',
+          items: [
+            { text: '核心语法自测试卷', link: '/python/Python核心语法自测试卷' },
+            { text: 'Python 面试题', link: '/python/python 面试题' },
+          ],
+        },
+      ],
+      '/python': [
+        {
+          text: '入口',
+          items: [
+            { text: 'Python 首页', link: '/python/' },
+            { text: '语法手册总览', link: '/' },
+          ],
+        },
+        {
+          text: '语法手册（按章）',
+          items: [
+            { text: '第1章 变量与解包', link: '/python/python语法手册-01-变量与解包' },
+            { text: '第2章 内置数据结构', link: '/python/python语法手册-02-内置数据结构' },
+            { text: '第3章 异常', link: '/python/python语法手册-03-异常' },
+            { text: '第4章 格式化与输出', link: '/python/python语法手册-04-格式化与输出' },
+            { text: '第5章 内置函数', link: '/python/python语法手册-05-内置函数' },
+            { text: '第6章 逻辑与真值', link: '/python/python语法手册-06-逻辑与真值' },
+            { text: '第7章 身份与成员', link: '/python/python语法手册-07-身份与成员' },
+            { text: '第8章 数据处理', link: '/python/python语法手册-08-数据处理' },
+            { text: '第9章 字符编码', link: '/python/python语法手册-09-字符编码' },
+            { text: '第10章 循环', link: '/python/python语法手册-10-循环' },
+            { text: '第11章 标准库', link: '/python/python语法手册-11-标准库' },
+            { text: '语法手册完整版', link: '/python/python语法手册-完整版备份' },
+          ],
+        },
+        {
+          text: '标准库',
+          items: [
+            { text: '语法手册 · 第11章 标准库', link: '/python/python语法手册-11-标准库' },
+            { text: 'math 数学库', link: '/python/AI课程-math数学库' },
+            { text: 'typing 类型提示', link: '/python/AI课程-typing类型提示' },
+            { text: 'collections', link: '/python/AI课程-collections' },
+            { text: 'random', link: '/python/AI课程-random' },
+            { text: 'heapq 使用指南', link: '/python/heapq使用指南' },
+          ],
+        },
+        {
+          text: '第三方库（课程内）',
+          items: [
+            { text: 'jieba', link: '/python/AI课程-jieba' },
+            { text: 'BeautifulSoup4', link: '/python/AI课程-beautifulsoup4' },
+          ],
+        },
+        {
+          text: '自测与面试',
+          items: [
+            { text: '核心语法自测试卷', link: '/python/Python核心语法自测试卷' },
+            { text: 'Python 面试题', link: '/python/python 面试题' },
+          ],
+        },
+      ],
+      '/ai/': [
+        {
+          text: '入口',
+          items: [
+            { text: 'AI 首页', link: '/ai/' },
+            { text: '知识体系与学习路径', link: '/ai/知识体系与学习路径' },
+          ],
+        },
+        {
+          text: '主线课程',
+          items: [
+            { text: 'RAG 与向量基础', link: '/ai/AI课程-RAG与向量基础' },
+            { text: 'Milvus 与 PyMilvus', link: '/ai/AI课程-Milvus向量数据库与PyMilvus' },
+            { text: 'RAG 检索增强生成', link: '/ai/AI课程-RAG检索增强生成' },
+            { text: 'RAG 评估与 RAGAs', link: '/ai/AI课程-RAG评估与RAGAs' },
+            { text: 'RAGFlow', link: '/ai/AI课程-RAGFlow' },
+          ],
+        },
+        {
+          text: '向量与检索',
+          items: [
+            { text: '余弦相似度', link: '/ai/AI课程-余弦相似度' },
+            { text: 'HNSW', link: '/ai/AI课程-HNSW' },
+            { text: 'ChromaDB', link: '/ai/AI课程-chromadb' },
+            { text: 'Sentence Transformers', link: '/ai/AI课程-sentence_transformers' },
+          ],
+        },
+        {
+          text: '工具与存储',
+          items: [
+            { text: 'etcd', link: '/ai/AI课程-etcd' },
+            { text: 'MinIO', link: '/ai/AI课程-minio' },
+          ],
+        },
+        {
+          text: '附录',
+          items: [
+            { text: '模型与 API 速查', link: '/ai/AI课程-模型与API速查' },
+          ],
+        },
+      ],
+      '/linux/': [
+        {
+          text: 'Linux',
+          items: [
+            { text: '首页', link: '/linux/' },
+            { text: 'Linux 入门与常用命令手册', link: '/linux/Linux入门与常用命令手册' },
+          ],
+        },
+      ],
+      '/docker/': [
+        {
+          text: 'Docker',
+          items: [
+            { text: '首页', link: '/docker/' },
+            { text: 'Docker 入门与常用命令手册', link: '/docker/Docker入门与常用命令手册' },
+            { text: 'Kubernetes 入门', link: '/docker/Kubernetes入门' },
+          ],
+        },
+      ],
+    },
     outline: { level: [2, 3] },
     lastUpdated: { text: '最后更新于' },
     docFooter: {
@@ -54,7 +285,7 @@ export default defineConfig({
       next: '下一篇',
     },
     footer: {
-      message: 'Python 全栈开发 · 核心语法查漏补缺',
+      message: '个人文档 · 按分类整理',
       copyright: '内容仅供学习参考',
     },
     // 编辑链接（如果托管在 GitHub，取消注释并填入你的仓库）

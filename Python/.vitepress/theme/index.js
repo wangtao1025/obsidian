@@ -11,8 +11,9 @@ export default {
     if (typeof window !== 'undefined') {
       // 初始化 Mermaid（图表渲染）
       import('mermaid').then((mermaidModule) => {
-        mermaidModule.default.initialize({ 
-          startOnLoad: false, // 手动控制渲染时机
+        const mermaid = mermaidModule.default
+        mermaid.initialize({
+          startOnLoad: false,
           theme: 'dark',
           themeVariables: {
             background: '#000000',
@@ -24,36 +25,109 @@ export default {
             tertiaryColor: '#111111',
           },
         })
-        
-        // 查找所有 mermaid 代码块并渲染
-        function renderMermaid() {
-          const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid, pre code.lang-mermaid')
-          mermaidBlocks.forEach((block) => {
-            const parent = block.closest('pre')
-            if (parent && !parent.classList.contains('mermaid-rendered')) {
-              parent.classList.add('mermaid-rendered')
-              const mermaidDiv = document.createElement('div')
-              mermaidDiv.className = 'mermaid'
-              mermaidDiv.textContent = block.textContent
-              parent.replaceWith(mermaidDiv)
-            }
+
+        // 若仍是代码块形态，转为 pre.mermaid（兼容 fence 未生效时）
+        function ensureMermaidBlocks() {
+          document.querySelectorAll('pre code.language-mermaid, pre code.lang-mermaid').forEach((code) => {
+            const pre = code.closest('pre')
+            if (!pre || pre.classList?.contains('mermaid')) return
+            const text = (code.textContent || '').trim()
+            if (!text) return
+            pre.className = 'mermaid'
+            pre.textContent = text
           })
-          mermaidModule.default.run()
         }
-        
-        // 初始渲染
-        renderMermaid()
-        
-        // 路由切换后重新渲染（监听路由变化）
-        const originalGo = routerRef.go
-        routerRef.go = function(...args) {
-          originalGo.apply(this, args)
-          setTimeout(renderMermaid, 200)
+
+        // 逐个渲染 .mermaid（支持 pre 与 div），单个失败不影响其余
+        async function renderMermaid() {
+          ensureMermaidBlocks()
+          const root = document.querySelector('.vp-doc') || document.body
+          const nodes = root.querySelectorAll('.mermaid:not([data-mermaid-done])')
+          for (const node of nodes) {
+            const code = (node.textContent || '').trim()
+            if (!code) continue
+            try {
+              node.setAttribute('data-mermaid-done', '1')
+              await mermaid.run({ nodes: [node], suppressErrors: true })
+              addMermaidExpandBtn(node)
+            } catch (err) {
+              node.removeAttribute('data-mermaid-done')
+              console.warn('Mermaid render error:', code.slice(0, 80) + '...', err)
+            }
+          }
         }
-        
-        // 监听页面内容更新
+
+        // 为 Mermaid 图表添加「放大查看」按钮
+        function addMermaidExpandBtn(mermaidNode) {
+          const wrapper = mermaidNode.closest('.mermaid-zoom-wrapper')
+          if (!wrapper || wrapper.querySelector('.mermaid-expand-btn')) return
+          const btn = document.createElement('button')
+          btn.className = 'mermaid-expand-btn'
+          btn.textContent = '放大查看'
+          btn.type = 'button'
+          btn.onclick = (e) => {
+            e.stopPropagation()
+            const svg = mermaidNode.querySelector('svg')
+            if (!svg) return
+            if (document.querySelector('.vp-mermaid-overlay')) return
+            const overlay = document.createElement('div')
+            overlay.className = 'vp-mermaid-overlay'
+            const inner = document.createElement('div')
+            inner.className = 'mermaid-zoomed'
+            const clone = svg.cloneNode(true)
+            clone.style.maxWidth = 'min(90vw, 1200px)'
+            inner.appendChild(clone)
+            overlay.appendChild(inner)
+            document.body.appendChild(overlay)
+            document.body.style.overflow = 'hidden'
+            overlay.style.opacity = '0'
+            requestAnimationFrame(() => { overlay.style.opacity = '1' })
+            function close() {
+              overlay.style.opacity = '0'
+              setTimeout(() => {
+                overlay.remove()
+                document.body.style.overflow = ''
+              }, 200)
+            }
+            overlay.onclick = close
+            overlay.onkeydown = (ev) => { if (ev.key === 'Escape') close() }
+            overlay.setAttribute('tabindex', '0')
+            overlay.focus()
+          }
+          wrapper.appendChild(btn)
+        }
+
+        function scheduleMermaid() {
+          const run = () => {
+            requestAnimationFrame(() => renderMermaid())
+          }
+          setTimeout(run, 100)
+          setTimeout(run, 400)
+          setTimeout(run, 1000)
+          setTimeout(run, 2000)
+        }
+
+        scheduleMermaid()
+
+        if (routerRef && typeof routerRef.afterEach === 'function') {
+          routerRef.afterEach(() => {
+            setTimeout(scheduleMermaid, 150)
+          })
+        }
+
+        if (routerRef && typeof routerRef.go === 'function') {
+          const originalGo = routerRef.go
+          routerRef.go = function (...args) {
+            originalGo.apply(this, args)
+            scheduleMermaid()
+          }
+        }
+
+        // 监听 DOM 变化，出现 .mermaid 或 mermaid 代码块时触发渲染
         const observer = new MutationObserver(() => {
-          renderMermaid()
+          if (document.querySelector('.mermaid:not([data-mermaid-done])') || document.querySelector('code.language-mermaid, code.lang-mermaid')) {
+            scheduleMermaid()
+          }
         })
         observer.observe(document.body, { childList: true, subtree: true })
       })
