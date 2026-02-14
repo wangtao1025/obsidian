@@ -9,9 +9,9 @@ export default defineConfig({
   // 笔记内容独立目录，与 VitePress 工程分离
   srcDir: 'docs',
 
-  // 首页显示 Python 语法手册
+  // 首页显示学习路径总览；语法手册见 /python/python语法手册
   rewrites: {
-    'python/python语法手册.md': 'index.md',
+    '学习路径总览.md': 'index.md',
   },
   // 排除非文档文件（路径相对于 srcDir 即 docs/）
   srcExclude: ['README.md'],
@@ -43,7 +43,7 @@ export default defineConfig({
   themeConfig: {
     // 顶栏：按分类入口，不重复列单篇文档
     nav: [
-      { text: '学习路径', link: '/学习路径总览' },
+      { text: '学习路径', link: '/' },
       { text: 'Python', link: '/python/' },
       { text: 'AI', link: '/ai/' },
       { text: 'Linux', link: '/linux/' },
@@ -51,11 +51,12 @@ export default defineConfig({
     ],
     // 侧栏：按路径显示当前分类下的文档，避免与顶栏重复
     sidebar: {
-      '/学习路径总览': [
+      // 首页（/）与 /学习路径总览 均显示学习路径侧栏
+      '/': [
         {
           text: '全站学习路径',
           items: [
-            { text: '学习路径总览', link: '/学习路径总览' },
+            { text: '学习路径总览', link: '/' },
             { text: 'Python 分类', link: '/python/' },
             { text: 'AI 分类', link: '/ai/' },
             { text: 'Linux 分类', link: '/linux/' },
@@ -63,54 +64,15 @@ export default defineConfig({
           ],
         },
       ],
-      '/': [
+      '/学习路径总览': [
         {
-          text: '入口',
+          text: '全站学习路径',
           items: [
-            { text: 'Python 首页', link: '/python/' },
-            { text: '语法手册总览', link: '/' },
-          ],
-        },
-        {
-          text: '语法手册（按章）',
-          items: [
-            { text: '第1章 变量与解包', link: '/python/python语法手册-01-变量与解包' },
-            { text: '第2章 内置数据结构', link: '/python/python语法手册-02-内置数据结构' },
-            { text: '第3章 异常', link: '/python/python语法手册-03-异常' },
-            { text: '第4章 格式化与输出', link: '/python/python语法手册-04-格式化与输出' },
-            { text: '第5章 内置函数', link: '/python/python语法手册-05-内置函数' },
-            { text: '第6章 逻辑与真值', link: '/python/python语法手册-06-逻辑与真值' },
-            { text: '第7章 身份与成员', link: '/python/python语法手册-07-身份与成员' },
-            { text: '第8章 数据处理', link: '/python/python语法手册-08-数据处理' },
-            { text: '第9章 字符编码', link: '/python/python语法手册-09-字符编码' },
-            { text: '第10章 循环', link: '/python/python语法手册-10-循环' },
-            { text: '第11章 标准库', link: '/python/python语法手册-11-标准库' },
-            { text: '语法手册完整版', link: '/python/python语法手册-完整版备份' },
-          ],
-        },
-        {
-          text: '标准库',
-          items: [
-            { text: '语法手册 · 第11章 标准库', link: '/python/python语法手册-11-标准库' },
-            { text: 'math 数学库', link: '/python/AI课程-math数学库' },
-            { text: 'typing 类型提示', link: '/python/AI课程-typing类型提示' },
-            { text: 'collections', link: '/python/AI课程-collections' },
-            { text: 'random', link: '/python/AI课程-random' },
-            { text: 'heapq 使用指南', link: '/python/heapq使用指南' },
-          ],
-        },
-        {
-          text: '第三方库（课程内）',
-          items: [
-            { text: 'jieba', link: '/python/AI课程-jieba' },
-            { text: 'BeautifulSoup4', link: '/python/AI课程-beautifulsoup4' },
-          ],
-        },
-        {
-          text: '自测与面试',
-          items: [
-            { text: '核心语法自测试卷', link: '/python/Python核心语法自测试卷' },
-            { text: 'Python 面试题', link: '/python/python 面试题' },
+            { text: '学习路径总览', link: '/' },
+            { text: 'Python 分类', link: '/python/' },
+            { text: 'AI 分类', link: '/ai/' },
+            { text: 'Linux 分类', link: '/linux/' },
+            { text: 'Docker 分类', link: '/docker/' },
           ],
         },
       ],
@@ -120,7 +82,7 @@ export default defineConfig({
           text: '入口',
           items: [
             { text: 'Python 首页', link: '/python/' },
-            { text: '语法手册总览', link: '/' },
+            { text: '语法手册总览', link: '/python/python语法手册' },
           ],
         },
         {
@@ -171,7 +133,7 @@ export default defineConfig({
           text: '入口',
           items: [
             { text: 'Python 首页', link: '/python/' },
-            { text: '语法手册总览', link: '/' },
+            { text: '语法手册总览', link: '/python/python语法手册' },
           ],
         },
         {
