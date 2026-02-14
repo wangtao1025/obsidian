@@ -81,13 +81,13 @@ uv add PyMuPDF beautifulsoup4 python-docx openpyxl python-pptx lxml sentence_tra
 
 | 格式 | 库 | 要点 |
 |------|-----|------|
-| PDF | PyMuPDF (`fitz`) | `fitz.open` → 逐页 `page.get_text("text")` |
-| Word | python-docx | `Document(file_path)` → `paragraphs` 拼接 |
-| Excel | openpyxl | `load_workbook` → `iter_rows(values_only=True)` 按行拼接 |
-| PPT | python-pptx | `Presentation` → 每页 `slide.shapes` 取 `shape.text` |
+| PDF | [PyMuPDF](/python/AI课程-PyMuPDF)（`fitz`） | `fitz.open` → 逐页 `page.get_text("text")` |
+| Word | [python-docx](/python/AI课程-python-docx) | `Document(file_path)` → `paragraphs` 拼接 |
+| Excel | [OpenPyXL](/python/AI课程-openpyxl) | `load_workbook` → `iter_rows(values_only=True)` 按行拼接 |
+| PPT | [python-pptx](/python/AI课程-python-pptx) | `Presentation` → 每页 `slide.shapes` 取 `shape.text` |
 | HTML | [BeautifulSoup4](/python/AI课程-beautifulsoup4) | `BeautifulSoup(html, "html.parser")` → `get_text(separator="\n")` |
 | JSON | json | `json.load` → `json.dumps(..., ensure_ascii=False, indent=2)` |
-| XML | lxml.etree | `etree.fromstring` → `root.itertext()` 拼接 |
+| XML | [lxml](/python/AI课程-lxml) | `etree.fromstring` → `root.itertext()` 拼接 |
 | CSV | csv | `csv.reader` → 每行用逗号连接再换行拼接 |
 | txt / md | 内置 open | `open(..., encoding="utf-8").read()` |
 
@@ -109,7 +109,7 @@ uv add PyMuPDF beautifulsoup4 python-docx openpyxl python-pptx lxml sentence_tra
 ### 4.3 递归分割策略
 
 - 用分隔符层级（如段落 → 句子 → 词）逐级切分，直到块大小符合要求。  
-- 课程中使用 **LangChain** 的 `RecursiveCharacterTextSplitter`（`chunk_size`、`chunk_overlap`）。
+- 课程中使用 [LangChain](/ai/AI课程-LangChain) 的 `RecursiveCharacterTextSplitter`（`chunk_size`、`chunk_overlap`）。
 
 ### 4.4 语义感知分块（SemanticChunker）
 
@@ -117,7 +117,7 @@ uv add PyMuPDF beautifulsoup4 python-docx openpyxl python-pptx lxml sentence_tra
 - **参数**：`window_size`（窗口内句子数）、`threshold`（相似度阈值，如 0.85）。  
 - **流程**：句子分割 → 滑动窗口初步分块 → `model.encode(docs)` → 相邻块相似度 → 确定分割点 → 合并为最终块。
 
-课程给出了基于 [Sentence Transformers](/ai/AI课程-sentence_transformers)（如 `all-MiniLM-L6-v2`）的 `SemanticChunker` 类；核心逻辑示例（精简）：
+课程给出了基于 [Sentence Transformers](/python/AI课程-sentence_transformers)（如 `all-MiniLM-L6-v2`）的 `SemanticChunker` 类；核心逻辑示例（精简）：
 
 ```python
 from sentence_transformers import SentenceTransformer

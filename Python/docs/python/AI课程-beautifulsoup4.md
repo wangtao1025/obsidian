@@ -19,7 +19,7 @@
 ## 2. 环境准备
 
 - Python ≥ 3.8，pip ≥ 21  
-- 建议安装 **lxml** 解析器以提升性能  
+- 建议安装 [lxml](/python/AI课程-lxml) 解析器以提升性能  
 
 ```bash
 # Windows
@@ -68,7 +68,7 @@ for item in soup.select("#menu li a"):
 
 ## 4. 解析器与编码
 
-- **lxml**：速度快，推荐（需安装 lxml）  
+- **[lxml](/python/AI课程-lxml)**：速度快，推荐（需安装 lxml）  
 - **html.parser**：内置，无需安装  
 - **html5lib**：容错最好，速度较慢（需安装 html5lib）  
 

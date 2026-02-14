@@ -10,14 +10,14 @@
 
 | 类别 | 关键词 |
 |------|--------|
-| **向量与检索** | vector, 向量嵌入, milvus, pymilvus, [HNSW](/ai/AI课程-HNSW), [余弦相似度](/ai/AI课程-余弦相似度), [math](/python/AI课程-math数学库), faiss, [ChromaDB](/ai/AI课程-chromadb), MMR, RRF |
-| **RAG 流程** | rag, rag_measure, ragflow, text_splitter, langchain, RAGAS, Lost-in-the-middle |
-| **模型与嵌入** | [Sentence Transformers](/ai/AI课程-sentence_transformers)、all-MiniLM-L6-v2、openai、llm、BPETokenizer、CrossEncoder |
-| **检索与排序** | rank_bm25, TF-IDF, BagofWords, scikit-learn |
-| **文档处理** | python-docx, python-pptx, PyMuPDF, openpyxl, lxml, beautifulsoup4, LaTeX |
-| **后端与部署** | Flask, FastAPI, Starlette, uvicorn, sqlalchemy, asyncio, SSE |
+| **向量与检索** | vector, 向量嵌入, milvus, pymilvus, [HNSW](/ai/AI课程-HNSW), [余弦相似度](/ai/AI课程-余弦相似度), [math](/python/AI课程-math数学库), [FAISS](/ai/AI课程-faiss), [ChromaDB](/ai/AI课程-chromadb), [MMR](/ai/AI课程-MMR), RRF |
+| **RAG 流程** | rag, rag_measure, ragflow, [text_splitter](/python/AI课程-text_splitter), [LangChain](/ai/AI课程-LangChain), [RAGAS](/ai/AI课程-RAGAS), Lost-in-the-middle |
+| **模型与嵌入** | [Sentence Transformers](/python/AI课程-sentence_transformers)、[all-MiniLM-L6-v2](/ai/AI课程-all-MiniLM-L6-v2)、[OpenAI](/python/AI课程-openai)、[大语言模型（llm）](/ai/AI课程-llm)、[BPETokenizer](/ai/AI课程-BPETokenizer)、CrossEncoder |
+| **检索与排序** | rank_bm25, TF-IDF, [BagofWords](/ai/AI课程-BagofWords), [Scikit-learn](/python/AI课程-scikit-learn) |
+| **文档处理** | [python-docx](/python/AI课程-python-docx), [python-pptx](/python/AI课程-python-pptx), [PyMuPDF](/python/AI课程-PyMuPDF), [OpenPyXL](/python/AI课程-openpyxl), [lxml](/python/AI课程-lxml), [BeautifulSoup4](/python/AI课程-beautifulsoup4), LaTeX |
+| **后端与部署** | [Flask](/python/AI课程-Flask), FastAPI, Starlette, uvicorn, sqlalchemy, asyncio, SSE |
 | **基础设施** | [etcd](/ai/AI课程-etcd), [MinIO](/ai/AI课程-minio), venv, python-dotenv, argparse |
-| **其他** | Pydantic, dataclasses, Jinja2, PromptEngineering, Runnable, [typing](/python/AI课程-typing类型提示), [collections](/python/AI课程-collections), [jieba](/python/AI课程-jieba), numpy |
+| **其他** | [Pydantic](/python/AI课程-Pydantic), dataclasses, Jinja2, [提示词工程](/ai/AI课程-PromptEngineering), [Runnable](/ai/AI课程-Runnable), [typing](/python/AI课程-typing类型提示), [collections](/python/AI课程-collections), [jieba](/python/AI课程-jieba), [NumPy](/python/AI课程-numpy) |
 
 下面为**第一讲：向量 → 向量嵌入 → 向量数据库**的笔记。
 

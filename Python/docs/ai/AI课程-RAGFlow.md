@@ -1,6 +1,6 @@
 # AI 课程笔记：RAGFlow
 
-来源课程：[rag.docs-hub.com](https://rag.docs-hub.com/html/)（zhangdocs）RAGFlow 章节。以下为 RAGFlow 定位、安装、核心特性、工作原理、应用场景及与 LangChain/商用平台对比的整理。
+来源课程：[rag.docs-hub.com](https://rag.docs-hub.com/html/)（zhangdocs）RAGFlow 章节。以下为 RAGFlow 定位、安装、核心特性、工作原理、应用场景及与 [LangChain](/ai/AI课程-LangChain)/商用平台对比的整理。
 
 ---
 
@@ -181,9 +181,9 @@ docker exec -it ollama ollama pull llava:7b
 
 ## 六、与其他工具的对比
 
-### 6.1 vs LangChain / LlamaIndex
+### 6.1 vs [LangChain](/ai/AI课程-LangChain) / LlamaIndex
 
-| 维度       | RAGFlow              | LangChain / LlamaIndex   |
+| 维度       | RAGFlow              | [LangChain](/ai/AI课程-LangChain) / LlamaIndex   |
 |------------|----------------------|---------------------------|
 | 使用方式   | 可视化界面           | 代码编程                  |
 | 上手难度   | 较低                 | 较高                      |
@@ -191,7 +191,7 @@ docker exec -it ollama ollama pull llava:7b
 | 适用人群   | 技术 + 非技术人员    | 主要为开发                |
 | 文档理解   | 内置表格、图片等     | 需自行编码集成            |
 
-**建议**：快速原型、非技术人员参与、需要可视化调试时选 RAGFlow；需要深度定制、复杂业务逻辑、有开发团队时选 LangChain/LlamaIndex。
+**建议**：快速原型、非技术人员参与、需要可视化调试时选 RAGFlow；需要深度定制、复杂业务逻辑、有开发团队时选 [LangChain](/ai/AI课程-LangChain)/LlamaIndex。
 
 ### 6.2 vs 商用闭源平台
 

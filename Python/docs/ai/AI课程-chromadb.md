@@ -89,7 +89,7 @@ results = collection.query(
 
 ## 7. 自定义嵌入函数
 
-默认嵌入对中文可能一般，可改用 [Sentence Transformers](/ai/AI课程-sentence_transformers) 等：
+默认嵌入对中文可能一般，可改用 [Sentence Transformers](/python/AI课程-sentence_transformers) 等：
 
 ```python
 from sentence_transformers import SentenceTransformer
@@ -138,7 +138,7 @@ results = collection.query(query_texts=["语义搜索"], n_results=1)
 
 ## 11. 向量数据库对比（摘要）
 
-| 类型 | FAISS | Chroma | Milvus | Pinecone | PostgreSQL |
+| 类型 | [FAISS](/ai/AI课程-faiss) | Chroma | Milvus | Pinecone | PostgreSQL |
 |------|--------|--------|--------|----------|------------|
 | 形态 | 库 | 嵌入式/独立 | 分布式 | 云托管 | 关系型+扩展 |
 | 场景 | 研究/中规模 | 快速开发/本地 | 大规模生产 | 无运维/云上 | 已有 PG/强事务 |

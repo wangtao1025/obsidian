@@ -225,7 +225,7 @@ def calculate_answer_relevance_similarity(question, answer):
   - **Context Recall**：检索是否覆盖了应有相关信息的比例。  
 - 实际使用时：准备测试集与（可选）标准答案 → 选定指标 → 跑 RAG 并调用 RAGAs 或自研脚本计算各指标，据此迭代检索与生成模块。
 
-课程内关联：[RAG 检索增强生成](/ai/AI课程-RAG检索增强生成)（第四讲）、[Milvus 向量数据库与 PyMilvus](/ai/AI课程-Milvus向量数据库与PyMilvus)、[RAG 与向量基础](/ai/AI课程-RAG与向量基础)；LangChain、RAGAS 等见课程导航与前述笔记。
+课程内关联：[RAG 检索增强生成](/ai/AI课程-RAG检索增强生成)（第四讲）、[Milvus 向量数据库与 PyMilvus](/ai/AI课程-Milvus向量数据库与PyMilvus)、[RAG 与向量基础](/ai/AI课程-RAG与向量基础)；[RAGAS](/ai/AI课程-RAGAS) 框架详见本站单篇，[LangChain](/ai/AI课程-LangChain) 见本站 [AI课程-LangChain](/ai/AI课程-LangChain)，其余见课程导航与前述笔记。
 
 ---
 

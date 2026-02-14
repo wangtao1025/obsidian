@@ -1,6 +1,6 @@
 # AI 课程：Sentence Transformers
 
-本文对应课程 [rag.docs-hub.com](https://rag.docs-hub.com/) 中的 **sentence_transformers** 文档。Sentence Transformers 可将句子、段落或文档转换为固定长度的向量（Embedding），用于语义搜索、相似度计算与 RAG 嵌入；与 [余弦相似度](/ai/AI课程-余弦相似度)、[ChromaDB](/ai/AI课程-chromadb)、[RAG 检索增强生成](/ai/AI课程-RAG检索增强生成) 搭配学习。
+本文对应课程 [rag.docs-hub.com](https://rag.docs-hub.com/) 中的 **sentence_transformers** 文档，文档归在 **Python 分类**（与 jieba、BeautifulSoup4 同为课程用到的第三方库）。Sentence Transformers 可将句子、段落或文档转换为固定长度的向量（Embedding），用于语义搜索、相似度计算与 RAG 嵌入；与 [余弦相似度](/ai/AI课程-余弦相似度)、[ChromaDB](/ai/AI课程-chromadb)、[RAG 检索增强生成](/ai/AI课程-RAG检索增强生成) 搭配学习。
 
 ---
 
@@ -270,4 +270,4 @@ for text, score in zip(chinese_texts, scores):
 
 ---
 
-**相关文档**：[余弦相似度](/ai/AI课程-余弦相似度) · [ChromaDB](/ai/AI课程-chromadb) · [RAG 检索增强生成](/ai/AI课程-RAG检索增强生成) · [RAG 与向量基础](/ai/AI课程-RAG与向量基础) · [知识体系与学习路径](/ai/知识体系与学习路径) · [sentence_transformers（课程原文）](https://rag.docs-hub.com/html/sentence_transformers.html)
+**相关文档**：[余弦相似度](/ai/AI课程-余弦相似度) · [ChromaDB](/ai/AI课程-chromadb) · [RAG 检索增强生成](/ai/AI课程-RAG检索增强生成) · [RAG 与向量基础](/ai/AI课程-RAG与向量基础) · [知识体系与学习路径](/ai/知识体系与学习路径) · [jieba](/python/AI课程-jieba) · [BeautifulSoup4](/python/AI课程-beautifulsoup4) · [sentence_transformers（课程原文）](https://rag.docs-hub.com/html/sentence_transformers.html)
