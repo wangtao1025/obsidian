@@ -65,7 +65,7 @@
 ## 7. 数据分割与文本分类
 
 - **train_test_split**：划分训练集/测试集；可选 `stratify=y` 保持类别比例。
-- **文本分类**：`TfidfVectorizer` 将文本转为 TF-IDF 向量，再接分类器（如 MultinomialNB）；与课程中 [TF-IDF](https://rag.docs-hub.com/html/TF-IDF.html)、[BagofWords](/ai/AI课程-BagofWords) 相关。
+- **文本分类**：`TfidfVectorizer` 将文本转为 TF-IDF 向量，再接分类器（如 MultinomialNB）；与课程中 [TF-IDF](/ai/AI课程-TF-IDF)、[BagofWords](/ai/AI课程-BagofWords) 相关。
 
 ---
 

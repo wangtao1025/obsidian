@@ -1,6 +1,6 @@
 # Python
 
-本分类包含：**语法手册**（总览 + 按章）、**标准库**（总览在语法手册第11章 + 课程内单篇）、**第三方库（课程内）**（jieba、BeautifulSoup4、lxml、OpenPyXL、PyMuPDF、Pydantic、python-docx、python-pptx、Requests、text_splitter、Sentence Transformers、OpenAI、Flask、NumPy、Scikit-learn）、**自测与面试**。左侧菜单已按上述分组，可直接从侧栏进入。若你从**前端转全栈**，可先看 [学习路径总览](/学习路径总览) 的「前端转全栈」建议路径。
+本分类包含：**语法手册**（总览 + 按章）、**标准库**（总览在语法手册第11章 + 课程内单篇）、**第三方库（课程内）**（jieba、BeautifulSoup4、lxml、OpenPyXL、PyMuPDF、Pydantic、python-docx、python-pptx、Requests、text_splitter、Sentence Transformers、OpenAI、Flask、NumPy、Scikit-learn、LaTeX）、**自测与面试**。左侧菜单已按上述分组，可直接从侧栏进入。若你从**前端转全栈**，可先看 [学习路径总览](/学习路径总览) 的「前端转全栈」建议路径。
 
 ## 入口与语法手册
 
@@ -28,6 +28,7 @@
 | collections | [collections](/python/AI课程-collections) |
 | random | [random](/python/AI课程-random) |
 | abc 抽象基类 | [abc 抽象基类](/python/AI课程-abc)（ABC、abstractmethod、接口契约） |
+| dataclasses | [dataclasses](/python/AI课程-dataclasses)（@dataclass、配置/DTO、与 Pydantic 互补） |
 | heapq 使用指南 | [heapq 使用指南](/python/heapq使用指南) · [HNSW](/ai/AI课程-HNSW)（检索中用堆） |
 
 ## 第三方库（课程内）
@@ -51,6 +52,7 @@
 | Flask | [Flask](/python/AI课程-Flask)（Web 框架、API 与 RAG 服务部署） |
 | NumPy | [NumPy](/python/AI课程-numpy)（数值计算、向量与矩阵运算） |
 | Scikit-learn | [Scikit-learn](/python/AI课程-scikit-learn)（分类/回归/预处理/评估、TF-IDF、与 RAG 检索相关） |
+| LaTeX | [LaTeX](/python/AI课程-LaTeX)（用 Python 生成 .tex、学术/技术文档排版） |
 
 全站学习路径见 [学习路径总览](/学习路径总览)；AI 课程地图见 [知识体系与学习路径](/ai/知识体系与学习路径)。
 

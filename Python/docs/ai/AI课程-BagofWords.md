@@ -1,6 +1,6 @@
 # AI 课程：词袋模型（BagofWords）
 
-本文对应课程 [rag.docs-hub.com](https://rag.docs-hub.com/) 中的 **BagofWords** 文档，归在 **AI 分类**（检索与排序算法）。词袋模型（Bag of Words，BoW）是一种将文本转换为数值向量的方法：只统计各词出现次数，不考虑词序。可与 [TF-IDF](https://rag.docs-hub.com/html/TF-IDF.html)、[rank_bm25](https://rag.docs-hub.com/html/rank_bm25.html)、[RAG 与向量基础](/ai/AI课程-RAG与向量基础) 搭配学习。
+本文对应课程 [rag.docs-hub.com](https://rag.docs-hub.com/) 中的 **BagofWords** 文档，归在 **AI 分类**（检索与排序算法）。词袋模型（Bag of Words，BoW）是一种将文本转换为数值向量的方法：只统计各词出现次数，不考虑词序。可与 [TF-IDF](/ai/AI课程-TF-IDF)、[BM25（rank_bm25）](/ai/AI课程-rank_bm25)、[RAG 与向量基础](/ai/AI课程-RAG与向量基础) 搭配学习。
 
 ---
 

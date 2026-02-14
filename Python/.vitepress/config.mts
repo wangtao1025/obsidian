@@ -111,6 +111,7 @@ export default defineConfig({
             { text: 'collections', link: '/python/AI课程-collections' },
             { text: 'random', link: '/python/AI课程-random' },
             { text: 'abc 抽象基类', link: '/python/AI课程-abc' },
+            { text: 'dataclasses', link: '/python/AI课程-dataclasses' },
             { text: 'heapq 使用指南', link: '/python/heapq使用指南' },
           ],
         },
@@ -132,6 +133,7 @@ export default defineConfig({
             { text: 'Flask', link: '/python/AI课程-Flask' },
             { text: 'NumPy', link: '/python/AI课程-numpy' },
             { text: 'Scikit-learn', link: '/python/AI课程-scikit-learn' },
+            { text: 'LaTeX', link: '/python/AI课程-LaTeX' },
           ],
         },
         {
@@ -176,6 +178,7 @@ export default defineConfig({
             { text: 'collections', link: '/python/AI课程-collections' },
             { text: 'random', link: '/python/AI课程-random' },
             { text: 'abc 抽象基类', link: '/python/AI课程-abc' },
+            { text: 'dataclasses', link: '/python/AI课程-dataclasses' },
             { text: 'heapq 使用指南', link: '/python/heapq使用指南' },
           ],
         },
@@ -197,6 +200,7 @@ export default defineConfig({
             { text: 'Flask', link: '/python/AI课程-Flask' },
             { text: 'NumPy', link: '/python/AI课程-numpy' },
             { text: 'Scikit-learn', link: '/python/AI课程-scikit-learn' },
+            { text: 'LaTeX', link: '/python/AI课程-LaTeX' },
           ],
         },
         {
@@ -242,6 +246,8 @@ export default defineConfig({
           text: '检索与排序',
           items: [
             { text: '词袋模型（BagofWords）', link: '/ai/AI课程-BagofWords' },
+            { text: 'TF-IDF', link: '/ai/AI课程-TF-IDF' },
+            { text: 'BM25（rank_bm25）', link: '/ai/AI课程-rank_bm25' },
             { text: 'MMR（最大边际相关性）', link: '/ai/AI课程-MMR' },
           ],
         },

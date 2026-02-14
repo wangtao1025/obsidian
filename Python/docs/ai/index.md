@@ -36,6 +36,8 @@
 | [ChromaDB](/ai/AI课程-chromadb) | 轻量向量库、集合与查询、本地/持久化、与 Milvus/FAISS 对比 |
 | [all-MiniLM-L6-v2](/ai/AI课程-all-MiniLM-L6-v2) | 轻量嵌入模型、本地向量化、与 RAG 检索衔接 |
 | [词袋模型（BagofWords）](/ai/AI课程-BagofWords) | BoW 原理、三步骤、实现要点、优缺点与适用场景 |
+| [TF-IDF](/ai/AI课程-TF-IDF) | 词频-逆文档频率、文档向量化、相似度与关键词提取、TfidfVectorizer |
+| [BM25（rank_bm25）](/ai/AI课程-rank_bm25) | 查询-文档相关性评分、TF/IDF/长度归一化/词频饱和、rank_bm25 使用 |
 | [MMR（最大边际相关性）](/ai/AI课程-MMR) | 相关性与多样性平衡、λ 参数、贪心选 k、检索/推荐/摘要 |
 | [提示词工程（Prompt Engineering）](/ai/AI课程-PromptEngineering) | 角色/任务/格式/示例/约束、思维链、Few-shot、迭代优化 |
 | [模型与 API 速查](/ai/AI课程-模型与API速查) | 模型类型与平台速查（配置 LLM/Embedding 时查阅） |
