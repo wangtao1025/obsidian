@@ -308,11 +308,13 @@ print("World")
 ```python
 ______________________
 ```
+> **待复习** → [错题本 4.10](/python/Python核心语法-错题本#410-print-file)（题目 + 知识点）
 
 **4.11** 实现"动态更新同一行"的两个关键技术是什么？
 > 你的回答：
 
 **4.12** `repr()` 函数的作用是什么？`print("apple\torange\n")` 和 `print(repr("apple\torange\n"))` 的输出有什么不同？
+> **待复习** → [错题本 4.12](/python/Python核心语法-错题本#412-repr)（题目 + 知识点）
 > 你的回答：
 
 **4.13** `__str__` 和 `__repr__` 的区别是什么？分别面向什么受众？
@@ -782,10 +784,11 @@ Hello World
 with open("output.txt", "w", encoding="utf-8") as f:
     print("内容", file=f)
 ```
+（待复习）
 
 **4.11** `\r`（回车符，回到行首覆盖当前行）和 `end=""`（不换行）。
 
-**4.12** `repr()` 返回对象的"官方"字符串表示，显式展示不可见字符。`print(text)` 会渲染 `\t` 和 `\n`；`print(repr(text))` 会原样显示 `'apple\torange\n'`。
+**4.12** `repr()` 返回对象的"官方"字符串表示，显式展示不可见字符。`print(text)` 会渲染 `\t` 和 `\n`；`print(repr(text))` 会原样显示 `'apple\torange\n'`。（待复习）
 
 **4.13**
 
