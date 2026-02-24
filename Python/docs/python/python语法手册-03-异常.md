@@ -45,12 +45,12 @@ def convert_base(number_str, from_base, to_base):
     
 - **`IndexError`**：序列索引超出范围。
 
-- **编码专用异常**：
+- **编码专用异常**：（**自测卷 3.5 待复习**）
 	- `UnicodeEncodeError`：字符串转字节失败（如 ASCII 编码中文）。
 	- `UnicodeDecodeError`：字节转字符串失败（如 用 UTF-8 去读 GBK 字节流）。
 	- `LookupError`：使用了不存在的编码名称。
 #### 3.4 专家级贴士：`try-except-else-finally`
 
-- **`else`**：当 `try` 块没有发生异常时执行（用于区分“成功执行”的逻辑）。
+- **`else`**：当 `try` 块没有发生异常时执行（用于区分“成功执行”的逻辑）。（**自测卷 3.6 待复习**）
     
 - **`finally`**：无论是否发生异常都会执行（常用于关闭文件句柄、释放数据库连接等工业级清理操作）。

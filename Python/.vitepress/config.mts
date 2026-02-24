@@ -140,6 +140,7 @@ export default defineConfig({
           text: '自测与面试',
           items: [
             { text: '核心语法自测试卷', link: '/python/Python核心语法自测试卷' },
+            { text: '核心语法 · 错题本', link: '/python/Python核心语法-错题本' },
             { text: 'Python 面试题', link: '/python/python 面试题' },
           ],
         },
