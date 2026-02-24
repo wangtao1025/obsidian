@@ -35,12 +35,12 @@
 
 - **规则**：设置的宽度是**最小保证宽度**。
 - **现象**：如果真实数据长度（如 12345）大于指定宽度（如 2），Python 会**原样输出全量数据**，绝不会为了对齐而截断数字（数据安全性高于排版美观）。
-#### 4.6 **码点展示** 与 **字节展示**
+#### 4.6 **码点展示** 与 **字节展示**（自测卷 4.6 待复习）
 - **码点：`f"U+{ord(char):04X}"` (补0，宽4，十六进制大写)。
     
 - **字节：`f"\\x{b:02x}"` (补0，宽2，十六进制小写)。
 ### [`print`](https://study.renshengtech.com/course/cmgg0mka10000p679mwure0bd/chapter/cmggr75in0003p6wd7qe8t4rd/section/cmgmhib3w003fp602jx862r1h)
-#### 4.7  基本语法
+#### 4.7  基本语法（自测卷 4.7 待复习）
 ```python
 print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
 ```
