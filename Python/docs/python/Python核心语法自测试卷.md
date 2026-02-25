@@ -480,6 +480,7 @@ print(1 in d.values())
 > 你的回答：
 
 **7.8** 如何让自定义类支持 `in` 运算符？需要定义什么方法？
+> **待复习** → [错题本 7.8](/python/Python核心语法-错题本#78-contains)（题目 + 知识点）
 > 你的回答：
 
 ---
@@ -874,7 +875,7 @@ with open("output.txt", "w", encoding="utf-8") as f:
 
 **7.7** 默认查找键。查找值：`value in d.values()`（但性能降至 O(n)）。
 
-**7.8** 定义 `__contains__(self, item)` 方法。
+**7.8** 定义 `__contains__(self, item)` 方法。（待复习）
 
 ## 八、数据处理
 

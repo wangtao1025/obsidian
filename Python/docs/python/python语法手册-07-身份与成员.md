@@ -83,7 +83,7 @@ print(1 in d.values())   # True (手动查值，但失去了 O(1) 速度)
 print(('a', 1) in d.items()) # True (查键值对是否存在)
 ```
 
-#### 7.2.3 自定义对象支持 `in`
+#### 7.2.3 自定义对象支持 `in`（自测卷 7.8 待复习）
 通过在类中定义 `__contains__` 方法，可以让自定义对象支持成员运算。
 ```python
 class MyClass:
