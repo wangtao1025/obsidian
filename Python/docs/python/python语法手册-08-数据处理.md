@@ -31,7 +31,7 @@ decimal_val = int("FF", 16)      # FF -> 255
 binary_str = bin(decimal_val)    # 255 -> '0b11111111'
 ```
 
-### 8.2 存储单位格式化 (Human Readable)
+### 8.2 存储单位格式化 (Human Readable)（自测卷 8.3 待复习）
 
 为了让文件大小变得“人类可读”，我们需要在 **1024 进制**（KiB/MiB 系列）下进行单位降级。
 
