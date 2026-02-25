@@ -4,6 +4,12 @@
 
 ---
 
+**本章对应自测卷**：[十一、标准库模块（共 8 题）](/python/Python核心语法自测试卷#十一标准库模块-共-8-题)  
+**学完能做什么**：用 `datetime` 做时间获取与加减、用 `time` 做计时、用进制与数学相关内置或模块做换算。  
+**小白注意**：① 官方完整 API 查 [Python 文档](https://docs.python.org/zh-cn/3/library/)。② 本站课程用到的标准库（math、typing、collections、random、heapq 等）见 [Python 首页](/python/)「标准库」表格。
+
+---
+
 ## 十一、标准库模块
 
 ### 11.1 `datetime` 日期时间处理
@@ -207,3 +213,7 @@ print("解析后的时间:", parsed_date)
 ---
 
 **延伸**：课程（RAG/向量）中用到的标准库另有单篇详解，见 [Python 首页](/python/) 的「标准库」：math、typing、collections、random、heapq；第三方库见「第三方库（课程内）」：jieba、BeautifulSoup4。
+
+---
+
+**本章小结**：常用标准库如 `datetime`（日期时间）、`time`（计时）、进制与数学相关；详细 API 查官方文档，本站课程相关模块见 Python 首页标准库与第三方库表格。

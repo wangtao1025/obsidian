@@ -4,6 +4,12 @@
 
 ---
 
+**本章对应自测卷**：[四、格式化输出 f-string 与 print（共 15 题）](/python/Python核心语法自测试卷#四格式化输出-f-string-与-print-共-15-题)  
+**学完能做什么**：用 f-string 做数字/对齐/补零/码点格式，用 `print` 的 sep/end/file 控制输出，理解 `repr` 与 `__str__`/`__repr__`。  
+**小白注意**：① 自定义填充字符（如用 1 填充）必须写对齐方式，否则 `f"{n:110d}"` 会被当成宽度 110。② `print(obj)` 用 `__str__`，容器里显示用 `__repr__`；只定义 `__repr__` 时 `print` 会回退用 `__repr__`。
+
+---
+
 ## 四、格式化输出 `(f-string` 与 `print)`
 
 ### `f-string`
@@ -234,3 +240,7 @@ print(repr(s)) # 输出: Student(name='Alice', score=95)
 # 在容器中展示时，默认调用 __repr__
 print([s]) # 输出: [Student(name='Alice', score=95)]
 ```
+
+---
+
+**本章小结**：f-string 格式 `{变量:填充对齐宽度.精度类型}`；默认补空格，补零用 `0`，自定义填充要写对齐。码点 `f"U+{ord(c):04X}"`。print 签名 `(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)`；输出到文件用 `file=f`。`repr()` 显式不可见字符；`__str__` 给人看、`__repr__` 给调试/容器用。

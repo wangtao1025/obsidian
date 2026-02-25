@@ -4,6 +4,12 @@
 
 ---
 
+**本章对应自测卷**：[十、循环遍历 while 与 for（共 8 题）](/python/Python核心语法自测试卷#十循环遍历-while-与-for-共-8-题)  
+**学完能做什么**：用 `range` 三种写法控制循环，分清 `break`/`continue`/`pass`/`return` 的作用范围，理解 `range` 惰性不占大内存。  
+**小白注意**：① `range(stop)` 不包含 stop；倒序要 `range(start, stop, -1)`。② `range` 不是列表，是惰性对象，`range(10**9)` 几乎不占内存。③ `break` 只跳出当前循环，`return` 直接结束整个函数。
+
+---
+
 ## 十、循环遍历( while 与 for)
 
 核心直觉： **`for` 是为了“数完”或“走完”，`while` 是为了“等到”。**
@@ -72,3 +78,7 @@
 | **`continue`** | **当前这一次迭代**     | **“这题跳过”** | 遇到脏数据（如 `None`），直接进入下一轮。  |
 | **`break`**    | **最近的一层循环**     | **“原地爆破”** | 找到目标数据后立即收工，不再跑剩下的循环。     |
 | **`return`**   | **整个函数**        | **“终结者”**  | 无论嵌套几层循环，直接关掉函数并带走结果。     |
+
+---
+
+**本章小结**：`for` 遍历已知序列，`while` 条件循环。`range(stop)`/`range(start,stop)`/`range(start,stop,step)`，不包含 stop；`range` 惰性省内存。`break` 跳出一层循环，`continue` 跳过当次，`return` 结束函数。

@@ -4,6 +4,12 @@
 
 ---
 
+**本章对应自测卷**：[三、异常捕获与主动抛出（共 8 题）](/python/Python核心语法自测试卷#三异常捕获与主动抛出-共-8-题)  
+**学完能做什么**：用 `try/except` 处理非法输入，用 `raise` 做业务边界校验，分清 `else` 与 `finally`。  
+**小白注意**：① `except` 尽量写具体类型（如 `ValueError`），避免裸 `except`。② `else` 是 try 里**没异常**时才执行；`finally` 是**无论是否异常**都执行（常用来关文件、释放资源）。
+
+---
+
 ## 三、异常捕获与主动抛出
 
 - **对应例题：[[python 面试题#[题目 1.1]：学生成绩管理系统 (综合大题)]][[python 面试题#[题目 1.2]：进制转换与存储单位换算 (算法类)]]**
@@ -54,3 +60,7 @@ def convert_base(number_str, from_base, to_base):
 - **`else`**：当 `try` 块没有发生异常时执行（用于区分“成功执行”的逻辑）。（**自测卷 3.6 待复习**）
     
 - **`finally`**：无论是否发生异常都会执行（常用于关闭文件句柄、释放数据库连接等工业级清理操作）。
+
+---
+
+**本章小结**：被动捕获用 `try/except`，主动校验用 `raise ValueError("...")`。常见异常：ValueError、TypeError、KeyError、IndexError；编码相关 UnicodeEncodeError/UnicodeDecodeError。`else` 在无异常时执行，`finally` 必定执行。
