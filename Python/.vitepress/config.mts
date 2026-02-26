@@ -4,7 +4,7 @@ import katex from 'markdown-it-katex'
 export default defineConfig({
   lang: 'zh-CN',
   title: '个人文档',
-  description: 'Python、AI、Linux、Docker 等分类笔记与文档',
+  description: 'Python、前端、AI、Linux、Docker 等分类笔记与文档',
 
   // 笔记内容独立目录，与 VitePress 工程分离
   srcDir: 'docs',
@@ -45,6 +45,7 @@ export default defineConfig({
     nav: [
       { text: '学习路径', link: '/' },
       { text: 'Python', link: '/python/' },
+      { text: '前端', link: '/frontend/' },
       { text: 'AI', link: '/ai/' },
       { text: 'Linux', link: '/linux/' },
       { text: 'Docker', link: '/docker/' },
@@ -58,6 +59,7 @@ export default defineConfig({
           items: [
             { text: '学习路径总览', link: '/' },
             { text: 'Python 分类', link: '/python/' },
+            { text: '前端 分类', link: '/frontend/' },
             { text: 'AI 分类', link: '/ai/' },
             { text: 'Linux 分类', link: '/linux/' },
             { text: 'Docker 分类', link: '/docker/' },
@@ -70,6 +72,7 @@ export default defineConfig({
           items: [
             { text: '学习路径总览', link: '/' },
             { text: 'Python 分类', link: '/python/' },
+            { text: '前端 分类', link: '/frontend/' },
             { text: 'AI 分类', link: '/ai/' },
             { text: 'Linux 分类', link: '/linux/' },
             { text: 'Docker 分类', link: '/docker/' },
@@ -266,6 +269,15 @@ export default defineConfig({
             { text: 'BPETokenizer', link: '/ai/AI课程-BPETokenizer' },
             { text: '提示词工程（Prompt Engineering）', link: '/ai/AI课程-PromptEngineering' },
             { text: '模型与 API 速查', link: '/ai/AI课程-模型与API速查' },
+          ],
+        },
+      ],
+      '/frontend/': [
+        {
+          text: '前端',
+          items: [
+            { text: '首页', link: '/frontend/' },
+            { text: '占位目录（JS / TS / Vue / React / Next / Vite）', link: '/frontend/#占位目录' },
           ],
         },
       ],
