@@ -111,36 +111,40 @@ export default defineConfig({
               link: "/python/python语法手册-01-变量与解包",
             },
             {
-              text: "第2章 内置数据结构",
+              text: "第2章 赋值与算术运算符",
+              link: "/python/python语法手册-赋值与算术运算符",
+            },
+            {
+              text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
-            { text: "第3章 异常", link: "/python/python语法手册-03-异常" },
+            { text: "第4章 异常", link: "/python/python语法手册-03-异常" },
             {
-              text: "第4章 格式化与输出",
+              text: "第5章 格式化与输出",
               link: "/python/python语法手册-04-格式化与输出",
             },
             {
-              text: "第5章 内置函数",
+              text: "第6章 内置函数",
               link: "/python/python语法手册-05-内置函数",
             },
             {
-              text: "第6章 逻辑与真值",
+              text: "第7章 逻辑与真值",
               link: "/python/python语法手册-06-逻辑与真值",
             },
             {
-              text: "第7章 身份与成员",
+              text: "第8章 身份与成员",
               link: "/python/python语法手册-07-身份与成员",
             },
             {
-              text: "第8章 数据处理",
+              text: "第9章 数据处理",
               link: "/python/python语法手册-08-数据处理",
             },
             {
-              text: "第9章 字符编码",
+              text: "第10章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
-            { text: "第10章 循环", link: "/python/python语法手册-10-循环" },
-            { text: "第11章 标准库", link: "/python/python语法手册-11-标准库" },
+            { text: "第11章 循环", link: "/python/python语法手册-10-循环" },
+            { text: "第12章 标准库", link: "/python/python语法手册-11-标准库" },
             {
               text: "语法手册完整版",
               link: "/python/python语法手册-完整版备份",
@@ -151,7 +155,7 @@ export default defineConfig({
           text: "标准库",
           items: [
             {
-              text: "语法手册 · 第11章 标准库",
+              text: "语法手册 · 第12章 标准库",
               link: "/python/python语法手册-11-标准库",
             },
             { text: "math 数学库", link: "/python/AI课程-math数学库" },
@@ -220,36 +224,40 @@ export default defineConfig({
               link: "/python/python语法手册-01-变量与解包",
             },
             {
-              text: "第2章 内置数据结构",
+              text: "第2章 赋值与算术运算符",
+              link: "/python/python语法手册-赋值与算术运算符",
+            },
+            {
+              text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
-            { text: "第3章 异常", link: "/python/python语法手册-03-异常" },
+            { text: "第4章 异常", link: "/python/python语法手册-03-异常" },
             {
-              text: "第4章 格式化与输出",
+              text: "第5章 格式化与输出",
               link: "/python/python语法手册-04-格式化与输出",
             },
             {
-              text: "第5章 内置函数",
+              text: "第6章 内置函数",
               link: "/python/python语法手册-05-内置函数",
             },
             {
-              text: "第6章 逻辑与真值",
+              text: "第7章 逻辑与真值",
               link: "/python/python语法手册-06-逻辑与真值",
             },
             {
-              text: "第7章 身份与成员",
+              text: "第8章 身份与成员",
               link: "/python/python语法手册-07-身份与成员",
             },
             {
-              text: "第8章 数据处理",
+              text: "第9章 数据处理",
               link: "/python/python语法手册-08-数据处理",
             },
             {
-              text: "第9章 字符编码",
+              text: "第10章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
-            { text: "第10章 循环", link: "/python/python语法手册-10-循环" },
-            { text: "第11章 标准库", link: "/python/python语法手册-11-标准库" },
+            { text: "第11章 循环", link: "/python/python语法手册-10-循环" },
+            { text: "第12章 标准库", link: "/python/python语法手册-11-标准库" },
             {
               text: "语法手册完整版",
               link: "/python/python语法手册-完整版备份",
@@ -260,7 +268,7 @@ export default defineConfig({
           text: "标准库",
           items: [
             {
-              text: "语法手册 · 第11章 标准库",
+              text: "语法手册 · 第12章 标准库",
               link: "/python/python语法手册-11-标准库",
             },
             { text: "math 数学库", link: "/python/AI课程-math数学库" },

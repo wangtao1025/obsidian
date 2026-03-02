@@ -1,6 +1,6 @@
-# Python 语法手册：标准库模块
+# 标准库模块
 
-← [语法手册总览](/python/python语法手册) | 下一章见总览
+← [语法手册总览](/python/python语法手册) | [上一章 循环](/python/python语法手册-10-循环)
 
 ---
 
@@ -10,21 +10,21 @@
 
 ---
 
-## 十一、标准库模块
+## 一、标准库模块
 
-### 11.1 `datetime` 日期时间处理
-#### 11.1.1 功能概述
+### 1.1 `datetime` 日期时间处理
+#### 1.1.1 功能概述
 `datetime` 模块提供日期和时间处理功能，支持时间获取、格式化、运算和解析。
 
-#### 11.1.2 主要类型
+#### 1.1.2 主要类型
 - `datetime`  包含日期和时间
 - `date` 仅包含日期
 - `time` 仅包含时间
 - `timedelta` 时间间隔
 
-#### 11.1.3 基本用法
+#### 1.1.3 基本用法
 
-##### 11.1.3.1 获取当前时间
+##### 1.1.3.1 获取当前时间
 ```python
 from datetime import datetime, date, time, timedelta
 
@@ -35,14 +35,14 @@ print("格式化时间:", now.strftime("%Y-%m-%d %H:%M:%S"))
  
 ```
 
-##### 11.1.3.2 创建特定时间
+##### 1.1.3.2 创建特定时间
 ```python
 # 创建特定时间
 dt = datetime(2024, 1, 15, 14, 30, 0)
 print("特定时间:", dt)
 ```
 
-##### 11.1.3.3 时间运算
+##### 1.1.3.3 时间运算
 ```python
 # 时间加减
 tomorrow = now + timedelta(days=1)
@@ -57,7 +57,7 @@ print("相差天数:", time_diff.days)
 print("相差秒数:", time_diff.total_seconds())
 ```
 
-##### 11.1.3.4 时间组件
+##### 1.1.3.4 时间组件
 ```python
 # 获取时间各部分
 print("年:", now.year)
@@ -68,7 +68,7 @@ print("分:", now.minute)
 print("星期:", now.weekday())
 ```
 
-##### 11.1.3.5 字符串解析
+##### 1.1.3.5 字符串解析
 ```python
 # 字符串解析为时间对象
 date_str = "2024-01-15 14:30:00"
@@ -78,16 +78,16 @@ print("解析后的时间:", parsed_date)
 - strptime 就是将字符串的时间转换为时间对象
 - strftime 就是将时间对象转换成时间字符串
 - https://docs.python.org/zh-cn/3/library/datetime.html#strftime-and-strptime-behavior
-#### 11.1.4 使用场景
+#### 1.1.4 使用场景
 - 日志记录和时间戳
 - 数据分析和统计
 - 定时任务和调度
 - 用户界面时间显示
 
-### 11.2 `collections` - 高级数据结构
+### 1.2 `collections` - 高级数据结构
 `collections` 模块提供高性能、多用途的数据结构，扩展了内置类型的功能。
 
-##### 11.2.1 `namedtuple` - 命名元组
+##### 1.2.1 `namedtuple` - 命名元组
 
 `namedtuple`是Python标准库`collections`模块中的一个工厂函数，用于创建具名元组。它允许你像访问对象的属性一样访问元组元素，主要作用是提高代码的可读性和可维护性。
 
