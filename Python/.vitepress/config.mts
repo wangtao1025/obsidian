@@ -115,6 +115,10 @@ export default defineConfig({
               link: "/python/python语法手册-赋值与算术运算符",
             },
             {
+              text: "第2章附 位运算符",
+              link: "/python/位运算符详解",
+            },
+            {
               text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
@@ -226,6 +230,10 @@ export default defineConfig({
             {
               text: "第2章 赋值与算术运算符",
               link: "/python/python语法手册-赋值与算术运算符",
+            },
+            {
+              text: "第2章附 位运算符",
+              link: "/python/位运算符详解",
             },
             {
               text: "第3章 内置数据结构",
