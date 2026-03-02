@@ -144,6 +144,10 @@ export default defineConfig({
               link: "/python/python语法手册-08-数据处理",
             },
             {
+              text: "第9章附 进制表示与转换",
+              link: "/python/进制表示与转换",
+            },
+            {
               text: "第10章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
@@ -259,6 +263,10 @@ export default defineConfig({
             {
               text: "第9章 数据处理",
               link: "/python/python语法手册-08-数据处理",
+            },
+            {
+              text: "第9章附 进制表示与转换",
+              link: "/python/进制表示与转换",
             },
             {
               text: "第10章 字符编码",
