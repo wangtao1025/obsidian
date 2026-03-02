@@ -202,18 +202,148 @@ result2 = (x + y) * z    # 先加后乘
 
 ## 5. 其他常见运算符类型（简述）
 
-- **比较运算符**：`==`、`!=`、`<`、`<=`、`>`、`>=`，返回布尔值。
-- **逻辑运算符**：`and`、`or`、`not`。
-- **位运算符**：`&`、`|`、`^`、`~`、`<<`、`>>`。
-- **成员运算符**：`in`、`not in`。
-- **身份运算符**：`is`、`is not`。
+本章仅作**概览与示例**；比较/逻辑/成员/身份在手册中有专章详解，可跳转阅读。**位运算符**无单独章节，此处给出完整示例。
+
+### 5.1 比较运算符
+
+六种：`==`、`!=`、`<`、`<=`、`>`、`>=`，返回布尔值。数值按大小比较，字符串按字典序（Unicode 码点）比较。
+
+```python
+a, b, c = 10, 5, 10
+print(f"a == b: {a == b}")   # False
+print(f"a == c: {a == c}")   # True
+print(f"a > b: {a > b}")     # True
+print(f"a >= c: {a >= c}")   # True
+
+# 字符串比较（按字典序）
+str1, str2 = "apple", "banana"
+print(f"'{str1}' < '{str2}': {str1 < str2}")  # True
+```
+
+**详解**：[逻辑与真值 · 关系运算符](/python/python语法手册-06-逻辑与真值)（链式比较、浮点比较、自定义类比较等）。
+
+### 5.2 逻辑运算符
+
+`and`（与）、`or`（或）、`not`（非）。常与比较运算结合做条件判断；注意短路求值及返回值不必为 `True`/`False`。
+
+```python
+condition1, condition2, condition3 = True, False, True
+print(condition1 and condition2)  # False
+print(condition1 or condition2)   # True
+print(not condition2)              # True
+
+# 与比较结合
+age, score, is_student = 25, 85, True
+ok = age > 18 and score > 80 and is_student
+print(f"年龄>18 且 分数>80 且 是学生: {ok}")  # True
+```
+
+**详解**：[逻辑与真值 · 逻辑运算符](/python/python语法手册-06-逻辑与真值)（短路、真值测试、返回值规则等）。
+
+### 5.3 位运算符
+
+对整数按二进制位运算：`&`（与）、`|`（或）、`^`（异或）、`~`（取反）、`<<`（左移）、`>>`（右移）。常用于标志位、权限、快速乘除 2 的幂等。
+
+```python
+x, y = 10, 4  # 二进制: 1010, 0100
+print(f"x & y = {x & y}")   # 0
+print(f"x | y = {x | y}")   # 14
+print(f"x ^ y = {x ^ y}")   # 14
+print(f"~x = {~x}")         # -11
+print(f"x << 1 = {x << 1}") # 20
+print(f"x >> 1 = {x >> 1}") # 5
+
+# 常见用法：奇偶判断、2 的幂、交换两数
+num = 15
+print(f"{num} 是偶数: {(num & 1) == 0}")  # False
+print(f"2^3 = {1 << 3}")                   # 8
+a, b = 5, 10
+a ^= b; b ^= a; a ^= b
+print(f"交换后: a={a}, b={b}")             # 10, 5
+```
+
+### 5.4 成员运算符
+
+`in`、`not in`：判断元素是否在可迭代对象中。字符串/列表/元组按元素查；**字典默认只查键**，查值需用 `value in d.values()`。
+
+```python
+my_string = "apple"
+my_list = [1, 2, 3, 4, 5]
+my_dict = {"name": "Alice", "age": 25}
+
+print("'a' in my_string:", "a" in my_string)  # True
+print("3 in my_list:", 3 in my_list)          # True
+print("'name' in my_dict:", "name" in my_dict) # True（查键）
+print("'Alice' in my_dict:", "Alice" in my_dict)  # False
+
+# 简单验证
+valid = ["A", "B", "C", "D"]
+print("'E' 是有效选项:", "E" in valid)  # False
+```
+
+**详解**：[身份与成员 · 成员运算符](/python/python语法手册-07-身份与成员)（字典查找陷阱、`__contains__` 等）。
+
+### 5.5 身份运算符
+
+`is`、`is not`：比较两个引用是否指向**同一对象**（即 `id(a) == id(b)`）。与 `==`（比较值）不同。判断 `None` 时推荐用 `is None`；小整数（-5～256）可能被缓存，同值可能同对象。
+
+```python
+x, y, z = 10, 10, 20
+list1, list2 = [1, 2, 3], [1, 2, 3]
+list3 = list1
+
+print("x is y:", x is y)           # True（小整数缓存）
+print("list1 is list2:", list1 is list2)  # False（不同对象）
+print("list1 is list3:", list1 is list3)  # True（同一引用）
+
+def compare_objects(obj1, obj2):
+    if obj1 is obj2:
+        return "同一对象"
+    elif obj1 == obj2:
+        return "值相等，非同一对象"
+    return "不同"
+print(compare_objects(x, y))      # 同一对象
+print(compare_objects(list1, list2))  # 值相等，非同一对象
+```
+
+**详解**：[身份与成员 · 身份运算符](/python/python语法手册-07-身份与成员)（`==` 与 `is` 区别、`None` 判断、小整数池等）。
 
 ---
 
 ## 6. 结合性（Associativity）
 
-- **左结合**：`a - b - c` 等价于 `(a - b) - c`；多数二元运算符如此。
-- **右结合**：`2 ** 3 ** 2` 等价于 `2 ** (3 ** 2)`；`a = b = c = 1` 从右向左赋值。
+运算符不仅有**优先级**，还具有**结合性**，用于决定在**优先级相同的多个运算符连续出现时**的计算方向。常见类型有 **左结合（从左到右）** 与 **右结合（从右到左）**。
+
+- **左结合（left-to-right）**：大多数二元运算符（如 `+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `^`, `<`, `<=`, `>`, `>=`, `==`, `!=`, `in`, `is`, `and`, `or`）。例如：`a - b - c` 实际等价于 `(a - b) - c`。
+- **右结合（right-to-left）**：常见于**赋值类运算符**（`=`, `+=`, `-=` 等）以及**幂运算符 `**`**。例如：
+  - **指数**：`2 ** 3 ** 2` 等价于 `2 ** (3 ** 2)`，不是 `(2 ** 3) ** 2`。
+  - **赋值**：`a = b = c = 10` 会依次从右向左赋值。
+
+### 6.1 常见运算符结合性示例表
+
+| 运算符 | 结合性 | 示例及解释 |
+|--------|--------|-------------|
+| `+`, `-`, `*`, `/` | 左结合 | `a - b - c` → `(a - b) - c` |
+| `**` | 右结合 | `2 ** 3 ** 2` → `2 ** (3 ** 2)` |
+| `=`, `+=`, `-=` 等 | 右结合 | `a = b = c = 1` 从右向左赋值 |
+| 比较、逻辑（`and` 等） | 左结合 | `True or False or True` 从左到右求值 |
+
+在编写复杂表达式时，理解结合性和优先级非常关键，建议适当加括号，避免歧义和可读性差的问题。
+
+### 6.2 结合性实例代码
+
+```python
+# 左结合示例
+result = 10 - 5 - 2    # 等价于 (10 - 5) - 2 = 3
+print(result)          # 输出: 3
+
+# 右结合示例（幂运算和赋值）
+print(2 ** 3 ** 2)     # 输出: 512，因为等价于 2 ** (3 ** 2) = 2 ** 9 = 512
+a = b = c = 7
+print(a, b, c)         # 输出: 7 7 7
+```
+
+如有不确定可参考官方文档：[Python Operator Precedence](https://docs.python.org/3/reference/expressions.html#operator-precedence)。
 
 ---
 
