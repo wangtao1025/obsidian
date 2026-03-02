@@ -212,26 +212,89 @@ print(dict1 == dict2)  # True
 
 #### 6.5.7 自定义类比较
 
-通过实现**魔术方法**定义比较行为：`__eq__`、`__ne__`（相等）；`__lt__`、`__le__`、`__gt__`、`__ge__`（大小）。不支持时返回 `NotImplemented`。可用 `functools.total_ordering` 减少重复实现。
+在 Python 中，除了内置数据类型可以直接使用关系运算符之外，还可以通过在**自定义类**中实现特定的**魔术方法**（如 `__eq__`、`__lt__` 等）来定义类的比较行为。这样可以让自定义对象像数值、字符串一样进行大小、相等等比较操作，非常适合在需要**排序、自定义判等、查找最大/最小对象**时使用。
+
+**魔术方法与运算符对应：**
+
+- **相等比较**：实现 `__eq__`（等于）、`__ne__`（不等于）。
+- **大小比较**：实现 `__lt__`（小于）、`__le__`（小于等于）、`__gt__`（大于）、`__ge__`（大于等于）。
+
+**使用要点：**
+
+- 只要实现部分魔术方法，Python 只支持对应的运算符；**建议完整实现**，行为更统一。
+- 若对象不支持某种比较，魔术方法应返回 `NotImplemented`，Python 会适当处理或抛出 `TypeError`。
+- 比较时可以**自由定义规则**，如按“年龄”、“工资”或“姓名”等字段进行。
+
+**代码示例：**
 
 ```python
+# 定义一个 Person 类，支持自定义比较
 class Person:
     def __init__(self, name, age, salary):
-        self.name, self.age, self.salary = name, age, salary
+        self.name = name
+        self.age = age
+        self.salary = salary
+
     def __eq__(self, other):
+        # 相等比较：姓名和年龄都相同即为相等
         if isinstance(other, Person):
             return self.name == other.name and self.age == other.age
         return False
+
     def __lt__(self, other):
+        # 小于比较：按年龄进行比较
         if isinstance(other, Person):
             return self.age < other.age
         return NotImplemented
-    # __le__, __gt__, __ge__, __ne__ 同理……
+
+    def __le__(self, other):
+        if isinstance(other, Person):
+            return self.age <= other.age
+        return NotImplemented
+
+    def __gt__(self, other):
+        if isinstance(other, Person):
+            return self.age > other.age
+        return NotImplemented
+
+    def __ge__(self, other):
+        if isinstance(other, Person):
+            return self.age >= other.age
+        return NotImplemented
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return f"Person(name='{self.name}', age={self.age}, salary={self.salary})"
+
+# 创建对象进行比较
 person1 = Person("Alice", 25, 50000)
 person2 = Person("Bob", 30, 60000)
-print(person1 < person2)   # True
-print(sorted([person2, person1]))  # 按年龄排序
+person3 = Person("Alice", 25, 55000)
+
+# 按自定义规则比较
+print(person1 == person3)   # True，名字与年龄都相同
+print(person1 == person2)   # False，名字或年龄不同
+print(person1 < person2)    # True，因为 25 < 30
+print(person2 > person1)    # True，因为 30 > 25
+print(person2 != person3)   # True
+
+# 实际开发：自定义对象排序
+person_list = [person2, person1, person3]
+print(sorted(person_list))  # 将依据年龄完成排序
 ```
+
+**常见应用场景：**
+
+- 排序员工信息、学生成绩单、自定义数据对象等。
+- 实现业务逻辑中的自定义比较需求（如唯一性判定、分组、筛选）。
+
+**补充说明：**
+
+- 通过自定义这些比较方法，可以让自己的类与内置类型一样方便地在各种比较、算法中使用。
+- 若只有部分比较方法实现，可能导致部分操作（如排序）报错，建议使用 **`functools.total_ordering`** 装饰器减少重复实现。
+- 如果只关心某些字段（比如只按 `salary` 比较），可调整魔术方法的逻辑。
 
 #### 6.5.8 与布尔运算符结合
 
