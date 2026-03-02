@@ -107,7 +107,7 @@ export default defineConfig({
           text: "语法手册（按章）",
           items: [
             {
-              text: "第1章 变量与解包",
+              text: "第1章 变量赋值与解包",
               link: "/python/python语法手册-01-变量与解包",
             },
             {
@@ -122,9 +122,12 @@ export default defineConfig({
               text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
-            { text: "第4章 异常", link: "/python/python语法手册-03-异常" },
             {
-              text: "第5章 格式化与输出",
+              text: "第4章 异常捕获与主动抛出",
+              link: "/python/python语法手册-03-异常",
+            },
+            {
+              text: "第5章 格式化输出",
               link: "/python/python语法手册-04-格式化与输出",
             },
             {
@@ -132,7 +135,7 @@ export default defineConfig({
               link: "/python/python语法手册-05-内置函数",
             },
             {
-              text: "第7章 逻辑与真值",
+              text: "第7章 逻辑判断与真值检测",
               link: "/python/python语法手册-06-逻辑与真值",
             },
             {
@@ -151,8 +154,14 @@ export default defineConfig({
               text: "第10章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
-            { text: "第11章 循环", link: "/python/python语法手册-10-循环" },
-            { text: "第12章 标准库", link: "/python/python语法手册-11-标准库" },
+            {
+              text: "第11章 循环遍历",
+              link: "/python/python语法手册-10-循环",
+            },
+            {
+              text: "第12章 标准库模块",
+              link: "/python/python语法手册-11-标准库",
+            },
             {
               text: "语法手册完整版",
               link: "/python/python语法手册-完整版备份",
@@ -163,7 +172,7 @@ export default defineConfig({
           text: "标准库",
           items: [
             {
-              text: "语法手册 · 第12章 标准库",
+              text: "语法手册 · 第12章 标准库模块",
               link: "/python/python语法手册-11-标准库",
             },
             { text: "math 数学库", link: "/python/AI课程-math数学库" },
@@ -228,7 +237,7 @@ export default defineConfig({
           text: "语法手册（按章）",
           items: [
             {
-              text: "第1章 变量与解包",
+              text: "第1章 变量赋值与解包",
               link: "/python/python语法手册-01-变量与解包",
             },
             {
@@ -243,9 +252,12 @@ export default defineConfig({
               text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
-            { text: "第4章 异常", link: "/python/python语法手册-03-异常" },
             {
-              text: "第5章 格式化与输出",
+              text: "第4章 异常捕获与主动抛出",
+              link: "/python/python语法手册-03-异常",
+            },
+            {
+              text: "第5章 格式化输出",
               link: "/python/python语法手册-04-格式化与输出",
             },
             {
@@ -253,7 +265,7 @@ export default defineConfig({
               link: "/python/python语法手册-05-内置函数",
             },
             {
-              text: "第7章 逻辑与真值",
+              text: "第7章 逻辑判断与真值检测",
               link: "/python/python语法手册-06-逻辑与真值",
             },
             {
@@ -272,8 +284,14 @@ export default defineConfig({
               text: "第10章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
-            { text: "第11章 循环", link: "/python/python语法手册-10-循环" },
-            { text: "第12章 标准库", link: "/python/python语法手册-11-标准库" },
+            {
+              text: "第11章 循环遍历",
+              link: "/python/python语法手册-10-循环",
+            },
+            {
+              text: "第12章 标准库模块",
+              link: "/python/python语法手册-11-标准库",
+            },
             {
               text: "语法手册完整版",
               link: "/python/python语法手册-完整版备份",
@@ -284,7 +302,7 @@ export default defineConfig({
           text: "标准库",
           items: [
             {
-              text: "语法手册 · 第12章 标准库",
+              text: "语法手册 · 第12章 标准库模块",
               link: "/python/python语法手册-11-标准库",
             },
             { text: "math 数学库", link: "/python/AI课程-math数学库" },
