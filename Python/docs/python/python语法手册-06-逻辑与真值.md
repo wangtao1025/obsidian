@@ -4,9 +4,9 @@
 
 ---
 
-**本章对应自测卷**：[六、逻辑判断与真值检测（共 10 题）](/python/Python核心语法自测试卷#六逻辑判断与真值检测-共-10-题)  
-**学完能做什么**：理解 `and`/`or` 的返回值规则、假值列表、短路带来的安全写法，以及自定义对象真值优先级。  
-**小白注意**：① `and` 返第一个假或最后一个，`or` 返第一个真或最后一个（不是只返 True/False）。② 假值除 None/False/0 外还有 `''`、`[]`、`{}` 等。③ 自定义对象先看 `__bool__()`，没有则看 `__len__()`，都没有则 True。
+**本章对应自测卷**：[六、逻辑判断与真值检测（共 14 题）](/python/Python核心语法自测试卷#六逻辑判断与真值检测-共-14-题)  
+**学完能做什么**：理解 `and`/`or` 的返回值规则、假值列表、短路带来的安全写法、自定义对象真值优先级，以及关系运算符（六种、链式比较、浮点数与类型注意）。  
+**小白注意**：① `and` 返第一个假或最后一个，`or` 返第一个真或最后一个（不是只返 True/False）。② 假值除 None/False/0 外还有 `''`、`[]`、`{}` 等。③ 自定义对象先看 `__bool__()`，没有则看 `__len__()`，都没有则 True。④ 关系运算符比较浮点数不要用 `==`，用 `math.isclose()`；set/dict 只支持 `==`、`!=`。
 
 ---
 
@@ -66,6 +66,164 @@ Python 判断对象真值的优先级：
 2. **`__len__()`**：次优先，若返回 `0` 则为假。
 3. **默认**：若两者都未定义，对象永远为 `True`。
 
+### 6.5 关系运算符（自测卷 6.11～6.28）
+
+关系运算符用于比较两个值之间的关系，**返回布尔值**（True/False），常与逻辑运算符结合做条件判断。以下为完整说明。
+
+#### 6.5.1 六种关系运算符
+
+| 运算符 | 含义 | 示例 | 返回值 |
+|--------|------|------|--------|
+| `<` | 小于 | `5 < 3` | False |
+| `<=` | 小于等于 | `5 <= 5` | True |
+| `>` | 大于 | `5 > 3` | True |
+| `>=` | 大于等于 | `5 >= 5` | True |
+| `==` | 等于 | `5 == 3` | False |
+| `!=` | 不等于 | `5 != 3` | True |
+
+#### 6.5.2 基本用法
+
+**数值比较**：可用于整数、浮点数等，结果用于 if、while 等条件。
+
+```python
+x, y = 7, 3
+print(x > y)      # True
+print(x == 7)     # True
+if x >= 5:
+    print("x不小于5")
+
+a, b = 10, 5
+print(f"{a} < {b}: {a < b}")   # False
+print(f"{a} >= {b}: {a >= b}") # True
+# 整数与浮点数可比较
+print(10 == 10.0)  # True
+```
+
+**字符串比较**：按**字典序（Unicode 码点）**逐字符比较。区分大小写（`'A'` < `'a'`）。
+
+```python
+print("apple" == "apple")    # True
+print("apple" < "banana")    # True
+print("Apple" < "apple")    # True（'A' 码点小于 'a'）
+print(sorted(["banana", "apple", "cherry"]))  # ['apple', 'banana', 'cherry']
+```
+
+**列表比较**：**元素逐一、从左到右**比较；若前面相同则较短者小。常用于版本号比较。
+
+```python
+list1, list2 = [1, 2, 3], [1, 2, 4]
+print(list1 < list2)   # True
+v1 = [int(x) for x in "3.9.1".split('.')]
+v2 = [int(x) for x in "3.10.0".split('.')]
+print(v1 < v2)  # True
+```
+
+#### 6.5.3 链式比较
+
+`a < b < c` 等价于 `(a < b) and (b < c)`，且 **b 只求值一次**，写法简洁且高效。
+
+- 只对**相邻**对象比较，如 `a < b > c` 等价于 `(a < b) and (b > c)`，不比较 a 与 c。
+- 从左到右短路，一旦为 False 即停止。
+
+```python
+x, y, z = 3, 7, 12
+print(1 < x < 10)      # True
+print(x < y < z)       # True
+print(60 <= 76 < 90)   # True，成绩良好
+
+# 实际应用：范围判定、严格递增
+if 60 <= score < 90:
+    print("成绩良好")
+if a < b < c < d:
+    print("严格递增")
+```
+
+#### 6.5.4 类型比较
+
+- **同类型**：可用全部六种运算符。
+- **int 与 float**：可比较，自动提升。
+- **集合、字典**：**只支持 `==` 和 `!=`**，使用 `<`、`>` 会抛出 `TypeError`。
+- **不同类型**（如 int 与 str）：一般只有 `==`、`!=` 可用，或抛 `TypeError`（如 `5 < '10'`）。
+
+| 类型 | 支持比较 | 备注 |
+|------|----------|------|
+| int/float | 全部 | 自动类型提升 |
+| str | 全部 | 按 Unicode 顺序 |
+| list/tuple | 全部 | 按元素依次对比 |
+| set/dict | `==`, `!=` | 只支持等于和不等于 |
+
+```python
+print({1, 2} == {2, 1})       # True
+print({'x': 1} == {'x': 1})   # True
+# print({1} < {2})            # TypeError
+```
+
+#### 6.5.5 浮点数比较
+
+因二进制存储存在**精度误差**，**不要用 `==` 判断浮点数相等**。应使用 `math.isclose(a, b)` 或容差判断。
+
+```python
+import math
+a, b = 0.1 * 3, 0.3
+print(a == b)              # False（精度误差）
+print(math.isclose(a, b))  # True，推荐
+print(abs(a - b) < 1e-9)   # True
+```
+
+#### 6.5.6 复杂数据结构比较
+
+- **嵌套列表/元组**：仍按元素逐层比较。
+- **嵌套字典**：只支持 `==`、`!=`，键值对完全一致才判等。
+
+```python
+print([[1,2],[3,4]] < [[1,2],[3,5]])  # True
+dict1 = {"a": 1, "b": {"x": 2, "y": 3}}
+dict2 = {"a": 1, "b": {"x": 2, "y": 3}}
+print(dict1 == dict2)  # True
+```
+
+#### 6.5.7 自定义类比较
+
+通过实现**魔术方法**定义比较行为：`__eq__`、`__ne__`（相等）；`__lt__`、`__le__`、`__gt__`、`__ge__`（大小）。不支持时返回 `NotImplemented`。可用 `functools.total_ordering` 减少重复实现。
+
+```python
+class Person:
+    def __init__(self, name, age, salary):
+        self.name, self.age, self.salary = name, age, salary
+    def __eq__(self, other):
+        if isinstance(other, Person):
+            return self.name == other.name and self.age == other.age
+        return False
+    def __lt__(self, other):
+        if isinstance(other, Person):
+            return self.age < other.age
+        return NotImplemented
+    # __le__, __gt__, __ge__, __ne__ 同理……
+person1 = Person("Alice", 25, 50000)
+person2 = Person("Bob", 30, 60000)
+print(person1 < person2)   # True
+print(sorted([person2, person1]))  # 按年龄排序
+```
+
+#### 6.5.8 与布尔运算符结合
+
+关系运算符常与 `and`、`or`、`not` 结合，做多条件判断与范围验证。
+
+```python
+if 10 < x < 20:
+    print("x 在 10 到 20 之间")
+# 用户输入验证
+if not (18 <= age <= 65):
+    errors.append("年龄必须在18到65之间")
+filtered = [x for x in data_list if min_val <= x <= max_val]
+```
+
+#### 6.5.9 参考回答（面试向）
+
+- **概述**：关系运算符用于比较两个值的关系，有六种（`<` `<=` `>` `>=` `==` `!=`），均返回布尔值。
+- **要点**：链式比较如 `1 < x < 10` 等价于 and 且中间只求值一次；set/dict 只支持 `==`、`!=`；浮点数用 `math.isclose()` 判等。
+- **应用**：数据验证、排序与最值、版本号比较、成绩等级等。
+
 ---
 
-**本章小结**：`and` 返首假或末值，`or` 返首真或末值；假值有 None、False、0、空串、空容器等。自定义对象真值：`__bool__` → `__len__` → 默认 True。短路可用来写 `user and user.name` 避免报错。
+**本章小结**：`and` 返首假或末值，`or` 返首真或末值；假值有 None、False、0、空串、空容器等。自定义对象真值：`__bool__` → `__len__` → 默认 True。短路可用来写 `user and user.name` 避免报错。关系运算符六种（`<` `<=` `>` `>=` `==` `!=`）返回布尔值；链式比较等价于 and 且中间只求值一次；浮点数用 `math.isclose`；set/dict 只支持 `==`、`!=`。
