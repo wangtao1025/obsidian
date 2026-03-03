@@ -4,7 +4,7 @@
 
 ---
 
-**本章对应自测卷**：[七、逻辑判断与真值检测（共 33 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-33-题)  
+**本章对应自测卷**：[七、逻辑判断与真值检测（共 40 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-40-题)  
 **学完能做什么**：理解 `and`/`or` 的返回值规则、假值列表、短路带来的安全写法、自定义对象真值优先级，以及关系运算符（六种、链式比较、浮点数与类型注意）。  
 **小白注意**：① `and` 返第一个假或最后一个，`or` 返第一个真或最后一个（不是只返 True/False）。② 假值除 None/False/0 外还有 `''`、`[]`、`{}` 等。③ 自定义对象先看 `__bool__()`，没有则看 `__len__()`，都没有则 True。④ 关系运算符比较浮点数不要用 `==`，用 `math.isclose()`；set/dict 只支持 `==`、`!=`。
 
@@ -478,3 +478,114 @@ def format_phone_number(phone):
 - 优先保证**可读性**：看一眼能懂比省一行代码重要得多。
 - 避免**嵌套多个三元表达式**，一行里嵌套多层会非常难读。
 - 把三元表达式当成**“值的选择器”**：只在“这个值还是那个值”的场景用它，其它一律先考虑普通 if-else。
+
+---
+
+## 三、在 Python 中实现 “switch” 语句
+
+### 3.1 核心概念
+
+Python 没有原生的 `switch-case` 语句，但可以用多种方式实现**“多个分支，选其一”**的逻辑：
+
+1. **`if-elif-else` 链**：最直接、最基础，语法清晰，适合分支不多的简单场景。
+2. **字典映射**：推荐方法之一，用字典将“键”映射到“结果值”，查找是 O(1)，代码简洁。
+3. **函数字典**：字典中存的是函数对象，适合每个分支逻辑比较复杂的情况。
+4. **Python 3.10+ 的 `match` 语句**：结构化模式匹配，可以看作“超强版 switch”，适合分支多、需要解构或复杂条件匹配的场景。
+
+下面按难度从低到高，给出示例。
+
+### 3.2 使用 `if-elif-else`（最直接）
+
+```python
+def switch_if_elif(case):
+    if case == "A":
+        return "Case A"
+    elif case == "B":
+        return "Case B"
+    elif case == "C":
+        return "Case C"
+    else:
+        return "Default case"
+```
+
+**特点**：语法直观、容易理解；分支很多时代码会较长，但对于小项目或快速脚本完全够用。
+
+### 3.3 使用字典映射（推荐）
+
+当“输入 → 输出”只是简单的值映射时，用字典会更简洁、性能也更好：
+
+```python
+def switch_dict(case):
+    mapping = {
+        "A": "Case A",
+        "B": "Case B",
+        "C": "Case C",
+    }
+    # .get 支持提供默认值
+    return mapping.get(case, "Default case")
+```
+
+**适用场景**：根据字符串/枚举类型选择不同文本、配置、常量值等。
+
+### 3.4 使用“函数字典”（复杂逻辑）
+
+当每个分支需要执行一段逻辑（而不仅仅是返回一个字符串）时，可以把**函数**存进字典：
+
+```python
+def case_a():
+    return "Action for case A"
+
+def case_b():
+    return "Action for case B"
+
+def case_default():
+    return "Default action"
+
+def switch_function_dict(case):
+    actions = {
+        "A": case_a,
+        "B": case_b,
+    }
+    # 如果 key 不存在，返回默认函数 case_default
+    func = actions.get(case, case_default)
+    return func()  # 调用函数
+```
+
+**适用场景**：每个分支内部逻辑较多、需要多行代码时，把逻辑封装成函数，用函数字典会让主流程非常干净。
+
+### 3.5 使用 `match` 语句（Python 3.10+）
+
+Python 3.10 引入的结构化模式匹配（`match`）可以看作是现代版的 switch，更强大也更清晰：
+
+```python
+def switch_match(case):
+    match case:
+        case "A":
+            return "Case A"
+        case "B":
+            return "Case B"
+        case "C":
+            return "Case C"
+        case _:
+            return "Default case"
+```
+
+特点：
+
+- 支持**值匹配**、**类型匹配**，甚至**序列/对象解包**等复杂模式。
+- `case _` 表示默认分支（类似 `default`）。
+- 代码结构清晰，适合分支多、逻辑复杂的场合。
+
+### 3.6 选择建议与性能考虑
+
+简单记忆：
+
+- **简单条件、分支不多**：直接用 `if-elif-else` 最直观。
+- **大量“输入→输出”的纯映射**：用**字典映射**，查找是 O(1)，代码短且易扩展。
+- **每个分支逻辑较复杂**：用**函数字典**封装每个分支的处理函数。
+- **Python 3.10+ 且分支/模式较复杂**：优先考虑 `match`，语法更清晰、可读性更强。
+
+无论哪种方式，都要注意：
+
+- 始终提供**默认分支**（如 `else`、`mapping.get(key, default)`、`case _`）。
+- 关注**可读性和可扩展性**，不要为了“看起来像 switch”而牺牲代码清晰度。
