@@ -4,7 +4,7 @@
 
 ---
 
-**本章对应自测卷**：[七、逻辑判断与真值检测（共 28 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-28-题)  
+**本章对应自测卷**：[七、逻辑判断与真值检测（共 33 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-33-题)  
 **学完能做什么**：理解 `and`/`or` 的返回值规则、假值列表、短路带来的安全写法、自定义对象真值优先级，以及关系运算符（六种、链式比较、浮点数与类型注意）。  
 **小白注意**：① `and` 返第一个假或最后一个，`or` 返第一个真或最后一个（不是只返 True/False）。② 假值除 None/False/0 外还有 `''`、`[]`、`{}` 等。③ 自定义对象先看 `__bool__()`，没有则看 `__len__()`，都没有则 True。④ 关系运算符比较浮点数不要用 `==`，用 `math.isclose()`；set/dict 只支持 `==`、`!=`。
 
@@ -325,3 +325,156 @@ filtered = [x for x in data_list if min_val <= x <= max_val]
 ---
 
 **本章小结**：`and` 返首假或末值，`or` 返首真或末值；假值有 None、False、0、空串、空容器等。自定义对象真值：`__bool__` → `__len__` → 默认 True。短路可用来写 `user and user.name` 避免报错。关系运算符六种（`<` `<=` `>` `>=` `==` `!=`）返回布尔值；链式比较等价于 and 且中间只求值一次；浮点数用 `math.isclose`；set/dict 只支持 `==`、`!=`。
+
+---
+
+## 二、三元表达式（条件表达式）
+
+### 2.1 概述：一行写完简单条件
+
+三元表达式（Ternary Expression，也叫**条件表达式**）是 Python 提供的一种**在一行里写简单 if-else** 的语法糖，用来根据条件选择**一个值**。
+
+经典语法（一定要记住这个顺序）：
+
+```python
+value_if_true if condition else value_if_false
+```
+
+- `condition`：条件表达式，结果为 `True` 或 `False`。
+- `value_if_true`：条件为 `True` 时，整个表达式的值。
+- `value_if_false`：条件为 `False` 时，整个表达式的值。
+
+特点：
+
+- **只返回一个值**（而不是执行多行语句）。
+- **只会执行一个分支**（和 if-else 一样，有短路，不会同时执行两边）。
+- 适合写**简单清晰的条件赋值 / 参数选择 / 返回值**。
+
+### 2.2 基本语法与 if-else 对比
+
+等价关系可以这样理解：
+
+```python
+# 三元表达式
+result = A if condition else B
+
+# 等价的 if-else
+if condition:
+    result = A
+else:
+    result = B
+```
+
+再看一个具体例子：
+
+```python
+x = 10
+result = "正数" if x > 0 else "非正数"
+
+# 等价写法：
+if x > 0:
+    result = "正数"
+else:
+    result = "非正数"
+```
+
+**什么时候用三元表达式，什么时候用 if-else？**
+
+- 逻辑**简单、只是在两个值之间二选一** → 用三元表达式可读且紧凑。
+- 逻辑比较复杂（多步计算、多个分支） → 用正常 `if / elif / else`，可读性远好于一行塞满逻辑。
+
+### 2.3 实际应用场景
+
+#### 2.3.1 简单条件赋值：给变量/配置选值
+
+**场景 1：根据用户输入设置默认值**
+
+```python
+def get_user_preference():
+    user_input = input("请输入您的偏好（1-3）：")
+    # 如果 user_input 合法就用它，否则用 '1' 作为默认值
+    preference = user_input if user_input in ["1", "2", "3"] else "1"
+    return preference
+```
+
+**场景 2：根据环境选择不同配置**
+
+```python
+is_production = True
+
+database_url = (
+    "mysql://prod-server:3306/db"
+    if is_production
+    else "mysql://localhost:3306/db"
+)
+```
+
+**场景 3：处理空值（fallback）**
+
+```python
+def safe_get_name(user_dict):
+    # 有 name 且非空就用它，否则用“未知用户”
+    return user_dict.get("name") if user_dict.get("name") else "未知用户"
+```
+
+#### 2.3.2 在列表推导式中做“按条件转换”
+
+三元表达式和列表推导式一起用时非常常见，用来**按条件决定每个元素如何变形**：
+
+```python
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# 偶数转成字符串，奇数保持整数
+processed_numbers = [str(x) if x % 2 == 0 else x for x in numbers]
+
+scores = [85, 92, 78, 96, 88, 91, 87, 94]
+# 高分（>=90）标记为“优秀”，否则“良好”
+grade_list = ["优秀" if score >= 90 else "良好" for score in scores]
+
+words = ["hello", "world", "python", "programming"]
+# 长度大于 5 的单词转换为大写，其他保持原样
+processed_words = [w.upper() if len(w) > 5 else w for w in words]
+```
+
+#### 2.3.3 在函数返回值中根据条件选择结果
+
+```python
+def get_user_role(user_type):
+    # 根据用户类型返回角色
+    return "管理员" if user_type == "admin" else "普通用户"
+
+def calculate_discount(amount, is_vip):
+    # 计算折扣：VIP 且金额 > 1000 打 8 折，否则原价
+    discount_rate = 0.8 if is_vip and amount > 1000 else 1.0
+    return amount * discount_rate
+
+def format_phone_number(phone):
+    # 11 位手机号格式化为 138-1234-5678，其它长度按原样返回
+    return f"{phone[:3]}-{phone[3:7]}-{phone[7:]}" if len(phone) == 11 else phone
+```
+
+### 2.4 总结与使用建议
+
+**语法**：`value_if_true if condition else value_if_false`
+
+**适用场景**：
+
+- 简单的**条件赋值 / 选择返回值**。
+- 列表推导式中按条件转换元素。
+- 函数中根据条件返回两种结果之一。
+
+**不适用场景**：
+
+- 有很多分支（`if / elif / else` 很多）。
+- 条件内部需要多步逻辑（读起来费劲）。
+
+**与 if-else 对比**：
+
+- 三元表达式：更紧凑，适合“一行搞定”的简单判断。
+- if-else：更清晰，适合复杂逻辑和多语句分支。
+
+**使用建议（给小白）**：
+
+- 优先保证**可读性**：看一眼能懂比省一行代码重要得多。
+- 避免**嵌套多个三元表达式**，一行里嵌套多层会非常难读。
+- 把三元表达式当成**“值的选择器”**：只在“这个值还是那个值”的场景用它，其它一律先考虑普通 if-else。
