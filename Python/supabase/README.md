@@ -9,9 +9,10 @@
 
 ## 2. 执行建表脚本
 
-在 Supabase 控制台打开 **SQL Editor**，执行本目录下 **`review_state_global.sql`** 中的全部 SQL。
-
-复习状态按「页面 + 题目」存一份全局数据，不区分用户，任意浏览器/设备打开都是同一套勾选，无需登录或开启匿名登录。
+在 Supabase 控制台打开 **SQL Editor**，复制 **`review_state_global.sql`** 的**整段**执行（含表、`grant`、RLS 策略）。  
+若仍出现 **403**：先再执行一遍脚本中「3. RLS 策略」整段（含 `drop policy if exists "allow_all_review_state_global"` 和 `create policy "allow_all_review_state_global"`）。若依旧 403，可尝试临时关闭该表 RLS 再试：  
+`alter table public.review_state_global disable row level security;`  
+（仅个人站点、前端已用 anon key 时可用；关掉后由 `grant` 控制权限。）
 
 ## 4. 配置前端环境变量
 
