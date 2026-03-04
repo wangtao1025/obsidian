@@ -887,12 +887,14 @@ async function enableReviewCheckboxes() {
     return answerHeading && (answerHeading.compareDocumentPosition(el) & document.DOCUMENT_POSITION_FOLLOWING)
   }
 
+  // 仅自测卷页面：插入「待复习题目」独立章节（见 isSelfTestPage）
   const existingWrap = doc.querySelector('.vp-review-unreviewed-wrap')
   if (!existingWrap) {
-    const wrap = document.createElement('div')
-    wrap.className = 'vp-review-unreviewed-wrap custom-block tip'
+    const wrap = document.createElement('section')
+    wrap.className = 'vp-review-unreviewed-wrap'
     wrap.innerHTML = `
-      <p class="custom-block-title">待复习题目</p>
+      <h2 id="待复习题目">待复习题目</h2>
+      <p class="vp-review-unreviewed-desc">以下为尚未勾选「已复习」的题目，点击可跳转作答。</p>
       <div class="vp-review-unreviewed-empty" style="display:none;">暂无，全部已勾选复习。</div>
       <div class="vp-review-unreviewed-table">
         <table>
@@ -901,8 +903,10 @@ async function enableReviewCheckboxes() {
         </table>
       </div>
     `
-    const first = doc.firstElementChild
-    if (first) doc.insertBefore(wrap, first)
+    const hr = doc.querySelector('hr')
+    const firstH2 = doc.querySelector('h2')
+    const insertBefore = hr ? hr.nextElementSibling : (firstH2 || doc.firstElementChild)
+    if (insertBefore) doc.insertBefore(wrap, insertBefore)
     else doc.appendChild(wrap)
   }
 
