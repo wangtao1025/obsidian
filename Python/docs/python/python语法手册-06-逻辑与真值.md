@@ -4,7 +4,7 @@
 
 ---
 
-**本章对应自测卷**：[逻辑判断与真值检测（共 40 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-40-题)
+**本章对应自测卷**：[逻辑判断与真值检测（共 44 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-44-题)
 **学完能做什么**：理解 `and`/`or` 的返回值规则、假值列表、短路带来的安全写法、自定义对象真值优先级，以及关系运算符（六种、链式比较、浮点数与类型注意）。  
 **小白注意**：① `and` 返第一个假或最后一个，`or` 返第一个真或最后一个（不是只返 True/False）。② 假值除 None/False/0 外还有 `''`、`[]`、`{}` 等。③ 自定义对象先看 `__bool__()`，没有则看 `__len__()`，都没有则 True。④ 关系运算符比较浮点数不要用 `==`，用 `math.isclose()`；set/dict 只支持 `==`、`!=`。
 
@@ -644,7 +644,186 @@ def switch_match(case):
 - `case _` 表示默认分支（类似 `default`）。
 - 代码结构清晰，适合分支多、逻辑复杂的场合。
 
-### 3.6 选择建议与性能考虑
+#### 3.5.1 match 语法速览（下次看到不懵）
+
+下面按「从最常见到稍进阶」列一遍，以后在别人代码里看到 `match`/`case` 就能对上号。
+
+**① 基本形式：按“值”相等匹配**
+
+```python
+match x:
+    case "A":
+        ...
+    case 1:
+        ...
+```
+
+- `match` 后面跟要判断的**一个值**（变量或表达式）。
+- `case "A":` 表示：若 `x == "A"`，就进这个分支；从上到下第一个匹配到的分支会执行，后面不再看。
+
+**② 默认分支：`case _`**
+
+```python
+    case _:
+        ...   # 上面都没匹配到时，进这里
+```
+
+- `_` 是通配符，**不绑定变量**，只表示“别的都算匹配”。
+- 习惯放在最后，当 `default` 用。
+
+**③ 多值任选其一：`case a | b | c`**
+
+```python
+    case "help" | "h" | "?":
+        return "显示帮助"
+```
+
+- 用 `|` 连接多个值，表示「匹配其中任意一个」。
+- 等价于 `if x == "help" or x == "h" or x == "?"`。
+
+**④ 按类型匹配：`case int()` / `case str()`**
+
+```python
+    case int():
+        ...   # x 是整数时进来
+    case str():
+        ...   # x 是字符串时进来
+```
+
+- 这里的 `int()`、`str()` **不是**“调用函数造一个新值”，而是**类型模式**：只判断「是不是这个类型」。
+- 可以理解为：`type(x) is int` / `type(x) is str`。
+
+**⑤ 守卫：类型匹配后再加条件 `if ...`**
+
+```python
+    case int() if x > 0:
+        return f"正整数: {x}"
+    case str() if len(x) > 10:
+        return f"长字符串: {x[:10]}..."
+```
+
+- 在 `case` 同一行末尾写 **`if 条件`**，叫**守卫（guard）**。
+- 含义：先满足类型（如 `int`），再满足 `if` 里的条件，才进这个分支。
+- 所以 `case int() if x > 0` = 「是整数，且大于 0」。
+
+**⑥ 把匹配到的值“抓”到变量里：`case int(n)`**
+
+```python
+    case int(n):
+        return f"你输入了整数 {n}"
+```
+
+- 在类型后面加**变量名**（如 `int(n)`），会把当前匹配的**那个值**赋给 `n`，分支里可以直接用 `n`。
+- 若只是判断类型、不需要用具体值，写 `int()` 即可。
+
+**⑦ 简单序列解构（了解即可）**
+
+```python
+match lst:
+    case [a, b]:
+        return f"两个元素: {a}, {b}"
+    case [first, *rest]:
+        return f"第一个是 {first}，其余 {rest}"
+```
+
+- `[a, b]` 表示「长度为 2 的序列」，并把第 1、2 个元素绑到 `a`、`b`。
+- `[first, *rest]` 表示「至少 1 个元素」，第一个给 `first`，剩余全部给 `rest`（列表）。
+
+**速查表**
+
+| 写法 | 含义（小白一句话） |
+|------|---------------------|
+| `case "A":` | 值等于 `"A"` 时进这里 |
+| `case _:` | 上面都不中时进这里（默认） |
+| `case "a" \| "b":` | 值是 `"a"` 或 `"b"` 时进这里 |
+| `case int():` | 是整数时进这里 |
+| `case str():` | 是字符串时进这里 |
+| `case int() if x > 0:` | 是整数且大于 0 时进这里 |
+| `case int(n):` | 是整数，且把该整数存到变量 `n` 里 |
+
+记住：**match 从上到下第一个“匹配”到的 case 会执行，执行完就结束**；后面的 case 不会再试。
+
+### 3.6 高级应用示例
+
+#### 3.6.1 数值范围匹配
+
+用**字典映射**处理“分数落在某区间 → 等级”时，可以用 `range` 做 key（`range` 不可变、可哈希），再遍历查找命中的区间：
+
+```python
+def grade_evaluator(score):
+    grade_map = {
+        range(90, 101): "A",
+        range(80, 90): "B",
+        range(70, 80): "C",
+        range(60, 70): "D",
+    }
+    for score_range, grade in grade_map.items():
+        if score in score_range:
+            return grade
+    return "F"
+
+# 示例
+for s in [95, 85, 75, 65, 55]:
+    print(f"{s} -> {grade_evaluator(s)}")  # A, B, C, D, F
+```
+
+#### 3.6.2 多条件匹配（match）
+
+`match` 可同时匹配多个值（`|`）、类型与守卫条件，适合命令解析、参数分发：
+
+```python
+def process_user_input(user_input):
+    match user_input:
+        case "help" | "h" | "?":
+            return "显示帮助信息"
+        case "quit" | "exit" | "q":
+            return "退出程序"
+        case "save" | "s":
+            return "保存文件"
+        case int() if user_input > 0:
+            return f"处理正整数: {user_input}"
+        case str() if len(user_input) > 10:
+            return f"处理长字符串: {user_input[:10]}..."
+        case _:
+            return f"未知命令: {user_input}"
+```
+
+#### 3.6.3 状态机实现
+
+用**字典映射**维护“当前状态 → 下一状态”和“状态 → 动作”，适合简单状态机（如交通灯、工作流）：
+
+```python
+class TrafficLight:
+    def __init__(self):
+        self.state = "RED"
+        self.transitions = {
+            "RED": "GREEN",
+            "GREEN": "YELLOW",
+            "YELLOW": "RED",
+        }
+        self.actions = {
+            "RED": "停车等待",
+            "GREEN": "可以通行",
+            "YELLOW": "准备停车",
+        }
+
+    def change_state(self):
+        self.state = self.transitions.get(self.state, "RED")
+        return self.state
+
+    def get_action(self):
+        return self.actions.get(self.state, "未知状态")
+
+# 示例
+light = TrafficLight()
+for _ in range(6):
+    light.change_state()
+    print(light.state, "-", light.get_action())
+```
+
+**适用场景**：命令行/配置路由、状态转换、按区间或类型分发，可结合字典映射与 `match` 按需选用。
+
+### 3.7 选择建议与性能考虑
 
 简单记忆：
 
