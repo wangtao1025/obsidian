@@ -879,44 +879,79 @@ async function enableReviewCheckboxes() {
 
   const state = getReviewState()
 
-  function bindCheckbox(li, checkbox, stableKey) {
+  let answerHeading = null
+  doc.querySelectorAll('h1, h2, h3, h4').forEach((h) => {
+    if (!answerHeading && (h.textContent || '').includes('参考答案')) answerHeading = h
+  })
+  function isInAnswerSection(el) {
+    return answerHeading && (answerHeading.compareDocumentPosition(el) & document.DOCUMENT_POSITION_FOLLOWING)
+  }
+
+  const existingWrap = doc.querySelector('.vp-review-unreviewed-wrap')
+  if (!existingWrap) {
+    const wrap = document.createElement('div')
+    wrap.className = 'vp-review-unreviewed-wrap custom-block tip'
+    wrap.innerHTML = `
+      <p class="custom-block-title">待复习题目</p>
+      <div class="vp-review-unreviewed-empty" style="display:none;">暂无，全部已勾选复习。</div>
+      <div class="vp-review-unreviewed-table">
+        <table>
+          <thead><tr><th>题号</th><th>题目</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    `
+    const first = doc.firstElementChild
+    if (first) doc.insertBefore(wrap, first)
+    else doc.appendChild(wrap)
+  }
+
+  function bindCheckbox(li, checkbox, stableKey, questionId) {
     if (li.hasAttribute('data-vp-review-done')) return
     li.setAttribute('data-vp-review-done', '1')
     li.setAttribute('data-vp-content-key', stableKey)
+    if (questionId) {
+      li.setAttribute('data-vp-question-id', questionId)
+      const anchorId = 'q-' + String(questionId).replace(/\./g, '-').replace(/附\./, '附-')
+      if (!li.id) li.id = anchorId
+    }
     checkbox.removeAttribute('disabled')
     checkbox.checked = !!state[stableKey]
     checkbox.addEventListener('change', () => {
       const next = { ...getReviewState(), [stableKey]: checkbox.checked }
       setReviewState(next)
       if (supabase) saveReviewStateToSupabase(supabase, pageSlug, stableKey, checkbox.checked)
+      updateUnreviewedTable(doc)
     })
   }
 
   const taskItems = doc.querySelectorAll('.task-list-item')
   taskItems.forEach((li) => {
+    if (isInAnswerSection(li)) return
     const id = getQuestionId(li)
     if (!id) return
     const stableKey = getStableContentKey(li)
     const checkbox = li.querySelector('input[type="checkbox"]')
     if (checkbox) {
-      bindCheckbox(li, checkbox, stableKey)
+      bindCheckbox(li, checkbox, stableKey, id)
     }
   })
 
   const fallbackItems = doc.querySelectorAll('ul > li, ol > li')
   fallbackItems.forEach((li) => {
+    if (isInAnswerSection(li)) return
     if (li.hasAttribute('data-vp-review-done')) return
     const id = getQuestionId(li)
     if (!id) return
     const stableKey = getStableContentKey(li)
     let checkbox = li.querySelector('input[type="checkbox"].vp-review-checkbox')
     if (checkbox) {
-      bindCheckbox(li, checkbox, stableKey)
+      bindCheckbox(li, checkbox, stableKey, id)
       return
     }
     checkbox = li.querySelector('input[type="checkbox"]')
     if (checkbox) {
-      bindCheckbox(li, checkbox, stableKey)
+      bindCheckbox(li, checkbox, stableKey, id)
       return
     }
     checkbox = document.createElement('input')
@@ -932,10 +967,70 @@ async function enableReviewCheckboxes() {
     }
     li.setAttribute('data-vp-review-done', '1')
     li.setAttribute('data-vp-content-key', stableKey)
+    li.setAttribute('data-vp-question-id', id)
+    const anchorId = 'q-' + String(id).replace(/\./g, '-').replace(/附\./, '附-')
+    if (!li.id) li.id = anchorId
     checkbox.addEventListener('change', () => {
       const next = { ...getReviewState(), [stableKey]: checkbox.checked }
       setReviewState(next)
       if (supabase) saveReviewStateToSupabase(supabase, pageSlug, stableKey, checkbox.checked)
+      updateUnreviewedTable(doc)
     })
   })
+
+  hideAnswerSectionCheckboxes(doc)
+  updateUnreviewedTable(doc)
+}
+
+function hideAnswerSectionCheckboxes(doc) {
+  const headings = doc.querySelectorAll('h1, h2, h3, h4')
+  let answerHeading = null
+  for (const h of headings) {
+    if ((h.textContent || '').includes('参考答案')) {
+      answerHeading = h
+      break
+    }
+  }
+  if (!answerHeading) return
+  const allTaskItems = doc.querySelectorAll('.task-list-item, li[data-vp-content-key]')
+  for (const li of allTaskItems) {
+    if (answerHeading.compareDocumentPosition(li) & document.DOCUMENT_POSITION_FOLLOWING) {
+      const cb = li.querySelector('input[type="checkbox"]')
+      if (cb) cb.style.setProperty('display', 'none')
+    }
+  }
+}
+
+function updateUnreviewedTable(doc) {
+  const container = doc.querySelector('.vp-review-unreviewed-wrap')
+  if (!container) return
+  const tbody = container.querySelector('table tbody')
+  if (!tbody) return
+  const rows = doc.querySelectorAll('li[data-vp-question-id]')
+  const unreviewed = []
+  rows.forEach((li) => {
+    const id = li.getAttribute('data-vp-question-id')
+    const cb = li.querySelector('input[type="checkbox"]')
+    if (id && cb && !cb.checked) {
+      const strong = li.querySelector('strong')
+      const short = strong ? (strong.textContent || '').trim() : id
+      unreviewed.push({ id, short })
+    }
+  })
+  tbody.innerHTML = unreviewed
+    .map(({ id, short }) => {
+      const anchorId = 'q-' + String(id).replace(/\./g, '-').replace(/附\./, '附-')
+      return `<tr><td>${escapeHtml(id)}</td><td><a href="#${anchorId}">${escapeHtml(short)}</a></td></tr>`
+    })
+    .join('')
+  const emptyRow = container.querySelector('.vp-review-unreviewed-empty')
+  const tableWrap = container.querySelector('.vp-review-unreviewed-table')
+  if (emptyRow) emptyRow.style.display = unreviewed.length ? 'none' : 'block'
+  if (tableWrap) tableWrap.style.display = unreviewed.length ? 'block' : 'none'
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div')
+  div.textContent = s
+  return div.innerHTML
 }
