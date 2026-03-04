@@ -858,6 +858,27 @@ function isSelfTestPage(pathname) {
   }
 }
 
+function waitForSelfTestContent(doc, maxWait = 2000, interval = 50) {
+  return new Promise((resolve) => {
+    const end = Date.now() + maxWait
+    const check = () => {
+      const h1 = doc.querySelector('h1')
+      const hasTitle = h1 && (h1.textContent || '').includes('自测试卷')
+      const hasTasks = doc.querySelectorAll('.task-list-item').length > 0
+      if (hasTitle || hasTasks) {
+        resolve(true)
+        return
+      }
+      if (Date.now() >= end) {
+        resolve(false)
+        return
+      }
+      setTimeout(check, interval)
+    }
+    check()
+  })
+}
+
 async function enableReviewCheckboxes() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname || '' : ''
   if (!isSelfTestPage(pathname)) return
@@ -865,7 +886,7 @@ async function enableReviewCheckboxes() {
   const doc = document.querySelector('.vp-doc')
   if (!doc) return
 
-  const pageSlug = pathname
+  const pageSlug = (() => { try { return decodeURIComponent(pathname) } catch { return pathname } })()
   let supabase = null
   try {
     supabase = await getSupabase()
@@ -876,6 +897,9 @@ async function enableReviewCheckboxes() {
   } catch (e) {
     console.warn('Supabase 同步跳过:', e)
   }
+
+  const ready = await waitForSelfTestContent(doc)
+  if (!ready) return
 
   const state = getReviewState()
 
