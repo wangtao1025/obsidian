@@ -4,7 +4,7 @@
 
 ---
 
-**本章对应自测卷**：[十二、标准库模块（共 8 题）](/python/Python核心语法自测试卷#十二标准库模块-共-8-题)  
+**本章对应自测卷**：[标准库模块（共 8 题）](/python/Python核心语法自测试卷#十二标准库模块-共-8-题)
 **学完能做什么**：用 `datetime` 做时间获取与加减、用 `time` 做计时、用进制与数学相关内置或模块做换算。  
 **小白注意**：① 官方完整 API 查 [Python 文档](https://docs.python.org/zh-cn/3/library/)。② 本站课程用到的标准库（math、typing、collections、random、heapq 等）见 [Python 首页](/python/)「标准库」表格。
 

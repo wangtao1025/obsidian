@@ -145,51 +145,47 @@ export default defineConfig({
               link: "/python/python语法手册-赋值与算术运算符",
             },
             {
-              text: "第2章附 位运算符",
-              link: "/python/位运算符详解",
-            },
-            {
               text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
             {
-              text: "第4章 异常捕获与主动抛出",
-              link: "/python/python语法手册-03-异常",
-            },
-            {
-              text: "第5章 格式化输出",
-              link: "/python/python语法手册-04-格式化与输出",
-            },
-            {
-              text: "第6章 内置函数",
+              text: "第4章 函数与作用域",
               link: "/python/python语法手册-05-内置函数",
             },
             {
-              text: "第7章 逻辑判断与真值检测",
+              text: "第5章 异常捕获与主动抛出",
+              link: "/python/python语法手册-03-异常",
+            },
+            {
+              text: "第6章 格式化输出",
+              link: "/python/python语法手册-04-格式化与输出",
+            },
+            {
+              text: "第7章 内置函数",
+              link: "/python/python语法手册-05-内置函数",
+            },
+            {
+              text: "第8章 逻辑判断与真值检测",
               link: "/python/python语法手册-06-逻辑与真值",
             },
             {
-              text: "第8章 身份与成员",
+              text: "第9章 身份与成员",
               link: "/python/python语法手册-07-身份与成员",
             },
             {
-              text: "第9章 数据处理",
+              text: "第10章 数据处理与进制表示",
               link: "/python/python语法手册-08-数据处理",
             },
             {
-              text: "第9章附 进制表示与转换",
-              link: "/python/进制表示与转换",
-            },
-            {
-              text: "第10章 字符编码",
+              text: "第11章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
             {
-              text: "第11章 循环遍历",
+              text: "第12章 循环遍历",
               link: "/python/python语法手册-10-循环",
             },
             {
-              text: "第12章 标准库模块",
+              text: "第13章 标准库模块",
               link: "/python/python语法手册-11-标准库",
             },
             {
@@ -275,51 +271,47 @@ export default defineConfig({
               link: "/python/python语法手册-赋值与算术运算符",
             },
             {
-              text: "第2章附 位运算符",
-              link: "/python/位运算符详解",
-            },
-            {
               text: "第3章 内置数据结构",
               link: "/python/python语法手册-02-内置数据结构",
             },
             {
-              text: "第4章 异常捕获与主动抛出",
-              link: "/python/python语法手册-03-异常",
-            },
-            {
-              text: "第5章 格式化输出",
-              link: "/python/python语法手册-04-格式化与输出",
-            },
-            {
-              text: "第6章 内置函数",
+              text: "第4章 函数与作用域",
               link: "/python/python语法手册-05-内置函数",
             },
             {
-              text: "第7章 逻辑判断与真值检测",
+              text: "第5章 异常捕获与主动抛出",
+              link: "/python/python语法手册-03-异常",
+            },
+            {
+              text: "第6章 格式化输出",
+              link: "/python/python语法手册-04-格式化与输出",
+            },
+            {
+              text: "第7章 内置函数",
+              link: "/python/python语法手册-05-内置函数",
+            },
+            {
+              text: "第8章 逻辑判断与真值检测",
               link: "/python/python语法手册-06-逻辑与真值",
             },
             {
-              text: "第8章 身份与成员",
+              text: "第9章 身份与成员",
               link: "/python/python语法手册-07-身份与成员",
             },
             {
-              text: "第9章 数据处理",
+              text: "第10章 数据处理与进制表示",
               link: "/python/python语法手册-08-数据处理",
             },
             {
-              text: "第9章附 进制表示与转换",
-              link: "/python/进制表示与转换",
-            },
-            {
-              text: "第10章 字符编码",
+              text: "第11章 字符编码",
               link: "/python/python语法手册-09-字符编码",
             },
             {
-              text: "第11章 循环遍历",
+              text: "第12章 循环遍历",
               link: "/python/python语法手册-10-循环",
             },
             {
-              text: "第12章 标准库模块",
+              text: "第13章 标准库模块",
               link: "/python/python语法手册-11-标准库",
             },
             {

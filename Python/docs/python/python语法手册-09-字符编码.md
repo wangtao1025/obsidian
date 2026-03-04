@@ -4,7 +4,7 @@
 
 ---
 
-**本章对应自测卷**：[十、字符编码（共 6 题）](/python/Python核心语法自测试卷#十字符编码-共-6-题)  
+**本章对应自测卷**：[字符编码（共 6 题）](/python/Python核心语法自测试卷#十字符编码-共-6-题)
 **学完能做什么**：分清 ASCII/Unicode/UTF-8 的角色，会 str↔bytes 编解码，用 `ord`/`chr` 做码点与字符互转，知道 `errors='replace'` 的作用。  
 **小白注意**：① Unicode 是码表（只发号），UTF-8 是编码方案（变长存）；ASCII 1 字节、汉字 3 字节、Emoji 4 字节。② 编码 `.encode()`、解码 `.decode()`，遇无法识别字符可加 `errors='replace'` 防崩。③ `ord('中')` 是十进制码点，`chr(65)` 是字符。
 

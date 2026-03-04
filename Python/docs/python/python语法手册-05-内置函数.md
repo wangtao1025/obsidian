@@ -4,7 +4,9 @@
 
 ---
 
-**本章对应自测卷**：[六、内置函数（共 10 题）](/python/Python核心语法自测试卷#六内置函数-共-10-题)  
+**本章对应自测卷**：[内置函数（共 10 题）](/python/Python核心语法自测试卷#六内置函数-共-10-题)
+
+**本章对应课程**：4.1《函数》，以及自测试卷中的「函数与作用域」「内置函数」相关题目。*** End Patch```"/> داشت to=functions.ApplyPatchenderrorೇವೆ to=functions.ApplyPatch ***!
 **学完能做什么**：用 `len/sum/max/min` 做统计与极差，用 `key` 按字典某字段比大小，分清 `reversed()`/`sorted()` 不改原数据。  
 **小白注意**：① `max`/`min` 按“规则”比要用 `key=lambda x: x["字段"]`。② `sorted()` 返回新列表，`.sort()` 只用于列表且返回 `None`。③ 空序列 `max([])` 会报错。
 
