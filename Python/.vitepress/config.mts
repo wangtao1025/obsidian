@@ -7,7 +7,12 @@ import taskLists from "markdown-it-task-lists";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
-const env = loadEnv(process.env.MODE ?? "development", root, "VITE_");
+const loaded = loadEnv(process.env.MODE ?? "development", root, "VITE_");
+// 支持 Vercel 等 CI：优先用 .env，没有则用 process.env（在 Vercel 项目里配置同名变量）
+const env = {
+  VITE_SUPABASE_URL: loaded.VITE_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "",
+  VITE_SUPABASE_ANON_KEY: loaded.VITE_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY ?? "",
+};
 
 export default defineConfig({
   lang: "zh-CN",
@@ -20,8 +25,8 @@ export default defineConfig({
   vite: {
     envDir: root,
     define: {
-      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL ?? ""),
-      "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(env.VITE_SUPABASE_ANON_KEY ?? ""),
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
+      "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
     },
   },
 
@@ -42,7 +47,7 @@ export default defineConfig({
         type: "text/javascript",
         id: "vp-supabase-env",
       },
-      `window.__VP_SUPABASE__={url:${JSON.stringify(env.VITE_SUPABASE_URL ?? "")},key:${JSON.stringify(env.VITE_SUPABASE_ANON_KEY ?? "")}};`,
+      `window.__VP_SUPABASE__={url:${JSON.stringify(env.VITE_SUPABASE_URL)},key:${JSON.stringify(env.VITE_SUPABASE_ANON_KEY)}};`,
     ],
     [
       "link",

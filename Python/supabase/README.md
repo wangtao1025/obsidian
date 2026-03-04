@@ -36,4 +36,14 @@ cp .env.example .env.local
 - **未配置**：不设置上述环境变量时，仅使用浏览器 localStorage，行为与之前一致。
 - **已配置**：首次进入自测卷页会匿名登录，从 Supabase 拉取该页的复习状态并写入本地；勾选/取消会同时写 localStorage 并同步到 Supabase，换设备后打开同一页即可看到相同勾选状态。
 
-**若配置后未生效**：请确认 `.env.local` 在项目根目录（与 `package.json` 同级），修改后**重启**开发服务器（`npm run docs:dev`）。部署到 Vercel 时在项目设置里添加同名环境变量。
+**若配置后未生效**：请确认 `.env.local` 在项目根目录（与 `package.json` 同级），修改后**重启**开发服务器（`npm run docs:dev`）。
+
+### Vercel 部署
+
+`.env.local` 不会随代码提交，因此 **Vercel 上必须单独配置环境变量**：
+
+1. 打开 Vercel 项目 → **Settings** → **Environment Variables**
+2. 新增两条变量（Production / Preview / Development 按需勾选）：
+   - `VITE_SUPABASE_URL` = 你的 Supabase Project URL
+   - `VITE_SUPABASE_ANON_KEY` = 你的 Supabase anon public key
+3. 保存后重新 **Redeploy** 一次，构建时才会把上述值打进页面，线上自测卷的复习状态才会同步到 Supabase。
