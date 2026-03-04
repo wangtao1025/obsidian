@@ -112,6 +112,7 @@ export default {
         if (routerRef && typeof routerRef.afterEach === 'function') {
           routerRef.afterEach(() => {
             setTimeout(scheduleMermaid, 150)
+            setTimeout(enableReviewCheckboxes, 200)
           })
         }
 
@@ -154,6 +155,7 @@ function initEnhancements() {
   enableFullscreenReading()
   enableCopyToast()
   addReadingTime()
+  enableReviewCheckboxes()
 }
 
 // 阅读进度条
@@ -727,4 +729,217 @@ function addReadingTime() {
       setTimeout(run, 500)
     })
   }
+}
+
+const REVIEW_STORAGE_KEY = 'vp-self-test-review'
+const SELF_TEST_PATH = 'Python核心语法自测试卷'
+const REVIEW_TABLE = 'review_state'
+
+function getReviewState() {
+  try {
+    const raw = localStorage.getItem(REVIEW_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function setReviewState(state) {
+  try {
+    localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(state))
+  } catch (e) {
+    console.warn('保存复习状态失败:', e)
+  }
+}
+
+let _supabaseClient = null
+async function getSupabase() {
+  const url = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL
+  const key = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY
+  if (!url || !key) return null
+  if (_supabaseClient) return _supabaseClient
+  try {
+    const { createClient } = await import('@supabase/supabase-js')
+    _supabaseClient = createClient(url, key)
+    return _supabaseClient
+  } catch (e) {
+    console.warn('Supabase 加载失败，将仅使用本地存储:', e)
+    return null
+  }
+}
+
+async function ensureAnonymousSession(supabase) {
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) return session
+    const { error } = await supabase.auth.signInAnonymously()
+    if (error) {
+      console.warn('匿名登录失败，将仅使用本地存储:', error.message)
+      return null
+    }
+    const { data: { session: s } } = await supabase.auth.getSession()
+    return s
+  } catch (e) {
+    console.warn('匿名登录异常:', e)
+    return null
+  }
+}
+
+async function loadReviewStateFromSupabase(supabase, pageSlug) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+    const { data, error } = await supabase
+      .from(REVIEW_TABLE)
+      .select('question_key, checked')
+      .eq('user_id', user.id)
+      .eq('page_slug', pageSlug)
+    if (error) {
+      console.warn('拉取复习状态失败:', error.message)
+      return null
+    }
+    const state = {}
+    if (Array.isArray(data)) {
+      data.forEach((row) => {
+        state[row.question_key] = !!row.checked
+      })
+    }
+    return state
+  } catch (e) {
+    console.warn('拉取复习状态异常:', e)
+    return null
+  }
+}
+
+async function saveReviewStateToSupabase(supabase, pageSlug, questionKey, checked) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from(REVIEW_TABLE).upsert(
+      {
+        user_id: user.id,
+        page_slug: pageSlug,
+        question_key: questionKey,
+        checked,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id,page_slug,question_key' }
+    )
+  } catch (e) {
+    console.warn('同步复习状态失败:', e)
+  }
+}
+
+function getQuestionId(li) {
+  const strong = li.querySelector('strong')
+  if (strong) {
+    const id = (strong.textContent || '').trim()
+    if (/^\d+\.\d+[a-z]?$|^二附\.\d+$/.test(id)) return id
+  }
+  const text = (li.textContent || '').trim()
+  const match = text.match(/^(\d+\.\d+[a-z]?|二附\.\d+)/)
+  return match ? match[1] : null
+}
+
+function simpleHash(str) {
+  let h = 0
+  const s = String(str)
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i)
+    h |= 0
+  }
+  return (h >>> 0).toString(36)
+}
+
+function getStableContentKey(li) {
+  const text = (li.textContent || '').trim()
+    .replace(/\s+/g, ' ')
+    .replace(/^\[[ xX]\]\s*/, '')
+  const withoutNumber = text.replace(/^\d+\.\d+[a-z]?|^二附\.\d+/, '').trim().slice(0, 120)
+  return simpleHash(withoutNumber) || simpleHash(text.slice(0, 80))
+}
+
+async function enableReviewCheckboxes() {
+  const pathname = typeof window !== 'undefined' ? window.location.pathname || '' : ''
+  if (!pathname.includes(SELF_TEST_PATH)) return
+
+  const doc = document.querySelector('.vp-doc')
+  if (!doc) return
+
+  const pageSlug = pathname
+  let supabase = null
+  try {
+    supabase = await getSupabase()
+    if (supabase) {
+      const session = await ensureAnonymousSession(supabase)
+      if (session) {
+        const remote = await loadReviewStateFromSupabase(supabase, pageSlug)
+        if (remote && typeof remote === 'object') setReviewState(remote)
+      }
+    }
+  } catch (e) {
+    console.warn('Supabase 同步跳过:', e)
+  }
+
+  const state = getReviewState()
+
+  function bindCheckbox(li, checkbox, stableKey) {
+    if (li.hasAttribute('data-vp-review-done')) return
+    li.setAttribute('data-vp-review-done', '1')
+    li.setAttribute('data-vp-content-key', stableKey)
+    checkbox.removeAttribute('disabled')
+    checkbox.checked = !!state[stableKey]
+    checkbox.addEventListener('change', () => {
+      const next = { ...getReviewState(), [stableKey]: checkbox.checked }
+      setReviewState(next)
+      if (supabase) saveReviewStateToSupabase(supabase, pageSlug, stableKey, checkbox.checked)
+    })
+  }
+
+  const taskItems = doc.querySelectorAll('.task-list-item')
+  taskItems.forEach((li) => {
+    const id = getQuestionId(li)
+    if (!id) return
+    const stableKey = getStableContentKey(li)
+    const checkbox = li.querySelector('input[type="checkbox"]')
+    if (checkbox) {
+      bindCheckbox(li, checkbox, stableKey)
+    }
+  })
+
+  const fallbackItems = doc.querySelectorAll('ul > li, ol > li')
+  fallbackItems.forEach((li) => {
+    if (li.hasAttribute('data-vp-review-done')) return
+    const id = getQuestionId(li)
+    if (!id) return
+    const stableKey = getStableContentKey(li)
+    let checkbox = li.querySelector('input[type="checkbox"].vp-review-checkbox')
+    if (checkbox) {
+      bindCheckbox(li, checkbox, stableKey)
+      return
+    }
+    checkbox = li.querySelector('input[type="checkbox"]')
+    if (checkbox) {
+      bindCheckbox(li, checkbox, stableKey)
+      return
+    }
+    checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.className = 'vp-review-checkbox'
+    checkbox.checked = !!state[stableKey]
+    checkbox.setAttribute('aria-label', '已复习')
+    const first = li.firstElementChild || li
+    if (first && first.tagName === 'P') {
+      first.insertBefore(checkbox, first.firstChild)
+    } else {
+      li.insertBefore(checkbox, li.firstChild)
+    }
+    li.setAttribute('data-vp-review-done', '1')
+    li.setAttribute('data-vp-content-key', stableKey)
+    checkbox.addEventListener('change', () => {
+      const next = { ...getReviewState(), [stableKey]: checkbox.checked }
+      setReviewState(next)
+      if (supabase) saveReviewStateToSupabase(supabase, pageSlug, stableKey, checkbox.checked)
+    })
+  })
 }

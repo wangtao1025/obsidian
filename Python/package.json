@@ -9,8 +9,10 @@
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.45.0",
     "katex": "^0.16.9",
     "markdown-it-katex": "^2.0.3",
+    "markdown-it-task-lists": "^2.1.1",
     "mermaid": "^11.0.0",
     "vitepress": "^1.6.0"
   }

@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
 import katex from "markdown-it-katex";
+import taskLists from "markdown-it-task-lists";
 
 export default defineConfig({
   lang: "zh-CN",
@@ -33,6 +34,7 @@ export default defineConfig({
     lineNumbers: true,
     config: (md) => {
       md.use(katex, { throwOnError: false, errorColor: "#cc0000" });
+      md.use(taskLists, { enabled: true });
       const defaultFence = md.renderer.rules.fence;
       md.renderer.rules.fence = (tokens, idx, options, env, self) => {
         const token = tokens[idx];
