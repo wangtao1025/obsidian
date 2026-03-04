@@ -9,12 +9,9 @@
 
 ## 2. 执行建表脚本
 
-在 Supabase 控制台打开 **SQL Editor**，执行本目录下 `review_state.sql` 中的全部 SQL。
+在 Supabase 控制台打开 **SQL Editor**，执行本目录下 **`review_state_global.sql`** 中的全部 SQL。
 
-## 3. 开启匿名登录
-
-在 **Authentication → Providers** 中启用 **Anonymous**（Enable Anonymous Sign-In）。  
-这样无需用户注册即可生成匿名用户，并用其存储复习状态。
+复习状态按「页面 + 题目」存一份全局数据，不区分用户，任意浏览器/设备打开都是同一套勾选，无需登录或开启匿名登录。
 
 ## 4. 配置前端环境变量
 
@@ -34,7 +31,7 @@ cp .env.example .env.local
 ## 5. 行为说明
 
 - **未配置**：不设置上述环境变量时，仅使用浏览器 localStorage，行为与之前一致。
-- **已配置**：首次进入自测卷页会匿名登录，从 Supabase 拉取该页的复习状态并写入本地；勾选/取消会同时写 localStorage 并同步到 Supabase，换设备后打开同一页即可看到相同勾选状态。
+- **已配置**：进入自测卷页会从 Supabase 拉取该页的复习状态；勾选/取消会同时写 localStorage 并同步到 Supabase。任意设备/浏览器打开均为同一套状态（全局一份，不区分用户）。
 
 **若配置后未生效**：请确认 `.env.local` 在项目根目录（与 `package.json` 同级），修改后**重启**开发服务器（`npm run docs:dev`）。
 

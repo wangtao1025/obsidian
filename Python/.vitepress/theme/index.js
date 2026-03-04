@@ -733,7 +733,7 @@ function addReadingTime() {
 
 const REVIEW_STORAGE_KEY = 'vp-self-test-review'
 const SELF_TEST_PATH = 'Python核心语法自测试卷'
-const REVIEW_TABLE = 'review_state'
+const REVIEW_TABLE = 'review_state_global'
 
 function getReviewState() {
   try {
@@ -780,31 +780,11 @@ async function getSupabase() {
   }
 }
 
-async function ensureAnonymousSession(supabase) {
-  try {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session) return session
-    const { error } = await supabase.auth.signInAnonymously()
-    if (error) {
-      console.warn('匿名登录失败，将仅使用本地存储:', error.message)
-      return null
-    }
-    const { data: { session: s } } = await supabase.auth.getSession()
-    return s
-  } catch (e) {
-    console.warn('匿名登录异常:', e)
-    return null
-  }
-}
-
 async function loadReviewStateFromSupabase(supabase, pageSlug) {
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
     const { data, error } = await supabase
       .from(REVIEW_TABLE)
       .select('question_key, checked')
-      .eq('user_id', user.id)
       .eq('page_slug', pageSlug)
     if (error) {
       console.warn('拉取复习状态失败:', error.message)
@@ -825,17 +805,14 @@ async function loadReviewStateFromSupabase(supabase, pageSlug) {
 
 async function saveReviewStateToSupabase(supabase, pageSlug, questionKey, checked) {
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
     await supabase.from(REVIEW_TABLE).upsert(
       {
-        user_id: user.id,
         page_slug: pageSlug,
         question_key: questionKey,
         checked,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: 'user_id,page_slug,question_key' }
+      { onConflict: 'page_slug,question_key' }
     )
   } catch (e) {
     console.warn('同步复习状态失败:', e)
@@ -893,11 +870,8 @@ async function enableReviewCheckboxes() {
   try {
     supabase = await getSupabase()
     if (supabase) {
-      const session = await ensureAnonymousSession(supabase)
-      if (session) {
-        const remote = await loadReviewStateFromSupabase(supabase, pageSlug)
-        if (remote && typeof remote === 'object') setReviewState(remote)
-      }
+      const remote = await loadReviewStateFromSupabase(supabase, pageSlug)
+      if (remote && typeof remote === 'object') setReviewState(remote)
     }
   } catch (e) {
     console.warn('Supabase 同步跳过:', e)
