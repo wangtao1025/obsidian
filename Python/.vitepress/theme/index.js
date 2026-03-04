@@ -110,9 +110,11 @@ export default {
         scheduleMermaid()
 
         if (routerRef && typeof routerRef.afterEach === 'function') {
-          routerRef.afterEach(() => {
+          routerRef.afterEach((to) => {
             setTimeout(scheduleMermaid, 150)
-            setTimeout(enableReviewCheckboxes, 200)
+            if (to && isSelfTestPage(to.path)) {
+              [100, 350, 650, 1100].forEach((ms) => setTimeout(enableReviewCheckboxes, ms))
+            }
           })
         }
 
