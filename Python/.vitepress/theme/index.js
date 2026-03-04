@@ -871,9 +871,19 @@ function getStableContentKey(li) {
   return simpleHash(withoutNumber) || simpleHash(text.slice(0, 80))
 }
 
+function isSelfTestPage(pathname) {
+  if (!pathname) return false
+  try {
+    const decoded = decodeURIComponent(pathname)
+    return decoded.includes(SELF_TEST_PATH)
+  } catch {
+    return pathname.includes(SELF_TEST_PATH)
+  }
+}
+
 async function enableReviewCheckboxes() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname || '' : ''
-  if (!pathname.includes(SELF_TEST_PATH)) return
+  if (!isSelfTestPage(pathname)) return
 
   const doc = document.querySelector('.vp-doc')
   if (!doc) return
