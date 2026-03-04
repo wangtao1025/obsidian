@@ -18,6 +18,7 @@ export default defineConfig({
   srcDir: "docs",
 
   vite: {
+    envDir: root,
     define: {
       "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL ?? ""),
       "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(env.VITE_SUPABASE_ANON_KEY ?? ""),
@@ -33,8 +34,16 @@ export default defineConfig({
   ignoreDeadLinks: "localhostLinks",
   appearance: "dark",
 
-  // 注入 Mermaid CSS
+  // 注入 Mermaid CSS；并将 Supabase 配置注入页面供主题读取
   head: [
+    [
+      "script",
+      {
+        type: "text/javascript",
+        id: "vp-supabase-env",
+      },
+      `window.__VP_SUPABASE__={url:${JSON.stringify(env.VITE_SUPABASE_URL ?? "")},key:${JSON.stringify(env.VITE_SUPABASE_ANON_KEY ?? "")}};`,
+    ],
     [
       "link",
       {

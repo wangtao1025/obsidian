@@ -753,14 +753,26 @@ function setReviewState(state) {
 }
 
 let _supabaseClient = null
+function getSupabaseEnv() {
+  if (typeof window !== 'undefined' && window.__VP_SUPABASE__) {
+    const u = window.__VP_SUPABASE__.url
+    const k = window.__VP_SUPABASE__.key
+    if (u && k) return { url: u, key: k }
+  }
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    const u = import.meta.env.VITE_SUPABASE_URL
+    const k = import.meta.env.VITE_SUPABASE_ANON_KEY
+    if (u && k) return { url: u, key: k }
+  }
+  return null
+}
 async function getSupabase() {
-  const url = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL
-  const key = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY
-  if (!url || !key) return null
+  const env = getSupabaseEnv()
+  if (!env || !env.url || !env.key) return null
   if (_supabaseClient) return _supabaseClient
   try {
     const { createClient } = await import('@supabase/supabase-js')
-    _supabaseClient = createClient(url, key)
+    _supabaseClient = createClient(env.url, env.key)
     return _supabaseClient
   } catch (e) {
     console.warn('Supabase 加载失败，将仅使用本地存储:', e)
