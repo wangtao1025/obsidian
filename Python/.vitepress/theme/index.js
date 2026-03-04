@@ -821,15 +821,40 @@ async function saveReviewStateToSupabase(supabase, pageSlug, questionKey, checke
   }
 }
 
-function getQuestionId(li) {
+/** 获取 li 所属章节的 slug（用于按章节题号 1/2/3 时生成唯一 id） */
+function getSectionSlug(li, doc) {
+  if (!doc) return ''
+  const h2s = doc.querySelectorAll('h2')
+  let sectionH2 = null
+  h2s.forEach((h) => {
+    if (h.compareDocumentPosition(li) & document.DOCUMENT_POSITION_FOLLOWING) sectionH2 = h
+  })
+  if (!sectionH2) return ''
+  if (sectionH2.id) return sectionH2.id
+  return (sectionH2.textContent || '').trim().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fa5-]/g, '') || 'section'
+}
+
+/** 支持旧格式（1.7、二附.5）与当前格式（按章节纯题号 **7**、**19**） */
+function getQuestionId(li, doc) {
   const strong = li.querySelector('strong')
-  if (strong) {
-    const id = (strong.textContent || '').trim()
-    if (/^\d+\.\d+[a-z]?$|^二附\.\d+$/.test(id)) return id
-  }
+  const strongText = strong ? (strong.textContent || '').trim() : ''
   const text = (li.textContent || '').trim()
-  const match = text.match(/^(\d+\.\d+[a-z]?|二附\.\d+)/)
-  return match ? match[1] : null
+
+  if (strongText && /^\d+\.\d+[a-z]?$|^二附\.\d+$/.test(strongText)) return strongText
+  let match = text.match(/^(\d+\.\d+[a-z]?|二附\.\d+)/)
+  if (match) return match[1]
+
+  if (strongText && /^\d+$/.test(strongText)) {
+    const slug = getSectionSlug(li, doc)
+    return slug ? `${slug}-${strongText}` : strongText
+  }
+  match = text.match(/^\d+\s+/)
+  if (match) {
+    const num = match[0].trim()
+    const slug = getSectionSlug(li, doc)
+    return slug ? `${slug}-${num}` : num
+  }
+  return null
 }
 
 function simpleHash(str) {
@@ -846,7 +871,10 @@ function getStableContentKey(li) {
   const text = (li.textContent || '').trim()
     .replace(/\s+/g, ' ')
     .replace(/^\[[ xX]\]\s*/, '')
-  const withoutNumber = text.replace(/^\d+\.\d+[a-z]?|^二附\.\d+/, '').trim().slice(0, 120)
+  const withoutNumber = text
+    .replace(/^(\d+\.\d+[a-z]?|二附\.\d+|\d+)\s*/, '')
+    .trim()
+    .slice(0, 120)
   return simpleHash(withoutNumber) || simpleHash(text.slice(0, 80))
 }
 
@@ -964,7 +992,7 @@ async function enableReviewCheckboxes() {
   const taskItems = doc.querySelectorAll('.task-list-item')
   taskItems.forEach((li) => {
     if (isInAnswerSection(li)) return
-    const id = getQuestionId(li)
+    const id = getQuestionId(li, doc)
     if (!id) return
     const stableKey = getStableContentKey(li)
     const checkbox = li.querySelector('input[type="checkbox"]')
@@ -977,7 +1005,7 @@ async function enableReviewCheckboxes() {
   fallbackItems.forEach((li) => {
     if (isInAnswerSection(li)) return
     if (li.hasAttribute('data-vp-review-done')) return
-    const id = getQuestionId(li)
+    const id = getQuestionId(li, doc)
     if (!id) return
     const stableKey = getStableContentKey(li)
     let checkbox = li.querySelector('input[type="checkbox"].vp-review-checkbox')
