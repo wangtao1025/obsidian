@@ -905,9 +905,15 @@ async function enableReviewCheckboxes() {
     `
     const hr = doc.querySelector('hr')
     const firstH2 = doc.querySelector('h2')
-    const insertBefore = hr ? hr.nextElementSibling : (firstH2 || doc.firstElementChild)
-    if (insertBefore) doc.insertBefore(wrap, insertBefore)
-    else doc.appendChild(wrap)
+    const anchor = hr || firstH2 || doc.firstElementChild
+    const parent = anchor ? anchor.parentElement : doc
+    const ref = anchor ? (hr ? hr.nextElementSibling : anchor) : null
+    if (parent) {
+      if (ref) parent.insertBefore(wrap, ref)
+      else parent.appendChild(wrap)
+    } else {
+      doc.appendChild(wrap)
+    }
   }
 
   function bindCheckbox(li, checkbox, stableKey, questionId) {
