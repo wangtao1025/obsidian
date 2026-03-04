@@ -1,6 +1,13 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import { defineConfig } from "vitepress";
+import { loadEnv } from "vite";
 import katex from "markdown-it-katex";
 import taskLists from "markdown-it-task-lists";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
+const env = loadEnv(process.env.MODE ?? "development", root, "VITE_");
 
 export default defineConfig({
   lang: "zh-CN",
@@ -9,6 +16,13 @@ export default defineConfig({
 
   // 笔记内容独立目录，与 VitePress 工程分离
   srcDir: "docs",
+
+  vite: {
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL ?? ""),
+      "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(env.VITE_SUPABASE_ANON_KEY ?? ""),
+    },
+  },
 
   // 首页显示学习路径总览；语法手册见 /python/python语法手册
   rewrites: {
