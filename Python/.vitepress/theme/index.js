@@ -948,14 +948,17 @@ async function enableReviewCheckboxes() {
     wrap.className = 'vp-review-unreviewed-wrap'
     wrap.innerHTML = `
       <h2 id="待复习题目">待复习题目</h2>
-      <p class="vp-review-unreviewed-desc">以下为尚未勾选「已复习」的题目，点击可跳转作答。</p>
-      <div class="vp-review-unreviewed-empty" style="display:none;">暂无，全部已勾选复习。</div>
-      <div class="vp-review-unreviewed-table">
-        <table>
-          <thead><tr><th>题号</th><th>题目</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      <details class="vp-review-unreviewed-details" open>
+        <summary>展开 / 收起待复习题目列表</summary>
+        <p class="vp-review-unreviewed-desc">以下为尚未勾选「已复习」的题目，点击可跳转作答。</p>
+        <div class="vp-review-unreviewed-empty" style="display:none;">暂无，全部已勾选复习。</div>
+        <div class="vp-review-unreviewed-table">
+          <table>
+            <thead><tr><th>题号</th><th>题目</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
     `
     const hr = doc.querySelector('hr')
     const firstH2 = doc.querySelector('h2')
