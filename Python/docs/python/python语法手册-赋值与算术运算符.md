@@ -817,10 +817,108 @@ for char in ['A', '中', '😀']:
     print(f"'{char}' U+{cp:04X} → {manual.hex()} 验证: {manual == builtin}")
 ```
 
+#### 6.3.4 自定义类重载按位或（`|`）——`__or__` / `__ror__` / `__ior__`
+
+**一句话（小白先记）**：想让自己的类支持 `obj1 | obj2` 这种写法时，在类里实现 **`__or__(self, other)`**；必要时再实现 `__ror__`、`__ior__`。
+
+---
+
+**1. 为什么需要重载？**
+
+内置的 `|` 只对**整数**等类型做按位或。若你定义了一个类（如“权限集”“标志位封装”），希望用 `a | b` 表示“合并两个对象”，就需要让该类**重载** `|` 运算符，否则写 `obj1 | obj2` 会报错（如 `TypeError: unsupported operand type(s) for |`）。
+
+**2. 对应哪些魔术方法？**
+
+可以这样记**左右关系**（都是站在“当前类实例”的角度看）：
+
+- **`__or__`**：当前类在按位或的**左边**（`self | other` 时调用）。
+- **`__ror__`**：当前类在按位或的**右边**（`other | self` 时，当左边不支持会调 `self.__ror__(other)`）。
+- **`__ior__`**：当前类在 **`|=` 的左边**（`self |= other` 时调用，用于原地合并）。
+
+| 写法         | 调用的方法        | 说明 |
+|--------------|-------------------|------|
+| `a \| b`     | `a.__or__(b)`     | 左边 `a` 的类实现了 `__or__`，用 `a` 的逻辑处理右边的 `b`。 |
+| `a \| b`     | `b.__ror__(a)`    | 若 `a.__or__(b)` 返回 **NotImplemented**，Python 再尝试右边 `b` 的 `__ror__(a)`，即“当前类在右侧”时用。 |
+| `a \|= b`    | `a.__ior__(b)`    | 左边 `a` 的类实现了 `__ior__`，表示 `\|=` 的左侧；未实现则退化成 `a = a \| b`。 |
+
+- **`__or__(self, other)`**：定义 `self | other` 的结果；`other` 是右边的对象。
+- **`__ror__(self, other)`**：定义 `other | self` 时、当 `other` 那边不支持与 `self` 做 `|` 时，用 `self` 这边的逻辑处理（即“反过来的 or”）。
+- **`__ior__(self, other)`**：定义 `self |= other` 的原地行为；可让 `self` 直接修改并返回 `self`，避免产生新对象。
+
+**3. 最小示例：实现 `__or__`**
+
+下面给一个简单的“权限集”类，用 `|` 表示“合并两种权限”（这里用整数位表示权限，便于小白对照前面的权限掩码）。
+
+```python
+class SimplePermission:
+    """用整数位表示权限，支持 a | b 合并权限。"""
+
+    def __init__(self, value: int):
+        # value：一个整数，每一位代表一种权限（如 1=读, 2=写, 4=执行）
+        self.value = value
+
+    def __or__(self, other):
+        # 当写 perm1 | perm2 时，会调用 perm1.__or__(perm2)
+        # 合并规则：两个权限的 value 做按位或，得到新整数，再包成新 SimplePermission
+        if isinstance(other, SimplePermission):
+            return SimplePermission(self.value | other.value)
+        if isinstance(other, int):
+            return SimplePermission(self.value | other)
+        return NotImplemented  # 其他类型不支持，让 Python 再试 __ror__ 或报错
+
+    def __repr__(self):
+        return f"SimplePermission({self.value})"
+
+# 使用示例
+READ, WRITE = 1, 2
+p1 = SimplePermission(READ)   # 只有读
+p2 = SimplePermission(WRITE)  # 只有写
+p3 = p1 | p2                  # 合并：读+写，value = 3
+print(p3)                     # SimplePermission(3)
+```
+
+**4. 何时用到 `__ror__`？**
+
+当左边是**不支持与你类做 `|` 的类型**（如整数）时，`int.__or__` 不认识你的自定义类，会返回 `NotImplemented`；此时 Python 会尝试用**右边**对象的 `__ror__(self, other)`，即你的类的 `__ror__(self, 那个整数)`。
+
+例如希望支持 `1 | perm`（整数在左、权限对象在右）也得到合并后的权限，可以在类里加上：
+
+```python
+def __ror__(self, other):
+    # 当写 1 | perm 时，整数 1 没有处理 SimplePermission 的 __or__，会返回 NotImplemented
+    # Python 就会调用 perm.__ror__(1)，这里用同一套合并逻辑即可
+    if isinstance(other, int):
+        return SimplePermission(self.value | other)
+    return NotImplemented
+```
+
+**5. 复合赋值 `|=` 与 `__ior__`**
+
+- 若只实现 `__or__` 而不实现 `__ior__`，写 `a |= b` 时，Python 会退化成 `a = a | b`，即用 `__or__` 的**返回值**重新赋给 `a`，**不会**修改原对象（适合不可变或“每次合并都生成新对象”的语义）。
+- 若希望 `a |= b` 时**原地修改** `a`（并仍返回 `self`），可实现 `__ior__(self, other)`，在方法里修改 `self` 的属性后 `return self`。
+
+```python
+def __ior__(self, other):
+    if isinstance(other, SimplePermission):
+        self.value |= other.value
+    elif isinstance(other, int):
+        self.value |= other
+    else:
+        return NotImplemented
+    return self  # 原地修改后返回 self，符合 |= 的常见语义
+```
+
+**6. 小白注意（避免踩坑）**
+
+- **返回值**：`__or__` 应返回一个新的对象或合法值，不要返回 `None`（否则 `a | b` 的结果就是 `None`）。
+- **不支持时**：若你的类不想处理与某种类型做 `|`，应返回 **`NotImplemented`**，这样 Python 会去尝试 `other.__ror__(self)` 或最终报错，而不是随便返回一个错误结果。
+- **与整数 `|` 的区别**：整数之间的 `|` 是严格的“按位或”；你重载的 `|` 可以自定义成任意语义（如“合并权限”“合并集合”），只要在文档里写清楚即可。
+- **类型检查**：在 `__or__` / `__ror__` 里用 `isinstance(other, ...)` 判断类型再决定如何计算，逻辑更清晰、也避免与不支持的类型混用导致难排查的错。
+
 ### 6.4 位运算小结
 
 - **&**：按位与，两位都为 1 结果为 1；常用于掩码、奇偶判断。
-- **|**：按位或，有 1 则 1；常用于合并标志、添加权限。
+- **|**：按位或，有 1 则 1；常用于合并标志、添加权限。自定义类可通过 `__or__` / `__ror__` / `__ior__` 重载 `|` 与 `|=`（见 6.3.4）。
 - **^**：按位异或，不同为 1；性质 `x^0=x`、`x^x=0`，可交换两数、去重。
 - **~**：按位取反，Python 中 `~x == -x-1`。
 - **<<**：左移，等价于乘 2^n；可快速算 2 的幂。Python 里左移很多位不会变 0，只会变大。
