@@ -1,6 +1,6 @@
 # Python
 
-本分类包含：**语法手册**（总览 + 按章）、**标准库**（总览在语法手册第12章 + 课程内单篇）、**第三方库（课程内）**（jieba、BeautifulSoup4、lxml、OpenPyXL、PyMuPDF、Pydantic、python-docx、python-pptx、Requests、text_splitter、Sentence Transformers、OpenAI、Flask、NumPy、Scikit-learn、LaTeX）、**自测与面试**。左侧菜单已按上述分组，可直接从侧栏进入。若你从**前端转全栈**，可先看 [学习路径总览](/学习路径总览) 的「前端转全栈」建议路径。
+本分类包含：**语法手册**（总览 + 按章）、**标准库**（总览在语法手册第13章 + 课程内单篇）、**第三方库（课程内）**（jieba、BeautifulSoup4、lxml、OpenPyXL、PyMuPDF、Pydantic、python-docx、python-pptx、Requests、text_splitter、Sentence Transformers、OpenAI、Flask、NumPy、Scikit-learn、LaTeX）、**自测与面试**。左侧菜单已按上述分组，可直接从侧栏进入。若你从**前端转全栈**，可先看 [学习路径总览](/学习路径总览) 的「前端转全栈」建议路径。
 
 ## 入口与语法手册
 
@@ -19,11 +19,11 @@
 
 ## 标准库
 
-总览见 [语法手册 · 第12章 标准库](/python/python语法手册-11-标准库)；下表为课程（RAG/向量）中用到的、单独成篇的标准库模块。AI 侧可从 [知识体系与学习路径](/ai/知识体系与学习路径#四、与-python-分类的交叉) 跳转。
+总览见 [语法手册 · 第13章 标准库](/python/python语法手册-11-标准库)；下表为课程（RAG/向量）中用到的、单独成篇的标准库模块。AI 侧可从 [知识体系与学习路径](/ai/知识体系与学习路径#四、与-python-分类的交叉) 跳转。
 
 | 主题                     | 跳转                                                                                |
 | ------------------------ | ----------------------------------------------------------------------------------- |
-| 语法手册 · 第11章 标准库 | [第11章 标准库](/python/python语法手册-11-标准库)（总览）                           |
+| 语法手册 · 第13章 标准库 | [第13章 标准库](/python/python语法手册-11-标准库)（总览）                           |
 | math 数学库              | [math 数学库](/python/AI课程-math数学库)                                            |
 | typing 类型提示          | [typing 类型提示](/python/AI课程-typing类型提示)                                    |
 | collections              | [collections](/python/AI课程-collections)                                           |

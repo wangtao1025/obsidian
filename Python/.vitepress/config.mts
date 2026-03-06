@@ -150,7 +150,7 @@ export default defineConfig({
             },
             {
               text: "第4章 函数与作用域",
-              link: "/python/python语法手册-05-内置函数",
+              link: "/python/python语法手册-函数与作用域",
             },
             {
               text: "第5章 异常捕获与主动抛出",
@@ -198,7 +198,7 @@ export default defineConfig({
           text: "标准库",
           items: [
             {
-              text: "语法手册 · 第12章 标准库模块",
+              text: "语法手册 · 第13章 标准库模块",
               link: "/python/python语法手册-11-标准库",
             },
             { text: "math 数学库", link: "/python/AI课程-math数学库" },
@@ -276,7 +276,7 @@ export default defineConfig({
             },
             {
               text: "第4章 函数与作用域",
-              link: "/python/python语法手册-05-内置函数",
+              link: "/python/python语法手册-函数与作用域",
             },
             {
               text: "第5章 异常捕获与主动抛出",
@@ -324,7 +324,7 @@ export default defineConfig({
           text: "标准库",
           items: [
             {
-              text: "语法手册 · 第12章 标准库模块",
+              text: "语法手册 · 第13章 标准库模块",
               link: "/python/python语法手册-11-标准库",
             },
             { text: "math 数学库", link: "/python/AI课程-math数学库" },
@@ -364,7 +364,6 @@ export default defineConfig({
           text: "自测与面试",
           items: [
             { text: "知识点导航（1–67）", link: "/python/Python-知识点导航" },
-            { text: "关系运算符详解", link: "/python/Python-关系运算符详解" },
             {
               text: "核心语法自测试卷",
               link: "/python/Python核心语法自测试卷",

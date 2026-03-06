@@ -380,3 +380,25 @@ body.vp-fullscreen-reading .vp-doc {
     display: none;
   }
 }
+
+
+/* 自测卷：题目/答案快速跳转 */
+.vp-answer-link,
+.vp-question-link {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  padding: 2px 8px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  background: var(--vp-c-bg-elv);
+}
+
+.vp-answer-link:hover,
+.vp-question-link:hover {
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-default-soft);
+}

@@ -44,4 +44,4 @@
 
 ## 与 Python 分类的交叉
 
-课程里用到的**标准库与第三方库**（math、typing、collections、random、abc、jieba、BeautifulSoup4、lxml、OpenPyXL、PyMuPDF、Pydantic、python-docx、python-pptx、Requests、text_splitter、Sentence Transformers、OpenAI、NumPy、Scikit-learn 等）文档**统一放在 Python 分类**：侧栏「标准库」「第三方库（课程内）」；标准库总览在 [语法手册第11章](/python/python语法手册-11-标准库)。AI 分类只放 RAG、向量、检索、评估等。从 AI 侧跳转：[知识体系与学习路径](/ai/知识体系与学习路径#四、与-python-分类的交叉) 的交叉表；从 Python 侧：[Python 首页](/python/) 侧栏或首页表格。
+课程里用到的**标准库与第三方库**（math、typing、collections、random、abc、jieba、BeautifulSoup4、lxml、OpenPyXL、PyMuPDF、Pydantic、python-docx、python-pptx、Requests、text_splitter、Sentence Transformers、OpenAI、NumPy、Scikit-learn 等）文档**统一放在 Python 分类**：侧栏「标准库」「第三方库（课程内）」；标准库总览在 [语法手册第13章](/python/python语法手册-11-标准库)。AI 分类只放 RAG、向量、检索、评估等。从 AI 侧跳转：[知识体系与学习路径](/ai/知识体系与学习路径#四、与-python-分类的交叉) 的交叉表；从 Python 侧：[Python 首页](/python/) 侧栏或首页表格。

@@ -1046,7 +1046,84 @@ async function enableReviewCheckboxes() {
   })
 
   hideAnswerSectionCheckboxes(doc)
+  enhanceSelfTestAnswerLinks(doc)
   updateUnreviewedTable(doc)
+}
+
+function normalizeSelfTestSectionTitle(text) {
+  return (text || "")
+    .replace(/（共\s*\d+\s*题）/g, "")
+    .trim()
+}
+
+function getNearestSelfTestH2(li, doc) {
+  if (!doc) return null
+  let sectionH2 = null
+  doc.querySelectorAll('h2').forEach((h) => {
+    if (h.compareDocumentPosition(li) & document.DOCUMENT_POSITION_FOLLOWING) sectionH2 = h
+  })
+  return sectionH2
+}
+
+function getSelfTestItemNumber(li) {
+  const strong = li.querySelector('strong')
+  const strongText = strong ? (strong.textContent || "").trim() : ""
+  if (/^\d+$/.test(strongText)) return strongText
+  const text = (li.textContent || "").trim()
+  const match = text.match(/^(\d+)/)
+  return match ? match[1] : null
+}
+
+function enhanceSelfTestAnswerLinks(doc) {
+  if (!doc) return
+  let answerHeading = null
+  doc.querySelectorAll('h1, h2, h3, h4').forEach((h) => {
+    if (!answerHeading && (h.textContent || "").includes('参考答案')) answerHeading = h
+  })
+  if (!answerHeading) return
+
+  const isAnswerItem = (el) => answerHeading && !!(answerHeading.compareDocumentPosition(el) & document.DOCUMENT_POSITION_FOLLOWING)
+  const answerMap = new Map()
+  const questionMap = new Map()
+  const items = doc.querySelectorAll('.task-list-item, ul > li, ol > li')
+
+  items.forEach((li) => {
+    const section = getNearestSelfTestH2(li, doc)
+    const num = getSelfTestItemNumber(li)
+    if (!section || !num) return
+    const sectionTitle = normalizeSelfTestSectionTitle(section.textContent)
+    if (!sectionTitle) return
+    const key = `${sectionTitle}__${num}`
+    if (isAnswerItem(li)) {
+      if (!li.id) li.id = `ans-${simpleHash(key)}`
+      answerMap.set(key, li)
+    } else {
+      questionMap.set(key, li)
+    }
+  })
+
+  questionMap.forEach((li, key) => {
+    const ans = answerMap.get(key)
+    if (!ans || li.querySelector('.vp-answer-link')) return
+    const link = document.createElement('a')
+    link.className = 'vp-answer-link'
+    link.href = `#${ans.id}`
+    link.textContent = '查看答案'
+    link.setAttribute('data-vp-answer-link', '1')
+    li.appendChild(link)
+  })
+
+  answerMap.forEach((li, key) => {
+    const q = questionMap.get(key)
+    if (!q || li.querySelector('.vp-question-link')) return
+    const link = document.createElement('a')
+    link.className = 'vp-question-link'
+    link.href = `#${q.id || `q-${simpleHash(key)}`}`
+    link.textContent = '返回题目'
+    link.setAttribute('data-vp-question-link', '1')
+    if (!q.id) q.id = `q-${simpleHash(key)}`
+    li.appendChild(link)
+  })
 }
 
 function hideAnswerSectionCheckboxes(doc) {
