@@ -127,14 +127,26 @@ export default defineConfig({
       // Python 分类（/python/ 与 /python 均配置）
       "/python/": [
         {
-          text: "入口",
+          text: "学习准备",
           items: [
             { text: "Python 首页", link: "/python/" },
             { text: "语法手册总览", link: "/python/python语法手册" },
+            {
+              text: "Python 开发环境与工具链",
+              link: "/python/Python开发环境与工具链",
+            },
+            {
+              text: "Python 语言认知与执行模型",
+              link: "/python/Python语言认知与执行模型",
+            },
+            {
+              text: "Python 数据类型总览",
+              link: "/python/Python数据类型总览",
+            },
           ],
         },
         {
-          text: "语法手册（按章）",
+          text: "核心语法（按章）",
           items: [
             {
               text: "第1章 变量赋值与解包",
@@ -195,6 +207,39 @@ export default defineConfig({
           ],
         },
         {
+          text: "进阶专题",
+          items: [
+            {
+              text: "Python 模块、包与导入机制",
+              link: "/python/Python模块包与导入机制",
+            },
+            {
+              text: "Python 迭代模型与生成器",
+              link: "/python/Python迭代模型与生成器",
+            },
+            {
+              text: "Python 面向对象基础",
+              link: "/python/Python面向对象基础",
+            },
+            {
+              text: "Python 对象模型与协议",
+              link: "/python/Python对象模型与协议",
+            },
+            {
+              text: "Python 运行时与内存机制",
+              link: "/python/Python运行时与内存机制",
+            },
+            {
+              text: "Python 并发基础",
+              link: "/python/Python并发基础",
+            },
+            {
+              text: "Python 性能分析与调优基础",
+              link: "/python/Python性能分析与调优基础",
+            },
+          ],
+        },
+        {
           text: "标准库",
           items: [
             {
@@ -238,7 +283,6 @@ export default defineConfig({
           text: "自测与面试",
           items: [
             { text: "知识点导航（1–67）", link: "/python/Python-知识点导航" },
-            // { text: '关系运算符详解', link: '/python/Python-关系运算符详解' },
             {
               text: "核心语法自测试卷",
               link: "/python/Python核心语法自测试卷",
@@ -253,14 +297,26 @@ export default defineConfig({
       ],
       "/python": [
         {
-          text: "入口",
+          text: "学习准备",
           items: [
             { text: "Python 首页", link: "/python/" },
             { text: "语法手册总览", link: "/python/python语法手册" },
+            {
+              text: "Python 开发环境与工具链",
+              link: "/python/Python开发环境与工具链",
+            },
+            {
+              text: "Python 语言认知与执行模型",
+              link: "/python/Python语言认知与执行模型",
+            },
+            {
+              text: "Python 数据类型总览",
+              link: "/python/Python数据类型总览",
+            },
           ],
         },
         {
-          text: "语法手册（按章）",
+          text: "核心语法（按章）",
           items: [
             {
               text: "第1章 变量赋值与解包",
@@ -321,6 +377,39 @@ export default defineConfig({
           ],
         },
         {
+          text: "进阶专题",
+          items: [
+            {
+              text: "Python 模块、包与导入机制",
+              link: "/python/Python模块包与导入机制",
+            },
+            {
+              text: "Python 迭代模型与生成器",
+              link: "/python/Python迭代模型与生成器",
+            },
+            {
+              text: "Python 面向对象基础",
+              link: "/python/Python面向对象基础",
+            },
+            {
+              text: "Python 对象模型与协议",
+              link: "/python/Python对象模型与协议",
+            },
+            {
+              text: "Python 运行时与内存机制",
+              link: "/python/Python运行时与内存机制",
+            },
+            {
+              text: "Python 并发基础",
+              link: "/python/Python并发基础",
+            },
+            {
+              text: "Python 性能分析与调优基础",
+              link: "/python/Python性能分析与调优基础",
+            },
+          ],
+        },
+        {
           text: "标准库",
           items: [
             {
@@ -367,6 +456,10 @@ export default defineConfig({
             {
               text: "核心语法自测试卷",
               link: "/python/Python核心语法自测试卷",
+            },
+            {
+              text: "核心语法 · 错题本",
+              link: "/python/Python核心语法-错题本",
             },
             { text: "Python 面试题", link: "/python/python 面试题" },
           ],

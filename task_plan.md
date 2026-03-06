@@ -1,61 +1,42 @@
-# Task Plan: 以面试题与语法手册为基准扩展自测试卷
+# 任务计划：python.docs-hub.com 66 题与当前手册覆盖审计
 
-## Goal
-审查 `Python/docs/python/python 面试题.md`、语法手册与自测试卷之间的覆盖差异，持续为 `Python/docs/python/Python核心语法自测试卷.md` 补充遗漏题目，并尽量保持旧题号稳定不变。
+## 目标
+完整分析 `https://python.docs-hub.com/` 的所有题目，判断这些题及其涉及的知识点在当前手册中的覆盖状态：
+- 已完整覆盖
+- 部分覆盖
+- 完全未纳入
 
-## Current Phase
-Phase 5
+并进一步给出：
+- 每个未纳入知识点最适合落到哪个现有文档/章节
+- 如果当前结构不合适，是否需要新增文档或调整左侧菜单顺序
+- 最终形成一份可执行的重编排建议
 
-## Phases
+## 阶段
+- [complete] 1. 盘点题站全部题目与主题范围
+- [complete] 2. 盘点当前手册与相关文档结构
+- [complete] 3. 逐题对照覆盖状态
+- [complete] 4. 归纳未覆盖知识点落点
+- [complete] 5. 评估左侧菜单与章节编排是否需要调整
+- [complete] 6. 输出审计结论与建议
 
-### Phase 1: Requirements & Discovery
-- [x] Understand user intent
-- [x] Identify constraints and requirements
-- [x] Document findings in findings.md
-- **Status:** complete
+## 当前已知
+- 题站共有 66 道题（编号表现为 1–65、67）。
+- 当前手册已重写到 `Python/docs/python/python语法手册-11-标准库.md`。
+- 之前的映射中，部分题被暂时排除在“核心语法手册正文”之外。
 
-### Phase 2: Gap Analysis
-- [x] Extract interview-question knowledge points
-- [x] Compare against self-test coverage
-- [x] Decide insertion strategy without breaking old numbering
-- **Status:** complete
+## 风格约束
+- 不只是看自测卷覆盖，要看 66 道题整体知识点覆盖。
+- 不能只说“有提到”，要判断是否真的形成了系统知识点归纳。
+- 要明确哪些题只覆盖了一部分。
+- 要给出未覆盖内容的合理落点。
 
-### Phase 3: Implementation
-- [x] Add missing self-test questions
-- [x] Sync answer section
-- [x] Preserve old numbering compatibility
-- **Status:** complete
+## 风险点
+- 题站题目可能跨多个知识点，不能只按标题机械归类。
+- 现有章节名称与题站主题未必一一对应，可能需要新增补充手册。
 
-### Phase 4: Verification
-- [x] Check numbering and cross-references
-- [x] Record remaining uncovered points
-- [x] Update progress logs
-- **Status:** complete
-
-### Phase 5: Delivery
-- [ ] Summarize changes
-- [ ] Explain residual gaps
-- [ ] Propose next batch
-- **Status:** in_progress
-
-## Key Questions
-1. `python 面试题.md` 当前覆盖了哪些知识点，而自测试卷尚未显式出题？
-2. 在不改旧题号的前提下，新增题目采用什么编号最稳？
-3. 本轮优先补哪些高价值缺口，能最大化提升覆盖率？
-
-## Decisions Made
-| Decision | Rationale |
-|----------|-----------|
-| 本轮不再顺延旧题号 | 用户明确担心题号影响；新增题只追加到各节末尾 |
-| 以“面试题 + 手册总览”双基准审计 | 面试题偏应用，手册偏知识点，组合更完整 |
-| 优先补应用型综合题 | 当前自测卷基础知识较全，综合场景题更有增益 |
-
-## Errors Encountered
-| Error | Attempt | Resolution |
-|-------|---------|------------|
-| `apply_patch` 通过 `exec_command` 触发警告 | 1 | 本轮改用 `python3` 脚本做定点编辑 |
-| `rg` 查询命令引号冲突 | 1 | 改用 `python3` 做精确行号定位 |
-
-## Notes
-- 已确认复习状态持久化主键基于题干内容哈希，而非显示题号。
-- 本轮新增题全部追加到各节末尾，没有再改动既有题号。
+## 2026-03-06 落地结果
+- [complete] 已新增 10 篇补充专题文档，覆盖原审计中的未纳入与部分覆盖主题。
+- [complete] 已重写 `Python/docs/python/Python-知识点导航.md`，把 66 题与扩展主题全部映射到当前文档体系。
+- [complete] 已重排 `Python/.vitepress/config.mts` 中 `/python/` 与 `/python` 侧边栏顺序。
+- [complete] 已扩写 `Python/docs/python/python语法手册-函数与作用域.md` 与 `Python/docs/python/python语法手册-11-标准库.md` 中原先覆盖不足的关键知识点。
+- [complete] 已执行 `npm run docs:build`，构建通过。

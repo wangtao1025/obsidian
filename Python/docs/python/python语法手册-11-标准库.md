@@ -1,388 +1,473 @@
 # 标准库模块
 
-← [语法手册总览](/python/python语法手册) | [上一章 循环](/python/python语法手册-10-循环)
+← [语法手册总览](/python/python语法手册) | [上一章 循环遍历](/python/python语法手册-10-循环)
 
 ---
 
-**本章对应自测卷**：[标准库模块（共 8 题）](/python/Python核心语法自测试卷#十二标准库模块-共-8-题)
-**学完能做什么**：用 `datetime` 做时间获取与加减、用 `time` 做计时、用进制与数学相关内置或模块做换算。  
-**小白注意**：① 官方完整 API 查 [Python 文档](https://docs.python.org/zh-cn/3/library/)。② 本站课程用到的标准库（math、typing、collections、random、heapq 等）见 [Python 首页](/python/)「标准库」表格。
+**本章对应自测卷**：[标准库模块（共 14 题）](/python/Python核心语法自测试卷#十二标准库模块-共-8-题)
+**学完能做什么**：掌握 `datetime`、`collections.namedtuple`、`re` 三类高频标准库知识点，并补上文件读取、`copy`、`reduce`、`pickle`、性能分析这些常见工程向面试知识。  
+**小白注意**：① 标准库是 Python 自带的，不用额外安装。② `strftime` 是“时间对象 -> 字符串”，`strptime` 是“字符串 -> 时间对象”。③ `re.match()` 偏向从开头匹配，`re.search()` 偏向在整段里找第一个匹配。④ `namedtuple` 依然是元组，本质上不可变。
 
 ---
 
-## 一、标准库模块
+## 一、先理解什么叫“标准库”
 
-### 1.1 `datetime` 日期时间处理
-#### 1.1.1 功能概述
-`datetime` 模块提供日期和时间处理功能，支持时间获取、格式化、运算和解析。
+**一句话先懂**：标准库就是 Python 官方自带的一整套工具箱，装好 Python 基本就能直接用。
 
-#### 1.1.2 主要类型
-- `datetime`  包含日期和时间
-- `date` 仅包含日期
-- `time` 仅包含时间
-- `timedelta` 时间间隔
+比如：
+- 时间日期处理：`datetime`
+- 命名元组：`collections.namedtuple`
+- 正则表达式：`re`
+- 拷贝：`copy`
+- 序列化：`pickle`
 
-#### 1.1.3 基本用法
+这些模块共同特点是：
+- 不用额外安装第三方包
+- 覆盖常见通用需求
+- 面试和日常开发里都很高频
 
-##### 1.1.3.1 获取当前时间
+---
+
+## 二、`datetime`：处理日期和时间
+
+### 2.1 `datetime` 模块里的四个高频类型
+
+自测题会问的最常见答案是：
+- `date`
+- `time`
+- `datetime`
+- `timedelta`
+
+### 2.2 当前时间和今天日期
+
 ```python
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date
 
-# 获取当前时间
+print(datetime.now())
+print(date.today())
+```
+
+**一句话先懂**：
+- `datetime.now()`：当前日期 + 时间
+- `date.today()`：今天的日期，不含具体时分秒
+
+### 2.3 `strftime()`：时间对象转字符串
+
+```python
+from datetime import datetime
+
 now = datetime.now()
-print("当前时间:", now)
-print("格式化时间:", now.strftime("%Y-%m-%d %H:%M:%S"))
- 
+print(now.strftime('%Y-%m-%d %H:%M:%S'))
 ```
 
-##### 1.1.3.2 创建特定时间
+如果你想得到类似：
+
+```text
+2024-01-15 14:30:00
+```
+
+就常用这个格式串：
+
 ```python
-# 创建特定时间
-dt = datetime(2024, 1, 15, 14, 30, 0)
-print("特定时间:", dt)
+'%Y-%m-%d %H:%M:%S'
 ```
 
-##### 1.1.3.3 时间运算
+### 2.4 `strptime()`：字符串转时间对象
+
 ```python
-# 时间加减
-tomorrow = now + timedelta(days=1)
-last_week = now - timedelta(weeks=1)
-print("明天:", tomorrow)
-print("上周:", last_week)
+from datetime import datetime
 
-# 时间差计算
-time_diff = tomorrow - now
-print("时间差:", time_diff)
-print("相差天数:", time_diff.days)
-print("相差秒数:", time_diff.total_seconds())
+text = '2024-01-15 14:30:00'
+dt = datetime.strptime(text, '%Y-%m-%d %H:%M:%S')
+print(dt)
 ```
 
-##### 1.1.3.4 时间组件
+### 2.5 `strftime` 和 `strptime` 怎么记
+
+- `strftime`：**format**，把时间格式化成字符串
+- `strptime`：**parse**，把字符串解析成时间
+
+### 2.6 `timedelta`：做日期时间加减
+
 ```python
-# 获取时间各部分
-print("年:", now.year)
-print("月:", now.month)
-print("日:", now.day)
-print("时:", now.hour)
-print("分:", now.minute)
-print("星期:", now.weekday())
+from datetime import datetime, timedelta
+
+now = datetime.now()
+print(now + timedelta(days=1))
+print(now - timedelta(hours=2))
 ```
 
-##### 1.1.3.5 字符串解析
+### 2.7 一个高频题：怎么求“明天”
+
 ```python
-# 字符串解析为时间对象
-date_str = "2024-01-15 14:30:00"
-parsed_date = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-print("解析后的时间:", parsed_date)
+from datetime import date, timedelta
+
+print(date.today() + timedelta(days=1))
 ```
-- strptime 就是将字符串的时间转换为时间对象
-- strftime 就是将时间对象转换成时间字符串
-- https://docs.python.org/zh-cn/3/library/datetime.html#strftime-and-strptime-behavior
-#### 1.1.4 使用场景
-- 日志记录和时间戳
-- 数据分析和统计
-- 定时任务和调度
-- 用户界面时间显示
 
-### 1.2 `collections` - 高级数据结构
-`collections` 模块提供高性能、多用途的数据结构，扩展了内置类型的功能。
+### 2.8 格式串写错通常会怎样
 
-##### 1.2.1 `namedtuple` - 命名元组
+```python
+from datetime import datetime
 
-`namedtuple`是Python标准库`collections`模块中的一个工厂函数，用于创建具名元组。它允许你像访问对象的属性一样访问元组元素，主要作用是提高代码的可读性和可维护性。
+# datetime.strptime('2024/01/15', '%Y-%m-%d')
+```
 
-- 主要特点
-	-  **具名访问**：可以通过属性名访问元组元素
-	- **索引访问**：仍然支持传统的索引访问方式
-	- **不可变性**：与普通元组一样，创建后不可修改
-	- **内存效率**：比普通类更节省内存
-	- **自描述性**：通过字段名提供更好的代码可读性
--  **导入 `namedtuple`**
-	```python
-		# 从 collections 模块导入 namedtuple 
-		from collections import namedtuple
-	```
--  **定义具名元组类型**
-    - 通过字段名创建一个新的具名元组类```
-    ```python
-    # 从 collections 模块导入 namedtuple 
-    from collections import namedtuple 
-    # 创建一个名为 'Point' 的具名元组类 # 该类将拥有 'x' 和 'y' 两个字段 
-    Point = namedtuple('Point', ['x', 'y'])
-    ```
--  **实例化具名元组对象**
-    - 传入各字段对应的值，获得该对象
-	```python
-	# 从 collections 模块导入 namedtuple 
-	from collections import namedtuple 
-	# 创建一个名为 'Point' 的具名元组类 # 该类将拥有 'x' 和 'y' 两个字段 
-	Point = namedtuple('Point', ['x', 'y']) 
-	
-	# 创建一个 Point 具名元组对象 
-	# 传入 x 值为 10，y 值为 20 
-	p = Point(10, 20)
-	```
-- 访问元素
-	- 既可以用“点.属性名”方式，也可以用索引方式
-	```python
-	# 从 collections 模块导入 namedtuple 
-	from collections import namedtuple 
-	# 创建一个名为 'Point' 的具名元组类 
-	# 该类将拥有 'x' 和 'y' 两个字段 
-	Point = namedtuple('Point', ['x', 'y']) 
-	
-	# 创建一个 Point 具名元组对象 
-	# 传入 x 值为 10，y 值为 20 
-	p = Point(10, 20) 
-	
-	# 访问具名元组的属性 
-	# 打印 x 属性的值 
-	print(f"p.x = {p.x}") 
-	# 预期输出: p.x = 10 
-	
-	# 打印 y 属性的值 
-	print(f"p.y = {p.y}") 
-	# 预期输出: p.y = 20 
-	
-	# 也可以像普通元组一样通过索引访问元素 
-	# 打印第一个元素 (索引为 0) 的值 
-	print(f"p[0] = {p[0]}") 
-	# 预期输出: p[0] = 10 
-	
-	# 打印第二个元素 (索引为 1) 的值 
-	print(f"p[1] = {p[1]}") 
-	# 预期输出: p[1] = 20 
-	
-	# 打印整个具名元组对象 
-	print(f"Point对象: {p}") 
-	# 预期输出: Point对象: Point(x=10, y=20)
-	```
-- 其他功能
-	- `_fields`、
-		- 获取具名元组的字段名 
-		- `print(f"字段名: {p._fields}") # 预期输出: 字段名: ('x', 'y')`
-	- `_replace()`
-		- 使用`_replace`方法，替换a字段，生成新的对象
-		- `new_person = person._replace(age=26, city='Boston')`
-	- `_asdict()`
-		- 转换为字典
-		- `# 将Person实例转换为字典`
-		- `person_dict = person._asdict()`
-- 多种创建方式
-	```python
-		from collections import namedtuple
-		# 方式1：使用列表定义字段
-		Person1 = namedtuple('Person', ['name', 'age', 'city'])
-		# 创建Person具名元组类
-		person1 = Person1('Alice', 25, 'New York')
-		# 创建Person实例
-		print(f"方式1 - 列表定义: {person1}")
-		# 打印方式1的结果
-		
-		# 方式2：使用字符串定义字段（空格分隔）
-		Person2 = namedtuple('Person', 'name age city')
-		# 创建Person具名元组类
-		person2 = Person2('Bob', 30, 'London')
-		# 创建Person实例
-		print(f"方式2 - 字符串定义: {person2}")
-		# 打印方式2的结果
-		
-		# 方式3：使用字符串定义字段（逗号分隔）
-		Person3 = namedtuple('Person', 'name, age, city')
-		# 创建Person具名元组类
-		person3 = Person3('Charlie', 35, 'Tokyo')
-		# 创建Person实例
-		print(f"方式3 - 逗号分隔: {person3}")
-		# 打印方式3的结果
-		
-		# 方式4：使用元组定义字段
-		Person4 = namedtuple('Person', ('name', 'age', 'city'))
-		# 创建Person具名元组类
-		person4 = Person4('David', 28, 'Paris')
-		# 创建Person实例
-		print(f"方式4 - 元组定义: {person4}")
-		# 打印方式4的结果
-		
-		# 打印功能验证标题
-		for i, person in enumerate([person1, person2, person3, person4], 1):
-		    # 遍历所有person对象
-		    print(f"方式{i} - 姓名: {person.name}, 年龄: {person.age}, 城市: {person.city}")
-	    # 打印每个person的属性
-	```
+这种通常会失败，并抛出 `ValueError`，因为：
+- 原字符串里是 `/`
+- 你的格式串里写的是 `-`
 
 ---
 
-### 1.3 `re` 模块 — 正则表达式（内置模块） {#13-re-模块-正则表达式内置模块}
+## 三、`collections.namedtuple`：带字段名的元组
 
-`re` 是 Python 的**内置标准库模块**，用于**正则表达式**：按“模式”匹配、查找、替换字符串。无需安装，`import re` 即可使用。下面先给小白一个总表，再分块说明常用函数和 **match 对象**。
+### 3.1 为什么要用 `namedtuple`
 
-#### 1.3.1 小白先记
+**一句话先懂**：普通元组只能靠位置取值，`namedtuple` 既保留元组的轻量特性，又能用字段名访问。
 
-- **正则**：用一串符号描述“长得像什么”的文本（如数字、邮箱、电话号），再在字符串里找或换。
-- **re 模块**：提供 `re.match`、`re.search`、`re.findall`、`re.sub`、`re.split` 等函数；很多函数返回 **match 对象**，用 `.group()` 取出匹配到的内容。
-- **match 对象**：表示“某次匹配的结果”，常用 `match.group(0)` 取整段匹配串，`match.group(1)`、`match.group(2)` 取括号分组。
+```python
+from collections import namedtuple
 
-#### 1.3.2 re 模块常用函数总览（总结表）
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(10, 20)
+print(p.x, p.y)
+```
 
-| 函数 / 方法 | 作用 | 返回值 | 典型场景 |
-|-------------|------|--------|----------|
-| `re.match(pattern, string)` | 从**字符串开头**尝试匹配 | 成功返回 **match 对象**，失败返回 `None` | 校验“整串是否符合格式”（如是否以数字开头） |
-| `re.search(pattern, string)` | 在字符串中**找第一个**匹配位置 | 成功返回 **match 对象**，失败返回 `None` | 找“有没有某模式”（不要求从开头） |
-| `re.findall(pattern, string)` | 找出**所有**不重叠的匹配 | **列表**，每个元素是匹配到的子串（或元组，当有分组时） | 提取所有数字、所有邮箱等 |
-| `re.sub(pattern, repl, string, count=0)` | 按模式**替换**；`repl` 可为字符串或函数 | **新字符串**，原串不变 | 掩码电话号、多词替换（配合函数），详见 [内置数据结构 · 字符串替换](/python/python语法手册-02-内置数据结构#152-字符串替换详解strreplace--不可变性-resub-多重替换) |
-| `re.split(pattern, string, maxsplit=0)` | 按模式**分割**字符串 | **列表** | 按多种分隔符（如逗号、分号）拆开，见 [1.5.6 .split()](/python/python语法手册-02-内置数据结构#156-split自测卷-319-待复习) |
-| `re.compile(pattern)` | 把正则字符串**编译**成对象 | **Pattern 对象**，可多次调用 `.match` / `.search` / `.sub` 等 | 同一正则要用很多次时，先 compile 再调用，更高效 |
-| `re.escape(string)` | 把字符串里的**正则特殊字符**转义 | **字符串**，适合作为“字面匹配”的正则 | 用户输入或字典键拼进正则时，避免 `.`、`+` 等被当语法 |
+### 3.2 相比普通元组，它的优势是什么
 
-#### 1.3.3 match 对象（小白向）
+至少可以先记这三点：
+- 可读性更强：`p.x` 比 `p[0]` 清楚
+- 代码语义更明确：字段名表达了位置含义
+- 仍然保留元组的轻量和不可变特性
 
-当 `re.match()`、`re.search()` 或 `Pattern` 的 `.match()` / `.search()` 匹配成功时，返回的是 **match 对象**（不是字符串）。用这个对象可以：
+### 3.3 最基础创建方式
 
-- **取出匹配到的文字**：`match.group(0)` 表示**整段**匹配到的字符串；若有括号分组，`match.group(1)`、`match.group(2)` 表示第 1、2 个括号里匹配到的部分。
-- **取出匹配范围**：`match.start()`、`match.end()` 表示匹配在原串中的起止索引；`match.span()` 返回 `(start, end)`。
+```python
+from collections import namedtuple
 
-**简单示例**：
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(10, 20)
+print(p)
+```
+
+### 3.4 字段的几种定义方式
+
+```python
+from collections import namedtuple
+
+P1 = namedtuple('Point', ['x', 'y'])
+P2 = namedtuple('Point', 'x y')
+P3 = namedtuple('Point', 'x, y')
+```
+
+这些写法都很常见。
+
+### 3.5 `_replace()` 是干什么的
+
+```python
+from collections import namedtuple
+
+Point = namedtuple('Point', ['x', 'y'])
+p1 = Point(10, 20)
+p2 = p1._replace(x=99)
+
+print(p1)  # Point(x=10, y=20)
+print(p2)  # Point(x=99, y=20)
+```
+
+**一句话先懂**：`_replace()` 不会修改原对象，而是返回一个新的 `namedtuple` 实例。
+
+这和字符串、元组的“不可变”思路是一致的。
+
+---
+
+<span id="13-re-模块-正则表达式内置模块"></span>
+## 四、`re` 模块：正则表达式的核心入口
+
+### 4.1 先记住三个最常用函数
+
+- `re.match()`：从开头尝试匹配
+- `re.search()`：在整段中找第一个匹配
+- `re.findall()`：把所有匹配结果收集成列表
 
 ```python
 import re
 
-s = "Hello 123 World 456"
-m = re.search(r"\d+", s)   # 找第一段连续数字
-if m:
-    print(m.group(0))      # "123"  整段匹配
-    print(m.span())        # (6, 9)  在 s 中的位置
-
-# 带分组的例子：提取区号和号码
-tel = "Tel: 010-12345678"
-n = re.search(r"(\d{3})-(\d{8})", tel)
-if n:
-    print(n.group(0))      # "010-12345678"  整段
-    print(n.group(1))      # "010"  第 1 个括号
-    print(n.group(2))      # "12345678"  第 2 个括号
+text = 'abc 123 xyz 456'
+print(re.match(r'\d+', text))
+print(re.search(r'\d+', text))
+print(re.findall(r'\d+', text))
 ```
 
-#### 1.3.4 match 对象常用属性和方法（总结表）
+### 4.2 `re.match()` 和 `re.search()` 的区别
 
-| 属性 / 方法 | 含义 | 示例 |
-|-------------|------|------|
-| `match.group(0)` | 整段匹配到的字符串 | `re.search(r'\d+', 'a12b').group(0)` → `'12'` |
-| `match.group(n)` | 第 n 个括号分组（n≥1） | 见上面 `group(1)`、`group(2)` |
-| `match.groups()` | 所有分组组成的**元组** | `('010', '12345678')` |
-| `match.start()` / `match.end()` | 匹配在原串中的起始 / 结束索引 | 见上面 `span()` |
-| `match.span()` | `(start, end)` 元组 | 用于切片：`s[m.start():m.end()]` 等价于 `m.group(0)` |
+**一句话先懂**：
+- `match` 更像“从字符串开头查”
+- `search` 更像“在整段文本里找第一个符合的”
 
-**注意**：匹配失败时得到的是 `None`，不能调用 `.group()`，否则会报错。使用前建议写 `if m:` 判断。
+```python
+import re
 
-#### 1.3.5 专业向补充
+text = 'abc 123'
+print(re.match(r'\d+', text))   # None
+print(re.search(r'\d+', text))  # 匹配到 123
+```
 
-- **match 与 search**：`match` 只从**开头**匹配；`search` 在**整串**里找第一个匹配。若要从开头匹配，用 `match` 更明确；若找任意位置，用 `search`。
-- **正则中的 raw 字符串**：建议写 `r"..."`，避免反斜杠被 Python 转义（如 `r"\d"` 表示“数字”）。
-- **更多 API**：`re.fullmatch`（整串匹配）、`re.finditer`（返回迭代器，每项为 match）、`re.sub` 的 `repl` 为函数时的用法等，见 [内置数据结构 · re.sub 结合函数做多重替换](/python/python语法手册-02-内置数据结构#41-方式二详解resub-结合函数做多重替换小白向)；完整列表见 [Python 官方 re 文档](https://docs.python.org/zh-cn/3/library/re.html)。
+### 4.3 `re.findall()` 返回什么
+
+```python
+import re
+
+text = 'abc 123 xyz 456'
+print(re.findall(r'\d+', text))  # ['123', '456']
+```
+
+**一句话先懂**：它返回的是列表，里面装的是所有匹配到的结果。
+
+### 4.4 `match` 对象怎么取值
+
+```python
+import re
+
+m = re.search(r'(\d+)-(\w+)', '123-abc')
+print(m.group(0))
+print(m.group(1))
+print(m.group(2))
+```
+
+这里：
+- `group(0)`：整段匹配结果
+- `group(1)`：第一个括号分组
+- `group(2)`：第二个括号分组
+
+### 4.5 `re.sub()`：按模式替换
+
+```python
+import re
+
+print(re.sub(r'\s+', '-', 'a  b   c'))  # a-b-c
+```
+
+**一句话先懂**：它常用来把“不规则空白”“多种分隔符”等内容统一处理掉。
+
+### 4.6 `re.compile()`、`re.escape()`、`re.split()`
+
+这些在前面的字符串章节已经细讲过，这里只做快速归纳：
+- `re.compile()`：把模式先编译好，适合重复使用
+- `re.escape()`：把特殊字符转义成字面量匹配
+- `re.split()`：按正则规则拆分字符串
+
+相关补充见：
+- `Python/docs/python/python语法手册-02-内置数据结构.md:586`
+- `Python/docs/python/python语法手册-02-内置数据结构.md:705`
+- `Python/docs/python/python语法手册-02-内置数据结构.md:788`
 
 ---
 
-**延伸**：课程（RAG/向量）中用到的标准库另有单篇详解，见 [Python 首页](/python/) 的「标准库」：math、typing、collections、random、heapq；第三方库见「第三方库（课程内）」：jieba、BeautifulSoup4。
+## 五、工程向高频标准库：文件读取、拷贝、归约、序列化、性能分析
 
----
-
-**本章小结**：常用标准库如 `datetime`（日期时间）、`time`（计时）、`re`（正则匹配与替换）、进制与数学相关；`re` 做模式匹配与替换，返回的 match 对象用 `.group(0)` 取整段、`.group(1)` 等取分组；详细 API 查官方文档，本站课程相关模块见 Python 首页标准库与第三方库表格。
-
-
-## 二、文件读取、`copy`、`reduce`、`pickle` 与性能分析
-
-### 2.1 文件对象：`read()` / `readline()` / `readlines()`
+### 5.1 文件读取：`read()` / `readline()` / `readlines()`
 
 ```python
 with open('demo.txt', 'r', encoding='utf-8') as f:
-    all_text = f.read()
-
-with open('demo.txt', 'r', encoding='utf-8') as f:
-    first_line = f.readline()
-
-with open('demo.txt', 'r', encoding='utf-8') as f:
-    all_lines = f.readlines()
+  text = f.read()
 ```
 
-- `read()`：返回整个字符串。
-- `readline()`：返回一行字符串。
-- `readlines()`：返回“每行一个字符串”的列表。
-- 读大文件时，更推荐：
+三者区别：
+- `read()`：一次读全部
+- `readline()`：读一行
+- `readlines()`：读成列表，每项一行
+
+如果文件很大，更推荐按行遍历：
 
 ```python
-with open('huge.log', 'r', encoding='utf-8') as f:
-    for line in f:
-        process(line)
+with open('big.txt', 'r', encoding='utf-8') as f:
+  for line in f:
+    process(line)
 ```
 
-### 2.2 `copy`：浅拷贝 vs 深拷贝
+**一句话先懂**：大文件不要一口气 `read()` 到内存里，按行遍历通常更稳。
+
+### 5.2 `copy`：浅拷贝和深拷贝
 
 ```python
 import copy
 
-origin = [[1, 2], [3, 4]]
-shallow = copy.copy(origin)
-deep = copy.deepcopy(origin)
-
-origin[0][0] = 999
-print(shallow)  # [[999, 2], [3, 4]]
-print(deep)     # [[1, 2], [3, 4]]
+a = [[1, 2], [3, 4]]
+b = copy.copy(a)
+c = copy.deepcopy(a)
 ```
 
-- **浅拷贝**：只复制最外层，内部嵌套对象仍共享。
-- **深拷贝**：递归复制，内部嵌套对象也独立。
+**一句话先懂**：
+- 浅拷贝只复制最外层容器
+- 深拷贝会递归复制里面嵌套的对象
 
-### 2.3 `functools.reduce()`：把一串值归约成一个值
+#### 5.2.1 为什么这个知识点特别容易出错
+
+因为很多人看到“复制”两个字，就以为复制完一定完全独立。
+
+但对嵌套结构来说，浅拷贝并不是这样。
+
+```python
+a = [[1, 2], [3, 4]]
+b = copy.copy(a)
+
+b[0].append(99)
+print(a)  # [[1, 2, 99], [3, 4]]
+```
+
+原因是：
+- 外层列表是新对象
+- 里面那两个内层列表，浅拷贝后仍然共享引用
+
+#### 5.2.2 深拷贝什么时候用
+
+如果你明确需要：
+- 外层和内层都彻底分离
+- 修改复制后的嵌套对象不影响原对象
+
+这时更适合 `copy.deepcopy()`。
+
+#### 5.2.3 但深拷贝也不是越多越好
+
+因为它：
+- 更重
+- 更慢
+- 可能复制很多你其实不需要复制的结构
+
+所以要先想清楚：
+- 你到底是想“复制一层结构”
+- 还是想“完全断开所有嵌套引用”
+
+### 5.3 `functools.reduce()`：把一串值归约成一个值
 
 ```python
 from functools import reduce
 
-nums = [1, 2, 3, 4]
-result = reduce(lambda acc, x: acc + x, nums, 0)
-print(result)  # 10
+print(reduce(lambda x, y: x + y, [1, 2, 3, 4]))  # 10
 ```
 
-- `reduce` 适合“累计折叠”问题。
-- 但简单求和优先用 `sum()`，可读性更好。
+**一句话先懂**：它会把多个值“不断合并”，最后得到一个结果。
 
-### 2.4 `pickle`：对象序列化与反序列化
+#### 5.3.1 它是怎么工作的
+
+大致可以理解成：
+
+```python
+(((1 + 2) + 3) + 4)
+```
+
+也就是把前一步结果继续和下一个值合并。
+
+#### 5.3.2 什么场景适合它
+
+- 求和、求积
+- 合并结构
+- 累积状态
+
+但如果只是简单求和，通常 `sum()` 更直观。
+
+### 5.4 `pickle`：对象序列化与反序列化
 
 ```python
 import pickle
 
-data = {'name': 'Tom', 'score': 95}
-blob = pickle.dumps(data)
-restored = pickle.loads(blob)
+data = {'name': 'Tom', 'age': 18}
+raw = pickle.dumps(data)
+obj = pickle.loads(raw)
+print(obj)
 ```
 
-- `dumps` / `loads`：面向内存中的字节串。
-- `dump` / `load`：面向文件。
-- **注意**：不要反序列化不可信来源的 pickle 数据。
+**一句话先懂**：
+- `dumps` / `dump`：把对象序列化
+- `loads` / `load`：把序列化结果恢复成对象
 
-### 2.5 常用工程向标准库速记
+#### 5.4.1 它常用来做什么
 
-- `collections.namedtuple`：轻量不可变记录结构。
-- `copy`：浅拷贝 / 深拷贝。
-- `functools.reduce`：归约运算。
-- `pickle`：对象序列化。
-- `pathlib` / `os`：路径与文件系统。
-- `timeit` / `cProfile`：性能测量与性能分析。
+- 临时保存 Python 对象
+- 在本地缓存中持久化对象
+- 进程间或任务间传递 Python 对象（某些场景）
+
+#### 5.4.2 `dump` / `load` 和 `dumps` / `loads` 的区别
+
+- `dump` / `load`：面向文件对象
+- `dumps` / `loads`：面向字节串
+
+```python
+import pickle
+
+with open('data.pkl', 'wb') as file:
+    pickle.dump(data, file)
+
+with open('data.pkl', 'rb') as file:
+    restored = pickle.load(file)
+```
+
+#### 5.4.3 最重要的安全提醒
+
+**不要反序列化不可信来源的 pickle 数据。**
+
+因为 `pickle` 更偏“Python 内部对象持久化机制”，不是面向不可信输入的安全交换格式。
+
+如果你需要：
+- 和其他语言交互
+- 面向外部接口传输
+- 处理不可信数据
+
+通常更优先考虑 `json` 等更安全、通用的格式。
+
+### 5.5 常见标准库模块全景速记
+
+这题面试经常不是要你背出几十个模块，而是看你是否有“标准库地图”。
+
+你可以先按类别记：
+- **时间日期**：`datetime`
+- **数学与随机**：`math`、`random`
+- **路径与文件系统**：`pathlib`、`os`
+- **序列化**：`json`、`pickle`
+- **正则**：`re`
+- **函数工具**：`functools`、`itertools`
+- **数据结构**：`collections`
+- **并发**：`threading`、`multiprocessing`、`concurrent.futures`
+- **性能与调试**：`timeit`、`cProfile`、`pdb`
+
+如果你要答“用过哪些标准库模块”，最好按“模块 + 使用场景”回答，而不是只报名字。
+
+### 5.6 Python 代码性能分析常见工具
+
+工程上提到“性能分析”时，常见入口包括：
+- `time`：粗略计时
+- `timeit`：小片段性能测试
+- `cProfile`：函数级性能分析
+- `pstats`：整理 `cProfile` 结果
+- `tracemalloc`：看内存分配
 
 ```python
 import timeit
-print(timeit.timeit("sum(range(100))", number=10000))
+print(timeit.timeit('sum(range(100))', number=10000))
 ```
 
-```python
-import cProfile
-cProfile.run("sum(range(100000))")
-```
+更完整的性能分析方法会在补充专题 [Python 性能分析与调优基础](/python/Python性能分析与调优基础) 里单独展开。
 
-### 2.6 对应面试题
+---
 
-- `14` `namedtuple` 有什么作用
-- `39` `read()` / `readline()` / `readlines()`
-- `42` 浅拷贝和深拷贝
-- `44` `reduce()`
-- `53` `pickling` 和 `unpickling`
-- `60` 常见标准库模块
-- `63` 如何分析 Python 代码执行性能
+## 六、本章高频问法速记
+
+- **`datetime` 的四个主要类型是什么**：`date`、`time`、`datetime`、`timedelta`。
+- **`datetime.now()` 和 `date.today()` 的区别**：前者有日期和时间，后者只有日期。
+- **`strftime` 和 `strptime` 的区别**：一个格式化，一个解析。
+- **怎么求明天日期**：`date.today() + timedelta(days=1)`。
+- **`namedtuple` 比普通元组强在哪**：字段名访问更清晰，但仍然不可变。
+- **`_replace()` 会不会改原对象**：不会，返回新对象。
+- **`re.match()`、`re.search()`、`re.findall()` 分别干什么**：开头匹配、整段找第一个、找全部。
+- **`m.group(0)`、`group(1)`、`group(2)` 是什么**：整段匹配、第 1 组、第 2 组。
+- **`re.sub(r'\s+', '-', 'a  b   c')` 的作用**：把连续空白统一替换成 `-`。
+- **`datetime.strptime('2024/01/15', '%Y-%m-%d')` 为什么会失败**：字符串格式和格式串不匹配，通常抛 `ValueError`。
+- **浅拷贝和深拷贝最关键的区别是什么**：浅拷贝只复制外层，深拷贝会递归复制嵌套对象。
+- **`pickle` 能不能处理不可信输入**：不能，反序列化不可信 pickle 数据有安全风险。
+- **怎么回答“用过哪些标准库”**：按模块类别加场景回答，比只报名字更好。
+- **性能分析第一步是什么**：先测量，再决定优化方向。
+
+---
+
+**本章小结**：标准库这一章不需要一次背很多模块，先抓住三个最核心的高频块：时间处理看 `datetime`，结构化轻量数据看 `namedtuple`，文本模式匹配看 `re`。再把文件读取、`copy`、`reduce`、`pickle`、性能分析这些工程向知识点补上，已经足够覆盖大部分基础开发和常见面试问法。 

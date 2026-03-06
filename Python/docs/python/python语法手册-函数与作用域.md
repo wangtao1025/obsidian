@@ -244,7 +244,9 @@ def greet(name, title=None):
 
 ---
 
-## 六、装饰器一句话补充
+## 六、装饰器：把“增强逻辑”包在函数外面
+
+### 6.1 一句话先懂
 
 装饰器本质上是：**接收一个函数，返回一个增强后的函数**。
 
@@ -260,11 +262,168 @@ def add(a, b):
     return a + b
 ```
 
-你现在只要先记住：**装饰器底层离不开函数对象、闭包、`*args/**kwargs`**。
+### 6.2 `@decorator` 语法糖到底等价于什么
+
+```python
+@log_call
+def add(a, b):
+    return a + b
+```
+
+等价于：
+
+```python
+def add(a, b):
+    return a + b
+
+add = log_call(add)
+```
+
+所以装饰器并不神秘，它只是把原函数交给另一个函数包装一下。
+
+### 6.3 为什么装饰器底层离不开闭包和 `*args/**kwargs`
+
+因为包装函数通常需要：
+- 记住原函数 `fn`
+- 接住原函数可能收到的各种参数
+
+最稳的通用模板一般像这样：
+
+```python
+def decorator(fn):
+    def wrapper(*args, **kwargs):
+        return fn(*args, **kwargs)
+    return wrapper
+```
+
+### 6.4 一个常见场景：打日志
+
+```python
+def log_call(fn):
+    def wrapper(*args, **kwargs):
+        print(f"开始调用 {fn.__name__}")
+        result = fn(*args, **kwargs)
+        print(f"结束调用 {fn.__name__}")
+        return result
+    return wrapper
+```
+
+### 6.5 为什么很多装饰器都要写 `functools.wraps`
+
+如果你直接返回 `wrapper`，原函数的一些元信息可能会丢失，比如：
+- `__name__`
+- `__doc__`
+
+更规范的写法：
+
+```python
+from functools import wraps
+
+
+def log_call(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        print(f"调用 {fn.__name__}")
+        return fn(*args, **kwargs)
+    return wrapper
+```
+
+这也是面试里经常会追问的点。
+
+### 6.6 带参数的装饰器怎么理解
+
+如果装饰器自己也要接参数，就会再多包一层。
+
+```python
+from functools import wraps
+
+
+def repeat(times):
+    def decorator(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            result = None
+            for _ in range(times):
+                result = fn(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
+
+
+@repeat(3)
+def greet(name):
+    print(f"hello {name}")
+```
+
+这时可以这样理解：
+- 最外层先接装饰器参数 `times`
+- 中间层接原函数 `fn`
+- 最里层才是真正执行包装逻辑的 `wrapper`
+
+### 6.7 多个装饰器叠加时顺序怎么记
+
+```python
+@a
+@b
+def func():
+    pass
+```
+
+等价于：
+
+```python
+func = a(b(func))
+```
+
+也就是：
+- 离函数最近的那个先包
+- 最上面的那个最后包
+
+### 6.8 装饰器常见应用场景
+
+- 日志
+- 权限校验
+- 性能统计
+- 缓存
+- 重试
+- 注册路由 / 注册插件
 
 ---
 
-## 七、常见考点对应
+## 七、递归与尾递归补充
+
+### 7.1 什么是递归
+
+函数调用自己。
+
+```python
+def factorial(n):
+    if n == 1:
+        return 1
+    return n * factorial(n - 1)
+```
+
+### 7.2 什么时候递归写起来更自然
+
+常见于：
+- 树结构
+- 分治问题
+- 一层套一层的数据处理
+
+### 7.3 什么是尾递归
+
+尾递归指的是：
+- 递归调用发生在函数返回前的最后一步
+
+### 7.4 Python 里要不要依赖尾递归优化
+
+通常不要。
+
+Python 并不把尾调用优化当成基础承诺，所以如果递归层级很深，更稳的思路通常是改写成循环。
+
+---
+
+## 八、常见考点对应
 
 本章主要对应 `python.docs-hub` 的这些题：
 
@@ -273,6 +432,7 @@ def add(a, b):
 - `48` 变量作用域（Scope）
 - `49` 闭包
 - `58` 装饰器用法
+- 扩展主题：尾递归
 
 如果你面试遇到这些题，优先按下面顺序组织回答：
 
@@ -282,4 +442,4 @@ def add(a, b):
 
 ---
 
-**本章小结**：函数默认返回 `None`；参数分位置参数、默认参数、`*args`、`**kwargs`；作用域遵循 LEGB；改全局用 `global`，改外层函数变量用 `nonlocal`；`lambda` 适合短小一次性函数；闭包是“函数 + 被记住的环境”；Python 没有传统函数重载，常用默认参数和 `*args/**kwargs` 替代。
+**本章小结**：函数默认返回 `None`；参数分位置参数、默认参数、`*args`、`**kwargs`；作用域遵循 LEGB；改全局用 `global`，改外层函数变量用 `nonlocal`；`lambda` 适合短小一次性函数；闭包是“函数 + 被记住的环境”；Python 没有传统函数重载，常用默认参数和 `*args/**kwargs` 替代；装饰器本质是“函数包函数”的增强写法；递归在某些问题上表达力很强，但深层递归通常不如循环稳妥。

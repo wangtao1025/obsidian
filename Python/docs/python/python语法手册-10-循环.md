@@ -1,167 +1,293 @@
-# 循环遍历( while 与 for)
+# 循环遍历
 
 ← [语法手册总览](/python/python语法手册) | [上一章 字符编码](/python/python语法手册-09-字符编码) | [下一章 标准库](/python/python语法手册-11-标准库)
 
 ---
 
-**本章对应自测卷**：[循环遍历 while 与 for（共 8 题）](/python/Python核心语法自测试卷#十一循环遍历-while-与-for-共-8-题)
-**学完能做什么**：用 `range` 三种写法控制循环，分清 `break`/`continue`/`pass`/`return` 的作用范围，理解 `range` 惰性不占大内存。  
-**小白注意**：① `range(stop)` 不包含 stop；倒序要 `range(start, stop, -1)`。② `range` 不是列表，是惰性对象，`range(10**9)` 几乎不占内存。③ `break` 只跳出当前循环，`return` 直接结束整个函数。
+**本章对应自测卷**：[循环遍历 while 与 for（共 14 题）](/python/Python核心语法自测试卷#十一循环遍历-while-与-for-共-8-题)
+**学完能做什么**：理解 `for` 和 `while` 的使用场景，掌握 `range()`、`break`、`continue`、`pass`、`for-else` / `while-else`、`while True` 等高频写法。  
+**小白注意**：① `range()` 不是列表。② `break` 只跳出当前这一层循环。③ `continue` 会跳过本轮后续代码，`pass` 什么都不做。④ `for-else` / `while-else` 的 `else` 不是“条件不成立就执行”。
 
 ---
 
-## 一、循环遍历( while 与 for)
+## 一、先分清：`for` 和 `while` 分别适合什么场景
 
-核心直觉： **`for` 是为了“数完”或“走完”，`while` 是为了“等到”。**
+### 1.1 `for`：适合“遍历一批东西”
 
-### 1.1 while 循环：在条件为 True 时反复执行
-
-**语法**：
+**一句话先懂**：当你已经知道要遍历什么对象时，通常优先用 `for`。
 
 ```python
-while 条件表达式:
-    # 循环体代码块（需缩进，一般 4 个空格）
-    ...
+for name in ['A', 'B', 'C']:
+  print(name)
 ```
 
-- 每次循环开始前都会先判断「条件表达式」是否为 True。  
-  - 为 True：执行缩进的循环体，然后再次判断条件。  
-  - 为 False：退出循环，执行后面的代码。
-- 典型场景：**不知道要循环多少次，只知道“什么时候可以停”**，例如用户输入验证、一直等到某个状态出现等。
+常见场景：
+- 遍历列表、字符串、字典
+- 跑固定次数
+- 依次处理一组数据
 
-**计数器示例**（打印 1～5）：
+### 1.2 `while`：适合“只要条件还成立就继续”
+
+**一句话先懂**：当循环次数不固定，而是由条件决定时，通常更适合 `while`。
 
 ```python
-count = 1
-while count <= 5:
-    print(f"这是第 {count} 次循环")
-    count += 1  # 条件更新：否则会永远 <= 5，变成死循环
+count = 3
+while count > 0:
+  print(count)
+  count -= 1
 ```
 
-**关键三要素**：
+常见场景：
+- 输入校验反复重试
+- 读取直到某个条件结束
+- 不确定循环多少次
 
-1. **条件表达式**：决定“要不要继续循环”。  
-2. **循环体**：需要重复执行的代码。  
-3. **条件更新**：在循环体内修改与条件相关的变量，让条件最终变为 False，避免无限循环。
+---
 
-**常见用法示例**：
+## 二、`range()`：`for` 最常见的搭档
 
-- **用户输入校验**：
+### 2.1 `range()` 的三种写法
+
+```python
+print(list(range(5)))
+print(list(range(1, 5)))
+print(list(range(1, 10, 2)))
+```
+
+对应三种形式：
+- `range(stop)`
+- `range(start, stop)`
+- `range(start, stop, step)`
+
+### 2.2 `range()` 返回的是列表吗
+
+**一句话先懂**：不是。`range()` 返回的是 `range` 对象。
+
+```python
+r = range(5)
+print(r)
+print(type(r))
+```
+
+### 2.3 为什么 `range()` 内存效率高
+
+因为它不是一次性把所有数字都真的存成一个列表，而是按规则“按需计算”。
+
+这也是为什么：
+- `range(1000000000)` 也能轻松创建
+- 但 `list(range(1000000000))` 会占很多内存
+
+### 2.4 一个高频题：生成 `[5, 4, 3, 2, 1]`
+
+```python
+print(list(range(5, 0, -1)))
+```
+
+### 2.5 `range()` 也支持切片
+
+```python
+r = range(10)
+print(r[2:8:2])
+print(list(r[2:8:2]))  # [2, 4, 6]
+```
+
+**一句话先懂**：`range` 对象也能切片，而且切完通常还是 `range` 对象。
+
+再看两个自测高频结果：
+
+```python
+print(list(range(5, -1, -2)))  # [5, 3, 1]
+print(list(range(5, 5, -1)))   # []
+```
+
+---
+
+## 三、循环控制：`break`、`continue`、`pass`
+
+### 3.0 四个高频关键字先分清
+
+| 关键字 | 作用范围 | 形象理解 |
+| --- | --- | --- |
+| `pass` | 当前代码位置 | 先占个位置，什么都不做 |
+| `continue` | 当前循环这一轮 | 跳过本轮后续代码，直接下一轮 |
+| `break` | 当前这一层循环 | 立刻结束这层循环 |
+| `return` | 整个函数 | 直接结束函数并返回结果 |
+
+### 3.1 `break`：立刻结束当前这一层循环
+
+```python
+for n in range(10):
+  if n == 3:
+    break
+  print(n)
+```
+
+### 3.1.1 `break` 能跳出几层循环
+
+**一句话先懂**：只跳出当前这一层。
+
+```python
+for i in range(3):
+  for j in range(3):
+    if j == 1:
+      break
+    print(i, j)
+```
+
+如果你要“跳出所有嵌套循环”，常见办法是：
+- 写函数，然后 `return`
+- 用标记变量配合外层判断
+- 重构逻辑，避免过深嵌套
+
+### 3.2 `continue`：跳过本轮剩余代码，进入下一轮
+
+```python
+for n in range(5):
+  if n == 2:
+    continue
+  print(n)
+```
+
+### 3.3 `pass`：什么都不做，只是语法占位
+
+```python
+for n in range(3):
+  if n == 1:
+    pass
+  print(n)
+```
+
+### 3.4 `continue` 和 `pass` 的本质区别
+
+- `continue`：会直接进入下一轮循环，本轮后面的代码不执行
+- `pass`：只是“占个位置”，程序还会继续往下执行
+
+一个高频输出题：
+
+```python
+for i in range(5):
+  if i == 2:
+    continue
+  if i == 4:
+    break
+  print(i, end=' ')
+```
+
+输出是：
+
+```text
+0 1 3 
+```
+
+---
+
+## 四、`for-else` 和 `while-else`：很多人第一次见都会懵
+
+### 4.1 `for-else` 的执行规则
+
+**一句话先懂**：如果循环是“正常跑完”的，`else` 就执行；如果中途 `break` 了，`else` 就不执行。
+
+```python
+for n in [1, 2, 3]:
+  print(n)
+else:
+  print('正常结束')
+```
+
+### 4.2 被 `break` 打断时，`else` 不执行
+
+```python
+for n in [1, 2, 3]:
+  if n == 2:
+    break
+  print(n)
+else:
+  print('正常结束')
+```
+
+### 4.3 `while-else` 也是同样规则
+
+```python
+count = 3
+while count > 0:
+  print(count)
+  count -= 1
+else:
+  print('while 正常结束')
+```
+
+### 4.4 它最常见的实际用途
+
+搜索场景特别常见：
+- 找到了就 `break`
+- 没找到，循环正常结束后进 `else`
+
+```python
+nums = [1, 3, 5, 8]
+for n in nums:
+  if n % 2 == 0:
+    print('找到偶数:', n)
+    break
+else:
+  print('没有找到偶数')
+```
+
+---
+
+## 五、遍历时拿到“索引 + 元素”
+
+### 5.1 推荐写法：`enumerate()`
+
+```python
+names = ['A', 'B', 'C']
+for index, name in enumerate(names):
+  print(index, name)
+```
+
+如果你想从 1 开始编号：
+
+```python
+for index, name in enumerate(names, start=1):
+  print(index, name)
+```
+
+**一句话先懂**：同时要序号和元素时，优先想到 `enumerate()`。
+
+---
+
+## 六、`while True`：能写，但一定要想清楚退出条件
+
+### 6.1 最常见的用法
 
 ```python
 while True:
-    user_input = input("请输入一个正整数：")
-    if user_input.isdigit() and int(user_input) > 0:
-        print(f"您输入的数字是：{user_input}")
-        break           # 校验通过，跳出循环
-    else:
-        print("输入无效，请重新输入！")
+  text = input('请输入 q 退出: ')
+  if text == 'q':
+    break
 ```
 
-- **while + else**：只有在循环“正常结束”（不是通过 `break` 跳出）时才会执行 `else` 里的代码：
+### 6.2 为什么它容易写出死循环
 
-```python
-count = 1
-while count <= 3:
-    print(f"循环第 {count} 次")
-    count += 1
-else:
-    print("循环正常结束（不是通过 break 退出）")
-```
+因为：
+- 条件本身永远是真
+- 如果你忘了写退出条件，或者退出条件永远达不到，循环就停不下来
 
-### 1.2 循环动力引擎：`range()`
-#### 1.1.1 语法
-`range` 不是列表，而是一个**“懒惰”的数字工厂**，只在循环需要时才生产下一个数字，极其节省内存。
-1. **`range(stop)`**：生成从`0`开始，到`stop`结束（不包含`stop`）的整数序列
-2. **`range(start, stop)`**：生成从`start`开始，到`stop`结束（不包含`stop`）的整数序列
-3. **`range(start, stop, step)`**：生成从`start`开始，到`stop`结束（不包含`stop`），并以`step`为步长的整数序列
-其中：
-- `stop`参数是一个限定值，序列不包含此值
-- `start`参数定义了序列的起始值（默认为`0`）
-- `step`参数表示序列中相邻数字之间的步长（默认为`1`）
-#### 1.1.2 高级特性
-- range对象与列表的转换
-	- `range()`函数生成的是一个`range`对象，而不是一个实际的列表。`range`对象是可迭代的，但它并不会在内存中立即生成所有数字。如果需要将其转换为列表，可以使用`list()`函数。
-	```python
-	# 生成一个range对象，表示从0到4的序列
-	my_range_object = range(5)
-	# 将range对象转换为列表并打印
-	print(list(my_range_object))
-	```
-- 内存效率
-	 - `range`对象具有非常高的内存效率。它们并不会真正地在内存中存储所有数字，而是依赖于一个算法来在需要时生成这些数字。这意味着即使是生成非常大的序列（例如`range(10**9)`），也不会占用大量内存。
-	```python
-	# 创建一个非常大的range对象
-	large_range = range(10**6)
-	# 打印range对象的内存占用（非常小）
-	print(f"range对象大小: {large_range.__sizeof__()} 字节")# 48 字节
-	
-	# 如果转换为列表，内存占用会很大
-	large_list = list(large_range)  # 这会占用大量内存
-	print(f"列表大小: {large_list.__sizeof__()} 字节")#8000040 字节
-	```
-- 生成递减序列
-	- `range()`函数也可以用于生成递减的序列。这需要满足两个条件：`start`值必须大于`stop`值，并且`step`值必须是负数。
-	```python
-	# 定义序列的起始值
-	start_value = 5
-	# 定义序列的停止值
-	stop_value = 0
-	# 定义负数步长，实现递减
-	negative_step = -1
-	# 遍历从start_value到stop_value+1，步长为negative_step的整数
-	for i in range(start_value, stop_value, negative_step):
-	    # 打印当前整数
-	    print(i)
-	```
-- `range` 支持切片操作
-	- `range`对象支持切片操作，尽管这个特性不常见。切片操作会返回一个新的`range`对象。
-	```python
-	# 创建一个从0到9的range对象
-	r = range(10)
-	print(list(r))#[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-	# 对range对象进行切片操作：从索引2开始，到索引8结束（不包含），步长为2
-	# 结果将是range(2, 8, 2)
-	print(r[2:8:2])
-	# 将切片结果转换为列表查看
-	print(list(r[2:8:2]))#[2, 4, 6]
-	```
-
-### 1.3  `break`, `continue`, `pass`, `return`
-| **关键字**        | **作用范围 (破坏半径)** | **形象理解**   | **场景示例**                  |
-| -------------- | --------------- | ---------- | ------------------------- |
-| **`pass`**     | **0 (无影响)**     | **“此处招租”** | 还没想好 `if` 后面的逻辑，先占个位防止报错。 |
-| **`continue`** | **当前这一次迭代**     | **“这题跳过”** | 遇到脏数据（如 `None`），直接进入下一轮。  |
-| **`break`**    | **最近的一层循环**     | **“原地爆破”** | 找到目标数据后立即收工，不再跑剩下的循环。     |
-| **`return`**   | **整个函数**        | **“终结者”**  | 无论嵌套几层循环，直接关掉函数并带走结果。     |
+所以 `while True` 最重要的不是“能不能写”，而是“退出逻辑是否清楚”。
 
 ---
 
-**本章小结**：`for` 遍历已知序列，`while` 条件循环。`range(stop)`/`range(start,stop)`/`range(start,stop,step)`，不包含 stop；`range` 惰性省内存。`break` 跳出一层循环，`continue` 跳过当次，`return` 结束函数。
+## 七、本章高频问法速记
 
+- **`for` 和 `while` 的核心区别**：一个更适合遍历现成对象，一个更适合按条件持续执行。
+- **`range()` 的三种形式**：`range(stop)`、`range(start, stop)`、`range(start, stop, step)`。
+- **`range()` 是列表吗**：不是，是 `range` 对象，按需生成，内存更省。
+- **怎么生成 `[5,4,3,2,1]`**：`list(range(5, 0, -1))`。
+- **`break` 能跳出几层循环**：只跳出当前这一层。
+- **`continue` 和 `pass` 的区别**：`continue` 跳过本轮剩余代码，`pass` 只是占位。
+- **`for-else` / `while-else` 的 `else` 什么时候执行**：循环正常结束时执行，被 `break` 打断就不执行。
+- **同时遍历索引和元素推荐用什么**：`enumerate()`。
+- **`while True` 常见退出方式是什么**：配合 `break`。
 
-## 二、循环与大文件读取
+---
 
-### 2.1 为什么读大文件不要直接 `read()`
-
-```python
-with open('huge.log', 'r', encoding='utf-8') as f:
-    for line in f:
-        process(line)
-```
-
-- `read()`：一次性把全部内容读进内存。
-- `for line in f`：按行迭代，更省内存，更适合日志、CSV、超大文本。
-
-### 2.2 `read()` / `readline()` / `readlines()` 怎么选
-
-- `read()`：要整块内容时用。
-- `readline()`：一次读一行，手动控制。
-- `readlines()`：一次读完，得到列表；大文件慎用。
-- **最推荐的工程写法**：`for line in f`。
-
-### 2.3 对应面试题
-
-- `13` `break`、`continue`、`pass` 的作用
-- `15` `range` 的运用
-- `41` 如何读取大文件
+**本章小结**：循环这一章最重要的不是背关键词，而是抓住“什么时候遍历对象、什么时候按条件循环、什么时候提前结束、什么时候跳过当前轮”。把 `for` / `while`、`range()`、`break/continue/pass`、`for-else/while-else` 这些核心规则连起来之后，绝大多数遍历和控制流题就都能看懂、写对。 
