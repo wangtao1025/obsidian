@@ -1,838 +1,632 @@
-# 逻辑判断 与 真值检测
+# 逻辑判断与真值检测
 
 ← [语法手册总览](/python/python语法手册) | [上一章 内置函数](/python/python语法手册-05-内置函数) | [下一章 身份与成员](/python/python语法手册-07-身份与成员)
 
 ---
 
 **本章对应自测卷**：[逻辑判断与真值检测（共 44 题）](/python/Python核心语法自测试卷#七逻辑判断与真值检测-共-44-题)
-**学完能做什么**：理解 `and`/`or` 的返回值规则、假值列表、短路带来的安全写法、自定义对象真值优先级，以及关系运算符（六种、链式比较、浮点数与类型注意）。  
-**小白注意**：① `and` 返第一个假或最后一个，`or` 返第一个真或最后一个（不是只返 True/False）。② 假值除 None/False/0 外还有 `''`、`[]`、`{}` 等。③ 自定义对象先看 `__bool__()`，没有则看 `__len__()`，都没有则 True。④ 关系运算符比较浮点数不要用 `==`，用 `math.isclose()`；set/dict 只支持 `==`、`!=`。
+**学完能做什么**：理解 `and` / `or` / `not` 的返回值规则，掌握假值列表、短路机制、关系运算符、链式比较、浮点数比较、三元表达式，以及 Python 中常见的 `switch` 替代方案。  
+**小白注意**：① `and` / `or` 不一定返回布尔值。② `not` 一定返回 `True` 或 `False`。③ 浮点数不要轻易用 `==` 判等。④ `match` 是 Python 3.10+ 语法。
 
 ---
 
-## 一、逻辑判断 与 真值检测
+## 一、先建立核心直觉：Python 的逻辑运算不只是“真”或“假”
 
-核心直觉： **Python 的逻辑运算不只是 `True/False`，更是“寻找结果”的过程。**
+**一句话先懂**：Python 里的逻辑判断，很多时候不是单纯在算 `True` / `False`，而是在“挑一个合适的结果”或者“决定后面还要不要继续算”。
 
-- `all(iterable)`：
-  - 逻辑：只有全部为 `True` 才返回 `True`。
-  - 例子：`all(s >= 60 for s in scores)` $\rightarrow$ 全员及格。
-- `any(iterable)`：
-  - 逻辑：只要有一个为 `True` 就返回 `True`。
-  - 例子：`any(s < 60 for s in scores)` $\rightarrow$ 是否有人挂科。
-
-### 1.1 逻辑运算符 and 、or、 not（自测卷 7.3、7.4 待复习）
-
-|**运算符**|**语义**|**短路逻辑 (关键)**|**返回值规则**|
-|---|---|---|---|
-|**`and`**|且 (找假)|若第一个为假，直接返回，不再看后面。|**“与”返首假**：返回第一个遇到的假值；若全是真，返回最后一个。|
-|**`or`**|或 (找真)|若第一个为真，直接返回，不再看后面。|**“或”返首真**：返回第一个遇到的真值；若全是假，返回最后一个。|
-|**`not`**|非|总是评估操作数，并强制取反。|**必返布尔值**：强制转换为 `True` 或 `False`。|
-
-### 1.2 真值测试：谁是“假”？ (Truth Value Testing)（自测卷 7.5 待复习）
-
-在 Python 中，以下对象在逻辑判断时被视为 **`False`**，其余皆为 `True`：
-
-1. **常量**：`None`, `False`
-    
-2. **数值零**：`0`, `0.0`, `0j`
-    
-3. **空容器**：`''`, `[]`, `()`, `{}`, `set()`, `range(0)`
-    
-4. **自定义对象**：定义了 `__bool__()` 返回 `False` 或 `__len__()` 返回 `0` 的类。
-    
-
-### 1.3 短路计算 (Short-circuiting) 的妙用
-
-短路特性不仅为了性能，更是为了**程序安全**。
-
-- **安全检查**：避免报错。
-    ``` Python
-    # 如果 user 为 None，后面 user.name 不会执行，避免了 AttributeError
-    if user is not None and user.name == "Admin":
-        pass
-    ```
-    
-- **设置默认值**：
-    ``` Python
-    # 如果 input_name 是空字符串(假)，则取 "Guest"
-    name = input_name or "Guest" 
-    ```
-    
-### 1.4 进阶：自定义对象的真值（自测卷 7.8 待复习）
-
-Python 判断对象真值的优先级：
-1. **`__bool__()`**：最优先，返回布尔值。
-2. **`__len__()`**：次优先，若返回 `0` 则为假。
-3. **默认**：若两者都未定义，对象永远为 `True`。
-
-### 1.5 关系运算符（自测卷 7.11～7.28）
-
-关系运算符用于比较两个值之间的关系，**返回布尔值**（True/False），常与逻辑运算符结合做条件判断。以下为完整说明。
-
-#### 1.5.1 六种关系运算符
-
-| 运算符 | 含义 | 示例 | 返回值 |
-|--------|------|------|--------|
-| `<` | 小于 | `5 < 3` | False |
-| `<=` | 小于等于 | `5 <= 5` | True |
-| `>` | 大于 | `5 > 3` | True |
-| `>=` | 大于等于 | `5 >= 5` | True |
-| `==` | 等于 | `5 == 3` | False |
-| `!=` | 不等于 | `5 != 3` | True |
-
-#### 1.5.2 基本用法
-
-**数值比较**：可用于整数、浮点数等，结果用于 if、while 等条件。
+比如：
 
 ```python
-x, y = 7, 3
-print(x > y)      # True
-print(x == 7)     # True
-if x >= 5:
-    print("x不小于5")
+name = input_name or 'Guest'
+```
 
-a, b = 10, 5
-print(f"{a} < {b}: {a < b}")   # False
-print(f"{a} >= {b}: {a >= b}") # True
-# 整数与浮点数可比较
+这行代码就不只是判断真假，它还顺手完成了“取默认值”。
+
+---
+
+## 二、逻辑运算符与真值规则
+
+<span id="61-逻辑运算符-and-or-not"></span>
+### 2.1 `and` / `or` / `not`
+
+| 运算符 | 一句话理解 | 返回值规则 |
+| --- | --- | --- |
+| `and` | 找第一个假值 | 返回第一个假值；如果都为真，返回最后一个 |
+| `or` | 找第一个真值 | 返回第一个真值；如果都为假，返回最后一个 |
+| `not` | 逻辑取反 | 一定返回布尔值 |
+
+```python
+print(1 and 2 and 3)     # 3
+print(0 and 2 and 3)     # 0
+print('' and 'hello')    # ''
+
+print(0 or '' or 'hello')  # 'hello'
+print(1 or 2 or 3)         # 1
+print(0 or '' or [])       # []
+```
+
+### 2.2 为什么 `and` / `or` 不总是返回布尔值
+
+**一句话先懂**：它们的设计目标是“根据真假挑结果”，不是强制把一切都变成 `True` / `False`。
+
+比如：
+
+```python
+a = 'Python'
+b = ''
+
+print(a and 123)  # 123
+print(b or '默认值')  # 默认值
+```
+
+- `a and 123`：前面是真的，所以继续看后面，返回 `123`
+- `b or '默认值'`：前面是假的，所以返回后面的 `'默认值'`
+
+这也是它们在“默认值选择”“防御式判断”里很好用的原因。
+
+### 2.3 `not` 和 `and` / `or` 的一个重要区别
+
+**一句话先懂**：`not` 会强制把结果变成布尔值，而 `and` / `or` 往往返回原对象。
+
+```python
+print(not [])       # True
+print(not 'hello')  # False
+print(not 0)        # True
+print(not None)     # True
+```
+
+### 2.4 短路计算：后面可能根本不会执行
+
+**一句话先懂**：如果前面的结果已经足够决定整条表达式的结果，Python 就不会再算后面了。
+
+#### 2.4.1 `and` 的短路
+
+```python
+x = 0
+print(x and 1 / 0)  # 0
+```
+
+因为 `x` 是假值，`and` 已经知道整条表达式一定是假，所以后面的 `1 / 0` 根本不会执行。
+
+#### 2.4.2 `or` 的短路
+
+```python
+x = 'ok'
+print(x or 1 / 0)   # ok
+```
+
+因为前面已经是真值，`or` 已经知道结果一定为真，所以后面也不会执行。
+
+### 2.5 短路最常见的两个实际用途
+
+#### 2.5.1 安全判断，避免报错
+
+```python
+if user is not None and user.name == 'Admin':
+  print('管理员')
+```
+
+如果 `user` 是 `None`，那么第二部分 `user.name` 就不会执行，从而避免 `AttributeError`。
+
+#### 2.5.2 设置默认值
+
+```python
+name = input_name or 'Guest'
+```
+
+逻辑是：
+- 如果 `input_name` 有值，就用它
+- 如果它是假值（比如空字符串），就退回到 `'Guest'`
+
+<span id="62-真值测试谁是假-truth-value-testing"></span>
+### 2.6 真值测试：哪些对象会被当成假
+
+下面这些对象在布尔环境中会被视为假：
+
+- `False`
+- `None`
+- `0`
+- `0.0`
+- `0j`
+- `''`
+- `[]`
+- `()`
+- `{}`
+- `set()`
+- `range(0)`
+
+除了这些常见假值之外，大多数对象都是真值。
+
+```python
+print(bool([]))
+print(bool(''))
+print(bool([1]))
+print(bool('hello'))
+```
+
+<span id="64-进阶自定义对象的真值"></span>
+### 2.7 自定义对象的真值判断优先级
+
+Python 判断一个自定义对象是真是假时，优先级是：
+
+1. 先看 `__bool__()`
+2. 没有 `__bool__()` 时，再看 `__len__()`
+3. 两者都没有时，默认当成真
+
+```python
+class Box:
+  def __len__(self):
+    return 0
+
+print(bool(Box()))  # False
+```
+
+如果写了 `__bool__()`，它优先级更高：
+
+```python
+class User:
+  def __bool__(self):
+    return False
+
+print(bool(User()))  # False
+```
+
+---
+
+<span id="65-关系运算符自测卷-6116-614"></span>
+## 三、关系运算符：比较大小、相等与范围判断
+
+### 3.1 六种关系运算符
+
+| 运算符 | 含义 |
+| --- | --- |
+| `<` | 小于 |
+| `<=` | 小于等于 |
+| `>` | 大于 |
+| `>=` | 大于等于 |
+| `==` | 等于 |
+| `!=` | 不等于 |
+
+**一句话先懂**：关系运算符的结果一定是布尔值。
+
+```python
+print(3 < 5)    # True
+print(3 == 5)   # False
+print(3 != 5)   # True
+```
+
+### 3.2 数值比较：整数和浮点数能直接比较
+
+```python
 print(10 == 10.0)  # True
+print(10 < 10.5)   # True
 ```
 
-**字符串比较**：按**字典序（Unicode 码点）**逐字符比较。区分大小写（`'A'` < `'a'`）。
+因为 Python 会按数值意义比较它们，而不是只看类型名。
+
+### 3.3 字符串比较：按字符编码顺序逐个比较
 
 ```python
-print("apple" == "apple")    # True
-print("apple" < "banana")    # True
-print("Apple" < "apple")    # True（'A' 码点小于 'a'）
-print(sorted(["banana", "apple", "cherry"]))  # ['apple', 'banana', 'cherry']
+print('Apple' < 'apple')
+print('abc' < 'abd')
 ```
 
-**列表比较**：**元素逐一、从左到右**比较；若前面相同则较短者小。常用于版本号比较。
+**一句话先懂**：字符串比较是逐字符进行的，比较依据是字符编码顺序。
+
+所以：
+- `'abc' < 'abd'` 是 `True`
+- `'Apple' < 'apple'` 也是 `True`，因为大写字母的编码通常比小写字母小
+
+### 3.4 列表和元组比较：逐元素、按顺序比较
 
 ```python
-list1, list2 = [1, 2, 3], [1, 2, 4]
-print(list1 < list2)   # True
-v1 = [int(x) for x in "3.9.1".split('.')]
-v2 = [int(x) for x in "3.10.0".split('.')]
-print(v1 < v2)  # True
+print([1, 2, 3] < [1, 2, 4])  # True
+print([1, 2] < [1, 2, 3])     # True
 ```
 
-#### 1.5.3 链式比较
+规则是：
+- 从左到右依次比较
+- 一旦某一位分出大小，就停止
+- 如果前面都一样，较短的序列更小
 
-`a < b < c` 等价于 `(a < b) and (b < c)`，且 **b 只求值一次**，写法简洁且高效。
-
-- 只对**相邻**对象比较，如 `a < b > c` 等价于 `(a < b) and (b > c)`，不比较 a 与 c。
-- 从左到右短路，一旦为 False 即停止。
+### 3.5 链式比较
 
 ```python
-x, y, z = 3, 7, 12
-print(1 < x < 10)      # True
-print(x < y < z)       # True
-print(60 <= 76 < 90)   # True，成绩良好
-
-# 实际应用：范围判定、严格递增
-if 60 <= score < 90:
-    print("成绩良好")
-if a < b < c < d:
-    print("严格递增")
+x = 5
+print(1 < x < 10)   # True
+print(1 < x == 5)   # True
 ```
 
-#### 1.5.4 类型比较
+**一句话先懂**：`1 < x < 10` 等价于 `(1 < x) and (x < 10)`。
 
-- **同类型**：可用全部六种运算符。
-- **int 与 float**：可比较，自动提升。
-- **集合、字典**：**只支持 `==` 和 `!=`**，使用 `<`、`>` 会抛出 `TypeError`。
-- **不同类型**（如 int 与 str）：一般只有 `==`、`!=` 可用，或抛 `TypeError`（如 `5 < '10'`）。
+### 3.5.1 中间变量会求值几次
 
-| 类型 | 支持比较 | 备注 |
-|------|----------|------|
-| int/float | 全部 | 自动类型提升 |
-| str | 全部 | 按 Unicode 顺序 |
-| list/tuple | 全部 | 按元素依次对比 |
-| set/dict | `==`, `!=` | 只支持等于和不等于 |
+只求值一次。
+
+这就是链式比较的一个重要优点：
+- 写法更自然
+- 也避免中间表达式被重复计算
+
+### 3.5.2 `a < b > c` 会不会比较 `a` 和 `c`
+
+不会。
 
 ```python
-print({1, 2} == {2, 1})       # True
-print({'x': 1} == {'x': 1})   # True
-# print({1} < {2})            # TypeError
+a, b, c = 1, 5, 3
+print(a < b > c)   # True
 ```
 
-#### 1.5.5 浮点数比较
-
-在实际编程中，比较浮点数（如 `float` 类型）时需要格外小心。由于计算机存储浮点数采用**二进制近似表示**，存在精度误差，导致一些看似“相等”的数用 `==` 直接比较时可能为 `False`。
-
-**常见注意事项：**
-
-- **不要直接用 `==` 或 `!=` 判断浮点数是否相等**，通常会因精度误差导致判断不准确。
-- 使用**“接近”**（即误差不超过很小的范围）来比较两个浮点数，可用 `abs(a - b) < 1e-9` 等方法，或 `math.isclose()` 函数。
-- 在数学或科学计算中尤其要注意比较容差，结果判断要考虑有效位数。
-
-**解决办法**：可用 `math.isclose()` 进行比较，也可指定**绝对误差**（`abs_tol`）或**相对误差**（`rel_tol`）。
-
-**常见应用场景：**
-
-- 判断计算结果、测量数据、科学实验中的浮点数是否“足够接近”。
-- 业务开发中，涉及金额、比率、分数等浮点结果时的比较与容差判断。
-
-**代码示例：**
+它等价于：
 
 ```python
-# 导入 math 模块
+(a < b) and (b > c)
+```
+
+并不会额外比较 `a < c`。
+
+### 3.5.3 链式比较也会短路
+
+如果前半段已经是 `False`，后半段就不会继续求值。
+
+### 3.6 浮点数比较：不要轻易直接用 `==`
+
+```python
+print(0.1 * 3 == 0.3)  # 可能是 False
+```
+
+原因不是 Python 算错了，而是浮点数底层用二进制近似表示，很多十进制小数无法精确存储。
+
+### 3.6.1 推荐做法一：`math.isclose()`
+
+```python
 import math
+print(math.isclose(0.1 * 3, 0.3))
+```
 
-# 定义两个浮点数
+### 3.6.2 推荐做法二：手动设容差
+
+```python
 a = 0.1 * 3
 b = 0.3
-
-# 错误的方式，可能为 False
-print(a == b)  # False，因为浮点数存在精度误差
-
-# 正确方式 1：用 abs() 判断是否足够接近
-print(abs(a - b) < 1e-9)  # True，差距小于指定容差，认为相等
-
-# 正确方式 2：用 math.isclose()，推荐方式
-print(math.isclose(a, b))  # True，默认容差设置适用大多数场景
-
-# math.isclose 可以自定义容差
-print(math.isclose(a, b, rel_tol=1e-12))  # True，可以调整容差要求
+print(abs(a - b) < 1e-9)
 ```
 
-#### 1.5.6 复杂数据结构比较
+### 3.7 哪些类型支持全部六种比较，哪些不支持
 
-- **嵌套列表/元组**：仍按元素逐层比较。
-- **嵌套字典**：只支持 `==`、`!=`，键值对完全一致才判等。
+- **常见支持全部六种的类型**：数字、字符串、列表、元组
+- **通常只适合用 `==` 和 `!=` 的类型**：字典
+- **集合有特殊情况**：
+  - `==` / `!=` 可以比较是否元素相同
+  - `<` / `<=` / `>` / `>=` 不是普通大小比较，而是**子集 / 超集关系判断**
 
 ```python
-print([[1,2],[3,4]] < [[1,2],[3,5]])  # True
-dict1 = {"a": 1, "b": {"x": 2, "y": 3}}
-dict2 = {"a": 1, "b": {"x": 2, "y": 3}}
-print(dict1 == dict2)  # True
+print({1, 2} == {2, 1})  # True
+print({1} < {1, 2})      # True，表示真子集
 ```
 
-#### 1.5.7 自定义类比较
+所以集合上的 `<` 并不是“1 比 2 小”的意思。
 
-在 Python 中，除了内置数据类型可以直接使用关系运算符之外，还可以通过在**自定义类**中实现特定的**魔术方法**（如 `__eq__`、`__lt__` 等）来定义类的比较行为。这样可以让自定义对象像数值、字符串一样进行大小、相等等比较操作，非常适合在需要**排序、自定义判等、查找最大/最小对象**时使用。
-
-**魔术方法与运算符对应：**
-
-- **相等比较**：实现 `__eq__`（等于）、`__ne__`（不等于）。
-- **大小比较**：实现 `__lt__`（小于）、`__le__`（小于等于）、`__gt__`（大于）、`__ge__`（大于等于）。
-
-**使用要点：**
-
-- 只要实现部分魔术方法，Python 只支持对应的运算符；**建议完整实现**，行为更统一。
-- 若对象不支持某种比较，魔术方法应返回 `NotImplemented`，Python 会适当处理或抛出 `TypeError`。
-- 比较时可以**自由定义规则**，如按“年龄”、“工资”或“姓名”等字段进行。
-
-**代码示例：**
+### 3.8 字典为什么不能直接用 `<` 比较
 
 ```python
-# 定义一个 Person 类，支持自定义比较
+# {'a': 1} < {'b': 2}   # TypeError
+```
+
+字典主要支持：
+- `==`
+- `!=`
+
+如果你要“按某个键的值比较字典”，通常应该明确写出比较规则，比如：
+
+```python
+a = {'score': 80}
+b = {'score': 95}
+print(a['score'] < b['score'])
+```
+
+### 3.9 复杂数据结构比较
+
+```python
+print([[1, 2], [3, 4]] < [[1, 2], [3, 5]])  # True
+```
+
+嵌套列表仍然是逐层按顺序比较。  
+但嵌套字典仍然不支持普通大小比较。
+
+<span id="157-自定义类比较"></span>
+### 3.10 自定义类比较
+
+**一句话先懂**：如果你希望 `p1 < p2`、`p1 == p2` 这样的写法对自定义对象生效，就要在类里实现对应的特殊方法。
+
+常见对应关系：
+- `==` → `__eq__`
+- `<` → `__lt__`
+- `<=` → `__le__`
+- `>` → `__gt__`
+- `>=` → `__ge__`
+
+```python
 class Person:
-    def __init__(self, name, age, salary):
-        self.name = name
-        self.age = age
-        self.salary = salary
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
 
-    def __eq__(self, other):
-        # 相等比较：姓名和年龄都相同即为相等
-        if isinstance(other, Person):
-            return self.name == other.name and self.age == other.age
-        return False
+  def __lt__(self, other):
+    if isinstance(other, Person):
+      return self.age < other.age
+    return NotImplemented
 
-    def __lt__(self, other):
-        # 小于比较：按年龄进行比较
-        if isinstance(other, Person):
-            return self.age < other.age
-        return NotImplemented
+  def __repr__(self):
+    return f"Person(name='{self.name}', age={self.age})"
 
-    def __le__(self, other):
-        if isinstance(other, Person):
-            return self.age <= other.age
-        return NotImplemented
-
-    def __gt__(self, other):
-        if isinstance(other, Person):
-            return self.age > other.age
-        return NotImplemented
-
-    def __ge__(self, other):
-        if isinstance(other, Person):
-            return self.age >= other.age
-        return NotImplemented
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __repr__(self):
-        return f"Person(name='{self.name}', age={self.age}, salary={self.salary})"
-
-# 创建对象进行比较
-person1 = Person("Alice", 25, 50000)
-person2 = Person("Bob", 30, 60000)
-person3 = Person("Alice", 25, 55000)
-
-# 按自定义规则比较
-print(person1 == person3)   # True，名字与年龄都相同
-print(person1 == person2)   # False，名字或年龄不同
-print(person1 < person2)    # True，因为 25 < 30
-print(person2 > person1)    # True，因为 30 > 25
-print(person2 != person3)   # True
-
-# 实际开发：自定义对象排序
-person_list = [person2, person1, person3]
-print(sorted(person_list))  # 将依据年龄完成排序
+p1 = Person('Alice', 25)
+p2 = Person('Bob', 30)
+print(p1 < p2)  # True
+print(sorted([p2, p1]))
 ```
 
-**关于「自定义对象排序」的说明（小白向）：**
+### 3.10.1 为什么要返回 `NotImplemented`
 
-- `person_list` 是一个列表，里面按顺序放了三个 `Person` 对象：`person2`（Bob, 30 岁）、`person1`（Alice, 25 岁）、`person3`（Alice, 25 岁）。
-- 内置函数 **`sorted(列表)`** 会对列表里的元素进行**升序排序**，并返回一个新的已排序列表（不修改原列表）。
-- 对自定义对象排序时，`sorted()` 在比较两个元素谁大谁小时，会去调用我们写好的魔术方法（例如 `__lt__`）。因为我们把「小于」定义成了「年龄更小」，所以 `sorted(person_list)` 实际上是**按年龄从小到大**排：先 25 岁的两个 Alice，再 30 岁的 Bob。
-- 如果类里没有实现 `__lt__` 等比较方法，`sorted()` 就不知道如何比较两个 `Person`，会报错。实现这些方法后，自定义对象就可以像数字、字符串一样参与排序、求最值等操作。
-
-**常见应用场景：**
-
-- 排序员工信息、学生成绩单、自定义数据对象等。
-- 实现业务逻辑中的自定义比较需求（如唯一性判定、分组、筛选）。
-
-**补充说明：**
-
-- 通过自定义这些比较方法，可以让自己的类与内置类型一样方便地在各种比较、算法中使用。
-- 若只有部分比较方法实现，可能导致部分操作（如排序）报错，建议使用 **`functools.total_ordering`** 装饰器减少重复实现。
-- 如果只关心某些字段（比如只按 `salary` 比较），可调整魔术方法的逻辑。
-
-#### 1.5.8 与布尔运算符结合
-
-关系运算符常与 `and`、`or`、`not` 结合，做多条件判断与范围验证。
+如果对方不是你支持的类型，比如拿 `Person` 去跟整数比较，应该返回 `NotImplemented`，这样 Python 才有机会尝试别的比较路径，或者最终给出合理的 `TypeError`。
 
 ```python
-if 10 < x < 20:
-    print("x 在 10 到 20 之间")
-# 用户输入验证
-if not (18 <= age <= 65):
-    errors.append("年龄必须在18到65之间")
-filtered = [x for x in data_list if min_val <= x <= max_val]
-```
-
-#### 1.5.9 参考回答（面试向）
-
-- **概述**：关系运算符用于比较两个值的关系，有六种（`<` `<=` `>` `>=` `==` `!=`），均返回布尔值。
-- **要点**：链式比较如 `1 < x < 10` 等价于 and 且中间只求值一次；set/dict 只支持 `==`、`!=`；浮点数用 `math.isclose()` 判等。
-- **应用**：数据验证、排序与最值、版本号比较、成绩等级等。
-
-### 1.6 if 条件分支（入门）
-
-**核心逻辑**：如果某个条件成立（为 True），就执行对应的代码块。
-
-**三种基本形式**：
-
-| 形式 | 用途 | 何时用 |
-|------|------|--------|
-| **if** | 只判断一种情况 | 条件成立时做某事 |
-| **if-else** | 两种情况二选一 | 非此即彼 |
-| **if-elif-else** | 多种情况多选一 | 成绩等级、菜单选择等 |
-
-**形式一：简单 if**
-
-```python
-if 条件:
-    # 条件成立时执行（缩进 4 空格）
-    ...
-```
-
-**形式二：if-else**
-
-```python
-if 条件:
-    # 成立时执行
-    ...
-else:
-    # 不成立时执行
-    ...
-```
-
-**形式三：if-elif-else**（按顺序检查，**一旦某个条件为 True 就执行该分支并跳出**，不再看后面的 elif/else）
-
-```python
-if 条件1:
-    ...
-elif 条件2:
-    ...
-elif 条件3:
-    ...
-else:
-    # 以上都不成立时执行
-    ...
-```
-
-**缩进**：Python 用缩进区分代码块，**同一代码块内缩进必须一致**（通常 4 个空格）；缩进错会报 `IndentationError`。`if` 后面的条件成立时，只执行**与 if 同层级缩进**的那一块。
-
-**条件里可以写什么**：前面 1.5 的关系运算符（`==`、`!=`、`>`、`<`、`>=`、`<=`）、1.1 的逻辑运算符（`and`、`or`、`not`）、以及 `in` / `not in` 等，只要结果是 True/False 或可被当作真值即可。例如：
-
-```python
-if age >= 18 and is_student:
-    print("成年学生")
-if name in ["Alice", "Bob"]:
-    print("你好")
-```
-
-**嵌套**：可以在一个 if 块里再写 if-else，用缩进区分内外层。
-
-**小例：闰年判断**（能被 4 整除且不能被 100 整除，或能被 400 整除）
-
-```python
-year = 2024
-if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-    print(f"{year}年是闰年。")
-else:
-    print(f"{year}年不是闰年。")
+class Person:
+  def __lt__(self, other):
+    if isinstance(other, Person):
+      return True
+    return NotImplemented
 ```
 
 ---
 
-**本章小结**：`and` 返首假或末值，`or` 返首真或末值；假值有 None、False、0、空串、空容器等。自定义对象真值：`__bool__` → `__len__` → 默认 True。短路可用来写 `user and user.name` 避免报错。关系运算符六种（`<` `<=` `>` `>=` `==` `!=`）返回布尔值；链式比较等价于 and 且中间只求值一次；浮点数用 `math.isclose`；set/dict 只支持 `==`、`!=`。**if 条件分支**：if / if-else / if-elif-else 三种形式，缩进区分代码块，条件为 True 时执行对应块；elif 按顺序检查，命中即跳出。
+## 四、`if`、三元表达式与条件分支写法
+
+### 4.1 `if` / `elif` / `else`
+
+这是最基础的条件分支结构。
+
+```python
+score = 85
+
+if score >= 90:
+  level = '优秀'
+elif score >= 60:
+  level = '及格'
+else:
+  level = '不及格'
+```
+
+适合场景：
+- 分支较多
+- 每个分支里逻辑不止一行
+- 需要清晰表达流程
+
+## 五、三元表达式：一行写完简单条件
+
+### 5.1 基本语法
+
+```python
+结果1 if 条件 else 结果2
+```
+
+**一句话先懂**：如果条件为真，就取前面的值；否则取后面的值。
+
+```python
+score = 75
+level = '及格' if score >= 60 else '不及格'
+print(level)
+```
+
+### 5.2 它和普通 `if-else` 的关系
+
+上面那句三元表达式，等价于：
+
+```python
+if score >= 60:
+  level = '及格'
+else:
+  level = '不及格'
+```
+
+### 5.3 三元表达式的高频场景
+
+#### 5.3.1 简单条件赋值
+
+```python
+user_input = '2'
+preference = user_input if user_input in ['1', '2', '3'] else '1'
+```
+
+#### 5.3.2 列表推导式里按条件转换
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+result = [str(x) if x % 2 == 0 else x for x in nums]
+print(result)
+```
+
+#### 5.3.3 函数返回值按条件选择
+
+```python
+def pass_status(score):
+  return '通过' if score >= 60 else '未通过'
+```
+
+### 5.4 什么时候不适合用三元表达式
+
+不太适合这些场景：
+- 条件本身很复杂
+- 分支里逻辑不止一个表达式
+- 出现多层嵌套三元，读起来费劲
+
+这时更推荐普通 `if / elif / else`，因为可读性更高。
 
 ---
 
-## 二、三元表达式（条件表达式）
+## 六、Python 里如何实现“switch”效果
 
-### 2.1 概述：一行写完简单条件
+Python 没有传统 C / Java 那种老式 `switch` 语句，但有很多替代写法。
 
-三元表达式（Ternary Expression，也叫**条件表达式**）是 Python 提供的一种**在一行里写简单 if-else** 的语法糖，用来根据条件选择**一个值**。
-
-经典语法（一定要记住这个顺序）：
+### 6.1 方式一：`if-elif-else`
 
 ```python
-value_if_true if condition else value_if_false
-```
+grade = 'B'
 
-- `condition`：条件表达式，结果为 `True` 或 `False`。
-- `value_if_true`：条件为 `True` 时，整个表达式的值。
-- `value_if_false`：条件为 `False` 时，整个表达式的值。
-
-特点：
-
-- **只返回一个值**（而不是执行多行语句）。
-- **只会执行一个分支**（和 if-else 一样，有短路，不会同时执行两边）。
-- 适合写**简单清晰的条件赋值 / 参数选择 / 返回值**。
-
-### 2.2 基本语法与 if-else 对比
-
-等价关系可以这样理解：
-
-```python
-# 三元表达式
-result = A if condition else B
-
-# 等价的 if-else
-if condition:
-    result = A
+if grade == 'A':
+  text = '优秀'
+elif grade == 'B':
+  text = '良好'
+elif grade == 'C':
+  text = '及格'
 else:
-    result = B
+  text = '未知等级'
 ```
 
-再看一个具体例子：
+适合：
+- 分支不多
+- 条件不只是“等于某个值”
+- 初学者最容易理解
+
+### 6.2 方式二：字典映射
 
 ```python
-x = 10
-result = "正数" if x > 0 else "非正数"
+grade_map = {
+  'A': '优秀',
+  'B': '良好',
+  'C': '及格'
+}
 
-# 等价写法：
-if x > 0:
-    result = "正数"
-else:
-    result = "非正数"
+grade = 'B'
+print(grade_map.get(grade, '未知等级'))
 ```
 
-**什么时候用三元表达式，什么时候用 if-else？**
+适合：
+- 纯“值 → 值”的映射
+- 分支较多
+- 配置化需求
 
-- 逻辑**简单、只是在两个值之间二选一** → 用三元表达式可读且紧凑。
-- 逻辑比较复杂（多步计算、多个分支） → 用正常 `if / elif / else`，可读性远好于一行塞满逻辑。
-
-### 2.3 实际应用场景
-
-#### 2.3.1 简单条件赋值：给变量/配置选值
-
-**场景 1：根据用户输入设置默认值**
-
-```python
-def get_user_preference():
-    user_input = input("请输入您的偏好（1-3）：")
-    # 如果 user_input 合法就用它，否则用 '1' 作为默认值
-    preference = user_input if user_input in ["1", "2", "3"] else "1"
-    return preference
-```
-
-**场景 2：根据环境选择不同配置**
-
-```python
-is_production = True
-
-database_url = (
-    "mysql://prod-server:3306/db"
-    if is_production
-    else "mysql://localhost:3306/db"
-)
-```
-
-**场景 3：处理空值（fallback）**
-
-```python
-def safe_get_name(user_dict):
-    # 有 name 且非空就用它，否则用“未知用户”
-    return user_dict.get("name") if user_dict.get("name") else "未知用户"
-```
-
-#### 2.3.2 在列表推导式中做“按条件转换”
-
-三元表达式和列表推导式一起用时非常常见，用来**按条件决定每个元素如何变形**：
-
-```python
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-# 偶数转成字符串，奇数保持整数
-processed_numbers = [str(x) if x % 2 == 0 else x for x in numbers]
-
-scores = [85, 92, 78, 96, 88, 91, 87, 94]
-# 高分（>=90）标记为“优秀”，否则“良好”
-grade_list = ["优秀" if score >= 90 else "良好" for score in scores]
-
-words = ["hello", "world", "python", "programming"]
-# 长度大于 5 的单词转换为大写，其他保持原样
-processed_words = [w.upper() if len(w) > 5 else w for w in words]
-```
-
-#### 2.3.3 在函数返回值中根据条件选择结果
-
-```python
-def get_user_role(user_type):
-    # 根据用户类型返回角色
-    return "管理员" if user_type == "admin" else "普通用户"
-
-def calculate_discount(amount, is_vip):
-    # 计算折扣：VIP 且金额 > 1000 打 8 折，否则原价
-    discount_rate = 0.8 if is_vip and amount > 1000 else 1.0
-    return amount * discount_rate
-
-def format_phone_number(phone):
-    # 11 位手机号格式化为 138-1234-5678，其它长度按原样返回
-    return f"{phone[:3]}-{phone[3:7]}-{phone[7:]}" if len(phone) == 11 else phone
-```
-
-### 2.4 总结与使用建议
-
-**语法**：`value_if_true if condition else value_if_false`
-
-**适用场景**：
-
-- 简单的**条件赋值 / 选择返回值**。
-- 列表推导式中按条件转换元素。
-- 函数中根据条件返回两种结果之一。
-
-**不适用场景**：
-
-- 有很多分支（`if / elif / else` 很多）。
-- 条件内部需要多步逻辑（读起来费劲）。
-
-**与 if-else 对比**：
-
-- 三元表达式：更紧凑，适合“一行搞定”的简单判断。
-- if-else：更清晰，适合复杂逻辑和多语句分支。
-
-**使用建议（给小白）**：
-
-- 优先保证**可读性**：看一眼能懂比省一行代码重要得多。
-- 避免**嵌套多个三元表达式**，一行里嵌套多层会非常难读。
-- 把三元表达式当成**“值的选择器”**：只在“这个值还是那个值”的场景用它，其它一律先考虑普通 if-else。
-
----
-
-## 三、在 Python 中实现 “switch” 语句
-
-### 3.1 核心概念
-
-Python 没有原生的 `switch-case` 语句，但可以用多种方式实现**“多个分支，选其一”**的逻辑：
-
-1. **`if-elif-else` 链**：最直接、最基础，语法清晰，适合分支不多的简单场景。
-2. **字典映射**：推荐方法之一，用字典将“键”映射到“结果值”，查找是 O(1)，代码简洁。
-3. **函数字典**：字典中存的是函数对象，适合每个分支逻辑比较复杂的情况。
-4. **Python 3.10+ 的 `match` 语句**：结构化模式匹配，可以看作“超强版 switch”，适合分支多、需要解构或复杂条件匹配的场景。
-
-下面按难度从低到高，给出示例。
-
-### 3.2 使用 `if-elif-else`（最直接）
-
-```python
-def switch_if_elif(case):
-    if case == "A":
-        return "Case A"
-    elif case == "B":
-        return "Case B"
-    elif case == "C":
-        return "Case C"
-    else:
-        return "Default case"
-```
-
-**特点**：语法直观、容易理解；分支很多时代码会较长，但对于小项目或快速脚本完全够用。
-
-### 3.3 使用字典映射（推荐）
-
-当“输入 → 输出”只是简单的值映射时，用字典会更简洁、性能也更好：
-
-```python
-def switch_dict(case):
-    mapping = {
-        "A": "Case A",
-        "B": "Case B",
-        "C": "Case C",
-    }
-    # .get 支持提供默认值
-    return mapping.get(case, "Default case")
-```
-
-**适用场景**：根据字符串/枚举类型选择不同文本、配置、常量值等。
-
-### 3.4 使用“函数字典”（复杂逻辑）
-
-当每个分支需要执行一段逻辑（而不仅仅是返回一个字符串）时，可以把**函数**存进字典：
+### 6.3 方式三：函数字典
 
 ```python
 def case_a():
-    return "Action for case A"
+  return '处理 A'
 
 def case_b():
-    return "Action for case B"
+  return '处理 B'
 
 def case_default():
-    return "Default action"
+  return '默认处理'
 
-def switch_function_dict(case):
-    actions = {
-        "A": case_a,
-        "B": case_b,
-    }
-    # 如果 key 不存在，返回默认函数 case_default
-    func = actions.get(case, case_default)
-    return func()  # 调用函数
+
+def dispatch(case):
+  table = {
+    'a': case_a,
+    'b': case_b,
+  }
+  func = table.get(case, case_default)
+  return func()
 ```
 
-**适用场景**：每个分支内部逻辑较多、需要多行代码时，把逻辑封装成函数，用函数字典会让主流程非常干净。
+适合：
+- 每个分支里有不同的复杂逻辑
+- 想把各分支拆成独立函数
+- 路由、命令分发、处理器映射
 
-### 3.5 使用 `match` 语句（Python 3.10+）
-
-Python 3.10 引入的结构化模式匹配（`match`）可以看作是现代版的 switch，更强大也更清晰：
+### 6.4 方式四：`match` 语句（Python 3.10+）
 
 ```python
-def switch_match(case):
-    match case:
-        case "A":
-            return "Case A"
-        case "B":
-            return "Case B"
-        case "C":
-            return "Case C"
-        case _:
-            return "Default case"
+def handle(cmd):
+  match cmd:
+    case 'start':
+      return 'start ok'
+    case 'stop':
+      return 'stop ok'
+    case 'pause':
+      return 'pause ok'
+    case _:
+      return 'unknown command'
 ```
 
-特点：
+**一句话先懂**：`match` 像是 Python 现代版的模式匹配，不只是比值相等，还能匹配类型、结构和附加条件。
 
-- 支持**值匹配**、**类型匹配**，甚至**序列/对象解包**等复杂模式。
-- `case _` 表示默认分支（类似 `default`）。
-- 代码结构清晰，适合分支多、逻辑复杂的场合。
+### 6.5 `case _:` 是什么意思
 
-#### 3.5.1 match 语法速览（下次看到不懵）
+它相当于“默认分支”，一般放在最后。
 
-下面按「从最常见到稍进阶」列一遍，以后在别人代码里看到 `match`/`case` 就能对上号。
+### 6.6 `match` 里的几个常见写法
 
-**① 基本形式：按“值”相等匹配**
+#### 6.6.1 多个值合并匹配
+
+```python
+match cmd:
+  case 'a' | 'b':
+    print('命中 a 或 b')
+```
+
+#### 6.6.2 类型模式
 
 ```python
 match x:
-    case "A":
-        ...
-    case 1:
-        ...
+  case int():
+    print('是整数')
+  case str():
+    print('是字符串')
 ```
 
-- `match` 后面跟要判断的**一个值**（变量或表达式）。
-- `case "A":` 表示：若 `x == "A"`，就进这个分支；从上到下第一个匹配到的分支会执行，后面不再看。
-
-**② 默认分支：`case _`**
+#### 6.6.3 绑定变量
 
 ```python
-    case _:
-        ...   # 上面都没匹配到时，进这里
+match x:
+  case int(n):
+    print('整数值是', n)
 ```
 
-- `_` 是通配符，**不绑定变量**，只表示“别的都算匹配”。
-- 习惯放在最后，当 `default` 用。
+- `case int():`：只检查是不是整数
+- `case int(n):`：检查是整数，并把值绑定给变量 `n`
 
-**③ 多值任选其一：`case a | b | c`**
+#### 6.6.4 守卫条件
 
 ```python
-    case "help" | "h" | "?":
-        return "显示帮助"
+match x:
+  case int(n) if n > 0:
+    print('正整数')
+  case str(s) if len(s) > 5:
+    print('长字符串')
+  case _:
+    print('其他')
 ```
 
-- 用 `|` 连接多个值，表示「匹配其中任意一个」。
-- 等价于 `if x == "help" or x == "h" or x == "?"`。
+这类写法就叫“类型 + 守卫”。
 
-**④ 按类型匹配：`case int()` / `case str()`**
+### 6.7 这四种 switch 写法怎么选
 
-```python
-    case int():
-        ...   # x 是整数时进来
-    case str():
-        ...   # x 是字符串时进来
-```
+- **分支少、逻辑简单**：`if-elif-else`
+- **纯值映射、分支多**：字典映射
+- **每个分支逻辑复杂**：函数字典
+- **Python 3.10+ 且需要模式匹配能力**：`match`
 
-- 这里的 `int()`、`str()` **不是**“调用函数造一个新值”，而是**类型模式**：只判断「是不是这个类型」。
-- 可以理解为：`type(x) is int` / `type(x) is str`。
+从工程实践看：
+- 字典映射通常更适合做配置、路由、状态到文本的映射
+- `if-elif-else` 在条件不是简单值匹配时更灵活
+- `match` 可读性强，但要考虑 Python 版本要求
 
-**⑤ 守卫：类型匹配后再加条件 `if ...`**
+---
 
-```python
-    case int() if x > 0:
-        return f"正整数: {x}"
-    case str() if len(x) > 10:
-        return f"长字符串: {x[:10]}..."
-```
+## 七、本章高频问法速记
 
-- 在 `case` 同一行末尾写 **`if 条件`**，叫**守卫（guard）**。
-- 含义：先满足类型（如 `int`），再满足 `if` 里的条件，才进这个分支。
-- 所以 `case int() if x > 0` = 「是整数，且大于 0」。
+- **`and` 的返回值规则**：返回第一个假值；如果都为真，返回最后一个。
+- **`or` 的返回值规则**：返回第一个真值；如果都为假，返回最后一个。
+- **`not` 的返回值类型**：总是布尔值。
+- **哪些对象是假值**：`None`、`False`、各种数值零、空字符串、空容器等。
+- **为什么 `if user is not None and user.name == ...` 安全**：因为 `and` 会短路。
+- **自定义对象真值优先级**：`__bool__()` → `__len__()` → 默认真。
+- **`1 < x < 10` 等价于什么**：`(1 < x) and (x < 10)`，而且 `x` 只求值一次。
+- **浮点数为什么别直接用 `==`**：因为二进制近似存储会带来精度误差。
+- **集合和字典支持哪些比较**：字典主要是 `==` / `!=`；集合的 `<` / `>` 表示子集 / 超集关系。
+- **自定义类比较时不支持对方类型该返回什么**：返回 `NotImplemented`。
+- **三元表达式语法**：`结果1 if 条件 else 结果2`。
+- **Python 如何替代 switch**：`if-elif-else`、字典映射、函数字典、`match`。
 
-**⑥ 把匹配到的值“抓”到变量里：`case int(n)`**
+---
 
-```python
-    case int(n):
-        return f"你输入了整数 {n}"
-```
-
-- 在类型后面加**变量名**（如 `int(n)`），会把当前匹配的**那个值**赋给 `n`，分支里可以直接用 `n`。
-- 若只是判断类型、不需要用具体值，写 `int()` 即可。
-
-**⑦ 简单序列解构（了解即可）**
-
-```python
-match lst:
-    case [a, b]:
-        return f"两个元素: {a}, {b}"
-    case [first, *rest]:
-        return f"第一个是 {first}，其余 {rest}"
-```
-
-- `[a, b]` 表示「长度为 2 的序列」，并把第 1、2 个元素绑到 `a`、`b`。
-- `[first, *rest]` 表示「至少 1 个元素」，第一个给 `first`，剩余全部给 `rest`（列表）。
-
-**速查表**
-
-| 写法 | 含义（小白一句话） |
-|------|---------------------|
-| `case "A":` | 值等于 `"A"` 时进这里 |
-| `case _:` | 上面都不中时进这里（默认） |
-| `case "a" \| "b":` | 值是 `"a"` 或 `"b"` 时进这里 |
-| `case int():` | 是整数时进这里 |
-| `case str():` | 是字符串时进这里 |
-| `case int() if x > 0:` | 是整数且大于 0 时进这里 |
-| `case int(n):` | 是整数，且把该整数存到变量 `n` 里 |
-
-记住：**match 从上到下第一个“匹配”到的 case 会执行，执行完就结束**；后面的 case 不会再试。
-
-### 3.6 高级应用示例
-
-#### 3.6.1 数值范围匹配
-
-用**字典映射**处理“分数落在某区间 → 等级”时，可以用 `range` 做 key（`range` 不可变、可哈希），再遍历查找命中的区间：
-
-```python
-def grade_evaluator(score):
-    grade_map = {
-        range(90, 101): "A",
-        range(80, 90): "B",
-        range(70, 80): "C",
-        range(60, 70): "D",
-    }
-    for score_range, grade in grade_map.items():
-        if score in score_range:
-            return grade
-    return "F"
-
-# 示例
-for s in [95, 85, 75, 65, 55]:
-    print(f"{s} -> {grade_evaluator(s)}")  # A, B, C, D, F
-```
-
-#### 3.6.2 多条件匹配（match）
-
-`match` 可同时匹配多个值（`|`）、类型与守卫条件，适合命令解析、参数分发：
-
-```python
-def process_user_input(user_input):
-    match user_input:
-        case "help" | "h" | "?":
-            return "显示帮助信息"
-        case "quit" | "exit" | "q":
-            return "退出程序"
-        case "save" | "s":
-            return "保存文件"
-        case int() if user_input > 0:
-            return f"处理正整数: {user_input}"
-        case str() if len(user_input) > 10:
-            return f"处理长字符串: {user_input[:10]}..."
-        case _:
-            return f"未知命令: {user_input}"
-```
-
-#### 3.6.3 状态机实现
-
-用**字典映射**维护“当前状态 → 下一状态”和“状态 → 动作”，适合简单状态机（如交通灯、工作流）：
-
-```python
-class TrafficLight:
-    def __init__(self):
-        self.state = "RED"
-        self.transitions = {
-            "RED": "GREEN",
-            "GREEN": "YELLOW",
-            "YELLOW": "RED",
-        }
-        self.actions = {
-            "RED": "停车等待",
-            "GREEN": "可以通行",
-            "YELLOW": "准备停车",
-        }
-
-    def change_state(self):
-        self.state = self.transitions.get(self.state, "RED")
-        return self.state
-
-    def get_action(self):
-        return self.actions.get(self.state, "未知状态")
-
-# 示例
-light = TrafficLight()
-for _ in range(6):
-    light.change_state()
-    print(light.state, "-", light.get_action())
-```
-
-**适用场景**：命令行/配置路由、状态转换、按区间或类型分发，可结合字典映射与 `match` 按需选用。
-
-### 3.7 选择建议与性能考虑
-
-简单记忆：
-
-- **简单条件、分支不多**：直接用 `if-elif-else` 最直观。
-- **大量“输入→输出”的纯映射**：用**字典映射**，查找是 O(1)，代码短且易扩展。
-- **每个分支逻辑较复杂**：用**函数字典**封装每个分支的处理函数。
-- **Python 3.10+ 且分支/模式较复杂**：优先考虑 `match`，语法更清晰、可读性更强。
-
-无论哪种方式，都要注意：
-
-- 始终提供**默认分支**（如 `else`、`mapping.get(key, default)`、`case _`）。
-- 关注**可读性和可扩展性**，不要为了“看起来像 switch”而牺牲代码清晰度。
+**本章小结**：逻辑判断这一章最重要的不是背“真假表”，而是建立三层意识：第一层，`and` / `or` / `not` 有明确的返回值规则；第二层，短路机制会影响程序是否继续执行、也能用来做安全判断和默认值；第三层，比较、三元表达式、`switch` 替代方案，本质上都是在“根据条件选择行为”。把这三层连起来，后面写条件判断就会自然很多。

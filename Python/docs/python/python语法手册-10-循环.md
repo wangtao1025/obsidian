@@ -138,3 +138,30 @@ else:
 ---
 
 **本章小结**：`for` 遍历已知序列，`while` 条件循环。`range(stop)`/`range(start,stop)`/`range(start,stop,step)`，不包含 stop；`range` 惰性省内存。`break` 跳出一层循环，`continue` 跳过当次，`return` 结束函数。
+
+
+## 二、循环与大文件读取
+
+### 2.1 为什么读大文件不要直接 `read()`
+
+```python
+with open('huge.log', 'r', encoding='utf-8') as f:
+    for line in f:
+        process(line)
+```
+
+- `read()`：一次性把全部内容读进内存。
+- `for line in f`：按行迭代，更省内存，更适合日志、CSV、超大文本。
+
+### 2.2 `read()` / `readline()` / `readlines()` 怎么选
+
+- `read()`：要整块内容时用。
+- `readline()`：一次读一行，手动控制。
+- `readlines()`：一次读完，得到列表；大文件慎用。
+- **最推荐的工程写法**：`for line in f`。
+
+### 2.3 对应面试题
+
+- `13` `break`、`continue`、`pass` 的作用
+- `15` `range` 的运用
+- `41` 如何读取大文件

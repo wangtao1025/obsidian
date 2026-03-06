@@ -763,17 +763,170 @@ FF (16进制) -> 11111111 (2进制) [期望: 11111111]
 
 ## [题目 1.3]：变量赋值与身份校验 (基础类)
 
-**题目背景**：考察 `is` vs == 的区别，以及 `None` 的判断标准。
+**题目背景**：考察 `is` vs `==` 的区别、`None` 的判断标准，以及小整数缓存带来的身份判断陷阱。
 
-**1. 核心考点拆解**：7316
+### **1. 核心考点拆解**：
 
-- **单例判断**：始终使用 `is None` 检查空值以保证性能和准确性。
+- **值比较 vs 身份比较**：`==` 比较内容是否相等，`is` 比较是否为同一个对象。
+- **`None` 判断最佳实践**：始终优先写 `x is None` / `x is not None`。
+- **缓存陷阱**：理解 `[-5, 256]` 小整数对象池对 `is` 结果的影响。
+- **重载干扰**：自定义 `__eq__` 可能让 `x == None` 产生误导性结果。
 
-- **缓存陷阱**：理解 `[-5, 256]` 小整数池对 `is` 判断的影响。
+### **2. 关联手册章节快速跳转**：
 
-**2. 关联手册章节快速跳转**：
+- [身份判断与成员运算符](/python/python语法手册-07-身份与成员)
+- [核心语法自测试卷 · 身份判断与成员运算符](/python/Python核心语法自测试卷#八身份判断与成员运算符-共-8-题)
+- [核心语法自测试卷 · 变量赋值与解包](/python/Python核心语法自测试卷#一变量赋值与解包-共-7-题)
 
-- `7.1 身份vs内容区别表` 
-- `7.3 None判断标准` 
-- `7.4 整数缓存陷阱`
-https://python.docs-hub.com/html/9.!=%E5%92%8Cis%20not%E8%BF%90%E7%AE%97%E7%AC%A6%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F.html
+### **3. 题目**
+
+#### 题 1：解释 `==` 与 `is` 的区别
+```python
+list_a = [1, 2, 3]
+list_b = [1, 2, 3]
+list_c = list_a
+
+print(list_a == list_b)
+print(list_a is list_b)
+print(list_a is list_c)
+```
+
+要求：
+- 写出输出结果；
+- 说明哪一行是在比较“内容”，哪一行是在比较“对象身份”。
+
+#### 题 2：为什么推荐 `is None`
+```python
+class Weird:
+    def __eq__(self, other):
+        return True
+
+obj = Weird()
+print(obj == None)
+print(obj is None)
+```
+
+要求：
+- 写出输出结果；
+- 说明为什么判断空值时不推荐 `== None`。
+
+#### 题 3：小整数缓存陷阱
+```python
+a = 256
+b = 256
+x = 257
+y = 257
+
+print(a is b)
+print(x is y)
+```
+
+要求：
+- 说明为什么 `256` 和 `257` 的 `is` 结果可能不同；
+- 总结在业务代码里什么时候该用 `==`，什么时候才该用 `is`。
+
+### **4. 参考答案（简版）**
+
+- **题 1**：输出依次为 `True`、`False`、`True`。`==` 比较值，`is` 比较身份；`list_c` 与 `list_a` 指向同一对象。
+- **题 2**：输出通常是 `True`、`False`。因为 `==` 会走 `__eq__`，可能被自定义逻辑污染；`is None` 才是在判断“是不是那个唯一的 `None` 对象”。
+- **题 3**：常见情况下 `a is b` 为 `True`，`x is y` 不可靠。原因是 CPython 会缓存一部分小整数对象。结论是：**比较数值、字符串、列表内容时用 `==`；只在判断 `None`、单例对象、哨兵对象时用 `is`**。
+
+---
+
+# 第二类：站点基础问答题全目录（来自 python.docs-hub）
+
+> 说明：以下目录基于 `https://python.docs-hub.com/` 于 2026-03-06 的可访问内容整理，共 **66** 题（编号 `1`–`65`、`67`）。这里先补齐题库目录与主题归类，后续可按优先级继续扩写为本地详细题解。
+
+## 1. 环境、语言认知与编码规范
+
+- [1. VSCode开发](https://python.docs-hub.com/html/1.VSCode开发.html)
+- [2. 什么是 Python？](https://python.docs-hub.com/html/2.什么是Python？.html)
+- [3. 请详细解释 Python 代码的执行过程](https://python.docs-hub.com/html/3.请详细解释Python代码的执行过程.html)
+- [4. 请详细解释解释型语言与编译型语言的主要区别](https://python.docs-hub.com/html/4.请详细解释解释型语言与编译型语言的主要区别.html)
+- [5. 你知道哪些 Python 的编码规范？](https://python.docs-hub.com/html/5.你知道哪些Python的编码规范？.html)
+
+## 2. 数据类型、变量与基础语法
+
+- [6. 数据类型](https://python.docs-hub.com/html/6.数据类型.html)
+- [7. Python 中如何声明多个变量并赋值](https://python.docs-hub.com/html/7.Python中如何声明多个变量并赋值.html)
+- [8. Python 有哪些内置数据结构](https://python.docs-hub.com/html/8.Python有哪些内置数据结构.html)
+- [9. `!=` 和 `is not` 运算符有什么区别？](https://python.docs-hub.com/html/9.!=和is%20not运算符有什么区别？.html)
+- [10. 进制](https://python.docs-hub.com/html/10.进制.html)
+- [11. 编码](https://python.docs-hub.com/html/11.编码.html)
+- [12. print](https://python.docs-hub.com/html/12.print.html)
+- [13. Python 中 `break`、`continue`、`pass` 有什么作用？](https://python.docs-hub.com/html/13.Python中break、continue、pass有什么作用？.html)
+- [14. `namedtuple` 有什么作用？](https://python.docs-hub.com/html/14.namedtuple有什么作用？.html)
+- [15. Python 的 `range` 函数如何运用？](https://python.docs-hub.com/html/15.Python的range函数如何运用？.html)
+
+## 3. 字符串、逻辑与运算符
+
+- [16. Python 中 `join()` 和 `split()` 函数有什么区别？](https://python.docs-hub.com/html/16.Python中join()和split()函数有什么区别？.html)
+- [17. Python 中如何将字符串转换为小写？](https://python.docs-hub.com/html/17.Python中如何将字符串转换为小写？.html)
+- [18. Python 中如何删除字符串中的前置空格？](https://python.docs-hub.com/html/18.Python中如何删除字符串中的前置空格？.html)
+- [19. Python 中如何使用索引反转字符串](https://python.docs-hub.com/html/19.Python中如何使用索引反转字符串.html)
+- [20. 什么是 Python 的成员运算符？](https://python.docs-hub.com/html/20.什么是Python的成员运算符？.html)
+- [21. 请详细说明 Python 中逻辑运算符（`and`、`or`、`not`）](https://python.docs-hub.com/html/21.请详细说明Python中逻辑运算符（`and`、`or`、`not`）.html)
+- [22. 什么是 Python 的关系运算符？](https://python.docs-hub.com/html/22.什么是Python的关系运算符？.html)
+- [23. 什么是 Python 的赋值和算术运算符？](https://python.docs-hub.com/html/23.什么是Python的赋值和算术运算符？请详细说明赋值运算符、算术运算符的种类、使用方法、优先级规则。.html)
+- [24. 请详细解释 Python 中整数除法、取模运算和幂运算三个运算符](https://python.docs-hub.com/html/24.请详细解释Python中整数除法、取模运算和幂运算三个运算符。.html)
+- [25. 如何在 Python 中表示和转换不同进制的数字](https://python.docs-hub.com/html/25.如何在Python中表示和转换不同进制的数字.html)
+- [26. 什么是 Python 的位运算符？](https://python.docs-hub.com/html/26.什么是Python的位运算符？.html)
+- [27. 请详细说明 Python 中三元表达式（Ternary Expression）的工作原理](https://python.docs-hub.com/html/27.请详细说明Python中三元表达式(Ternary%20Expression)的工作原理.html)
+- [28. Python 中如何实现 switch 语句？](https://python.docs-hub.com/html/28.Python中如何实现switch语句？.html)
+- [29. 什么是 Python 的负索引？](https://python.docs-hub.com/html/29.什么是Python的负索引？.html)
+- [30. Python 中如何实现字符串替换操作？](https://python.docs-hub.com/html/30.Python中如何实现字符串替换操作？.html)
+
+## 4. 容器、文件与迭代模型
+
+- [31. Python 中 `append`、`insert` 和 `extend` 有什么区别？](https://python.docs-hub.com/html/31.Python中append、insert和extend有什么区别？.html)
+- [32. 请详细说明 Python 中 `enumerate()` 函数的作用](https://python.docs-hub.com/html/32.请详细说明Python中`enumerate()`函数的作用.html)
+- [33. Python 中 `remove`、`del` 和 `pop` 有什么区别？](https://python.docs-hub.com/html/33.Python中remove、del和pop有什么区别？.html)
+- [34. Python 中如何更改列表元素的数据类型？](https://python.docs-hub.com/html/34.Python中如何更改列表元素的数据类型？.html)
+- [35. 请详细说明 Python 中列表（list）和元组（tuple）的区别](https://python.docs-hub.com/html/35.请详细说明Python中列表(list)和元组(tuple)的区别.html)
+- [36. 什么是 Python 元组的解封装？](https://python.docs-hub.com/html/36.什么是Python元组的解封装？.html)
+- [37. 详细说明 Python 字典](https://python.docs-hub.com/html/37.详细说明Python字典.html)
+- [38. Python 中 `KeyError`、`TypeError` 和 `ValueError` 有什么区别？](https://python.docs-hub.com/html/38.Python中KeyError、TypeError和ValueError有什么区别？.html)
+- [39. 请详细解释 Python 中 `read()`、`readline()` 和 `readlines()` 三种文件读取方法](https://python.docs-hub.com/html/39.请详细解释Python中`read()`、`readline()`和`readlines()`三种文件读取方法.html)
+- [40. Python 中 iterable、iterator 和 generator 的区别与联系](https://python.docs-hub.com/html/40.Python中iterable、iterator和generator的区别与联系.html)
+- [41. Python 中如何读取大文件？](https://python.docs-hub.com/html/41.Python中如何读取大文件？.html)
+- [42. 请详细解释 Python 中浅拷贝（shallow copy）和深拷贝（deep copy）的区别](https://python.docs-hub.com/html/42.请详细解释Python中浅拷贝（shallow%20copy）和深拷贝（deep%20copy）的区别.html)
+
+## 5. 函数式工具与作用域
+
+- [43. 什么是 Python 的 Lambda 函数？](https://python.docs-hub.com/html/43.什么是Python的Lambda函数？.html)
+- [44. Python 中的 `reduce` 函数有什么作用？](https://python.docs-hub.com/html/44.Python中的reduce函数有什么作用？.html)
+- [45. Python 的 `zip` 函数有什么作用？](https://python.docs-hub.com/html/45.Python的zip函数有什么作用？.html)
+- [46. 请详细解释 Python 中 `any()` 和 `all()` 内置函数的作用](https://python.docs-hub.com/html/46.请详细解释Python中`any()`和`all()`内置函数的作用.html)
+- [47. 为什么 Python 中没有函数重载？](https://python.docs-hub.com/html/47.为什么Python中没有函数重载？.html)
+- [48. 请介绍 Python 中变量的作用域（Scope）？](https://python.docs-hub.com/html/48.请介绍Python中变量的作用域(Scope)？.html)
+- [49. 什么是 Python 的闭包](https://python.docs-hub.com/html/49.什么是Python的闭包.html)
+
+## 6. 运行时、对象系统与工程实践
+
+- [50. 请详细说明 Python 中的内存管理机制](https://python.docs-hub.com/html/50.请详细说明Python中的内存管理机制.html)
+- [51. 请详细说明 Python 程序退出时内存的释放情况](https://python.docs-hub.com/html/51.请详细说明Python程序退出时内存的释放情况.html)
+- [52. Python 中是否有严格意义上的 `main` 函数？](https://python.docs-hub.com/html/52.Python中是否有严格意义上的main函数？.html)
+- [53. 什么是 Python 的 pickling 和 unpickling？](https://python.docs-hub.com/html/53.什么是Python的pickling和unpickling？.html)
+- [54. 什么是 Python 的猴子补丁（monkey patching）？](https://python.docs-hub.com/html/54.什么是Python的猴子补丁(monkey%20patching)？.html)
+- [55. 什么是 Python 的鸭子类型（Duck Typing）](https://python.docs-hub.com/html/55.什么是Python的鸭子类型(Duck%20Typing).html)
+- [56. 什么是 Python 中的面向对象编程](https://python.docs-hub.com/html/56.什么是Python中的面向对象编程.html)
+- [57. Python 是否支持多重继承](https://python.docs-hub.com/html/57.Python是否支持多重继承.html)
+- [58. 请详细说明 Python 3 中装饰器的用法](https://python.docs-hub.com/html/58.请详细说明Python3中装饰器的用法.html)
+- [59. 什么是 Python 中的模块和包？](https://python.docs-hub.com/html/59.什么是Python中的模块和包？.html)
+- [60. 你使用过哪些 Python 标准库模块？](https://python.docs-hub.com/html/60.你使用过哪些Python标准库模块？.html)
+- [61. 你知道哪些 Python 魔术方法](https://python.docs-hub.com/html/61.你知道哪些Python魔术方法.html)
+- [62. 讲一下 Python 多线程、多进程和线程池](https://python.docs-hub.com/html/62.讲一下Python多线程、多进程和线程池.html)
+- [63. 如何分析 Python 代码的执行性能？](https://python.docs-hub.com/html/63.如何分析Python代码的执行性能？.html)
+- [64. pip](https://python.docs-hub.com/html/64.pip.html)
+- [65. pip -m](https://python.docs-hub.com/html/65.pip-m.html)
+- [67. uv](https://python.docs-hub.com/html/67.uv.html)
+
+## 7. 推荐扩写顺序
+
+如果后续继续把这份文档从“目录版”扩成“题解版”，建议按下面顺序推进：
+
+1. **先补高频基础题**：`3`、`5`、`8`、`9`、`10`、`11`、`12`、`16`、`20`、`21`、`23`、`25`、`30`。
+2. **再补容器和函数题**：`31`–`46`。
+3. **最后补运行时与工程题**：`50`–`67`。
+
+这样更符合 Python 面试的高频顺序，也更适合和你现有的语法手册、自测卷互相联动。

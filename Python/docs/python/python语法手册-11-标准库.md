@@ -286,3 +286,103 @@ if n:
 ---
 
 **本章小结**：常用标准库如 `datetime`（日期时间）、`time`（计时）、`re`（正则匹配与替换）、进制与数学相关；`re` 做模式匹配与替换，返回的 match 对象用 `.group(0)` 取整段、`.group(1)` 等取分组；详细 API 查官方文档，本站课程相关模块见 Python 首页标准库与第三方库表格。
+
+
+## 二、文件读取、`copy`、`reduce`、`pickle` 与性能分析
+
+### 2.1 文件对象：`read()` / `readline()` / `readlines()`
+
+```python
+with open('demo.txt', 'r', encoding='utf-8') as f:
+    all_text = f.read()
+
+with open('demo.txt', 'r', encoding='utf-8') as f:
+    first_line = f.readline()
+
+with open('demo.txt', 'r', encoding='utf-8') as f:
+    all_lines = f.readlines()
+```
+
+- `read()`：返回整个字符串。
+- `readline()`：返回一行字符串。
+- `readlines()`：返回“每行一个字符串”的列表。
+- 读大文件时，更推荐：
+
+```python
+with open('huge.log', 'r', encoding='utf-8') as f:
+    for line in f:
+        process(line)
+```
+
+### 2.2 `copy`：浅拷贝 vs 深拷贝
+
+```python
+import copy
+
+origin = [[1, 2], [3, 4]]
+shallow = copy.copy(origin)
+deep = copy.deepcopy(origin)
+
+origin[0][0] = 999
+print(shallow)  # [[999, 2], [3, 4]]
+print(deep)     # [[1, 2], [3, 4]]
+```
+
+- **浅拷贝**：只复制最外层，内部嵌套对象仍共享。
+- **深拷贝**：递归复制，内部嵌套对象也独立。
+
+### 2.3 `functools.reduce()`：把一串值归约成一个值
+
+```python
+from functools import reduce
+
+nums = [1, 2, 3, 4]
+result = reduce(lambda acc, x: acc + x, nums, 0)
+print(result)  # 10
+```
+
+- `reduce` 适合“累计折叠”问题。
+- 但简单求和优先用 `sum()`，可读性更好。
+
+### 2.4 `pickle`：对象序列化与反序列化
+
+```python
+import pickle
+
+data = {'name': 'Tom', 'score': 95}
+blob = pickle.dumps(data)
+restored = pickle.loads(blob)
+```
+
+- `dumps` / `loads`：面向内存中的字节串。
+- `dump` / `load`：面向文件。
+- **注意**：不要反序列化不可信来源的 pickle 数据。
+
+### 2.5 常用工程向标准库速记
+
+- `collections.namedtuple`：轻量不可变记录结构。
+- `copy`：浅拷贝 / 深拷贝。
+- `functools.reduce`：归约运算。
+- `pickle`：对象序列化。
+- `pathlib` / `os`：路径与文件系统。
+- `timeit` / `cProfile`：性能测量与性能分析。
+
+```python
+import timeit
+print(timeit.timeit("sum(range(100))", number=10000))
+```
+
+```python
+import cProfile
+cProfile.run("sum(range(100000))")
+```
+
+### 2.6 对应面试题
+
+- `14` `namedtuple` 有什么作用
+- `39` `read()` / `readline()` / `readlines()`
+- `42` 浅拷贝和深拷贝
+- `44` `reduce()`
+- `53` `pickling` 和 `unpickling`
+- `60` 常见标准库模块
+- `63` 如何分析 Python 代码执行性能

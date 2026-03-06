@@ -4,230 +4,534 @@
 
 ---
 
-**本章对应自测卷**：[内置函数（共 10 题）](/python/Python核心语法自测试卷#六内置函数-共-10-题)
-
-**本章对应课程**：4.1《函数》，以及自测试卷中的「函数与作用域」「内置函数」相关题目。*** End Patch```"/> داشت to=functions.ApplyPatchenderrorೇವೆ to=functions.ApplyPatch ***!
-**学完能做什么**：用 `len/sum/max/min` 做统计与极差，用 `key` 按字典某字段比大小，分清 `reversed()`/`sorted()` 不改原数据。  
-**小白注意**：① `max`/`min` 按“规则”比要用 `key=lambda x: x["字段"]`。② `sorted()` 返回新列表，`.sort()` 只用于列表且返回 `None`。③ 空序列 `max([])` 会报错。
+**本章对应自测卷**：[内置函数（共 19 题）](/python/Python核心语法自测试卷#六内置函数-共-10-题)
+**学完能做什么**：熟练使用 `len()`、`sum()`、`max()`、`min()`、`reversed()`、`sorted()`、`enumerate()`、`zip()`、`any()`、`all()` 解决计数、求和、排序、并行遍历、批量判断等高频问题。  
+**小白注意**：① `sorted()` 返回新列表，不改原数据。② `reversed()` 返回迭代器，不是列表。③ `max()` / `min()` 空序列默认会报错。④ `any()` 和 `all()` 判断的是“真值”，不只是 `True` 和 `False` 两个字面量。
 
 ---
 
-## 一、内置函数
+## 一、先理解什么叫“内置函数”
 
-本章介绍写代码时最常用的几个**内置函数**（不用 `import`，直接就能用）。每个函数都会说明：做什么、怎么用、注意点，并配上简单示例，方便小白对照练习。
+**一句话先懂**：内置函数就是 Python 已经提前准备好的函数，不用 `import`，拿来就能用。
 
----
-
-### 1.1 `len()`：求长度（元素个数）
-
-**一句话**：返回序列或集合里**有多少个元素**。
-
-**写法**：`len(对象)`
-
-**能传什么**：字符串、列表、元组、字典、集合、range 等「有长度」的对象。
-
-**返回值**：一个**整数**。
+比如：
 
 ```python
-len("hello")           # 5  （5 个字符）
-len([10, 20, 30])      # 3  （3 个元素）
-len((1, 2))            # 2  （元组 2 个元素）
-len({"a": 1, "b": 2})  # 2  （字典是键的个数）
-len(range(5))          # 5
-len([])                # 0  （空列表长度为 0）
+print(len('hello'))
+print(sum([1, 2, 3]))
+print(max(10, 20, 30))
 ```
 
-**常见用法**：算平均分时要除以「个数」，就用 `len(scores)` 当分母：`sum(scores) / len(scores)`。（自测卷 6.1）
+这些函数的共同特点：
+- Python 自带
+- 使用频率很高
+- 用来处理最基础、最通用的任务
 
-**注意**：  
-- 传**数字**会报错（`len(42)` 不行），因为整数没有「长度」概念。  
-- 字典的 `len` 是**键的个数**，不是键值对占用的内存。
+**开发视角**：
+- 内置函数往往比你自己手写循环更简洁
+- 也更接近 Python 的常见写法
+- 看到需求时，先想“有没有现成内置函数”，通常能少写很多代码
 
 ---
 
-### 1.2 `sum()`：对数值求和
+## 二、计数、求和、最大最小：最基础的一组函数
 
-**一句话**：把可迭代对象里的**数字全部加起来**。
+### 2.1 `len()`：求长度
 
-**写法**：`sum(iterable, start=0)`
-
-| 参数 | 含义 |
-|------|------|
-| 第一个参数 | 必须是「可迭代对象」，且元素一般是数字（如列表、元组、range） |
-| `start`（可选） | 从哪个数开始加，默认是 `0`。例如 `sum([1,2,3], 10)` 得到 10+1+2+3=16 |
-
-**返回值**：一个**数字**（整数或浮点数）。
+**一句话先懂**：`len()` 返回“有多少个元素”。
 
 ```python
-sum([1, 2, 3, 4, 5])   # 15
-sum((10, 20, 30))      # 60
-sum(range(6))          # 0+1+2+3+4+5 = 15
-sum([], 100)           # 空列表 + start → 100
-sum([1.5, 2.5])        # 4.0
+print(len('hello'))
+print(len([10, 20, 30]))
+print(len((1, 2)))
+print(len({'a': 1, 'b': 2}))
+print(len({1, 2, 3}))
 ```
 
-**常见用法**：算总分、算平均分的分子：`sum(scores) / len(scores)`。（自测卷 6.1）
+### 2.1.1 `len()` 分别返回什么
 
-**注意**：  
-- 不能对**字符串列表**直接 `sum()`（字符串不能和 0 相加），需要先转成数字或换写法。  
-- 空列表 `sum([])` 得到 `0`（因为 start 默认是 0）。
-
----
-
-### 1.3 `max()` 和 `min()`：最大值与最小值（自测卷 6.2 待复习）
-
-**一句话**：`max()` 返回其中**最大的**一个，`min()` 返回**最小的**一个。
-
-**写法**：  
-- `max(iterable)` 或 `max(a, b, c, ...)`  
-- `min(iterable)` 或 `min(a, b, c, ...)`
-
-**两种用法**：  
-1. **传一个可迭代对象**：在「一整组」里找最大/最小。  
-2. **传多个参数**：在这几个数里比。  
-3. **传可迭代对象 + `key`**：按「key 函数的返回值」来比大小（见下表）。
-
-| 参数 | 含义 |
-|------|------|
-| 可迭代对象 或 多个参数 | 要比较的对象（数字、字符串、或元素可比较的列表等） |
-| `key`（可选） | 一个函数；对每个元素先算 `key(元素)`，再按这个结果比大小。（自测卷 6.2） |
-
-**返回值**：可迭代对象里的**一个元素**（不是索引），类型和元素一致。
+- 字符串：字符个数
+- 列表 / 元组：元素个数
+- 集合：去重后的元素个数
+- 字典：**键的个数**
 
 ```python
-# 基本用法
-max([85, 92, 78, 95, 60])   # 95
-min([85, 92, 78, 95, 60])   # 60
-max(1, 5, 3)                # 5  多个参数
-min("hello")                # 'e'  按字母/Unicode 比
+d = {'name': 'Tom', 'age': 18}
+print(len(d))  # 2
+```
 
-# key：按「规则」比。例如按字典里的 "score" 找最高分的人
+**注意**：字典的 `len(d)` 不是“值的个数”，也不是“键值对占内存多少”，而是键的数量。
+
+### 2.1.2 什么对象不能用 `len()`
+
+```python
+# len(42)     # TypeError
+# len(3.14)   # TypeError
+```
+
+整数、浮点数这种“单个数值”没有长度概念。
+
+### 2.2 `sum()`：对数值求和
+
+**一句话先懂**：`sum()` 把一组数字加起来。
+
+```python
+print(sum([1, 2, 3, 4]))
+print(sum((10, 20, 30)))
+print(sum(range(5)))
+```
+
+**标准语法**：
+
+```python
+sum(iterable, start=0)
+```
+
+- `iterable`：一组可迭代的数字
+- `start`：从哪个数开始累加，默认是 `0`
+
+```python
+print(sum([1, 2, 3], 10))  # 16
+```
+
+### 2.2.1 `start` 参数到底是什么意思
+
+`sum([1, 2, 3], 10)` 相当于：
+
+```python
+10 + 1 + 2 + 3
+```
+
+所以结果是 `16`。
+
+### 2.2.2 为什么 `sum()` 通常不直接拿来拼字符串或列表
+
+```python
+# sum(['a', 'b', 'c'])   # TypeError
+# sum([[1], [2], [3]])   # TypeError
+```
+
+因为 `sum()` 的设计目标主要是处理**数字累加**。  
+拼字符串通常用 `''.join(...)`，拼列表更常见的是：
+- 循环 `extend()`
+- 列表推导式
+- 其他更明确的写法
+
+### 2.2.3 一个非常常见的场景：求平均值
+
+```python
+scores = [85, 92, 78, 95, 60]
+avg = sum(scores) / len(scores)
+print(avg)
+```
+
+### 2.2.4 为什么 `sum(student['score'] >= 60 for student in students)` 可行
+
+```python
 students = [
-    {"name": "小明", "score": 80},
-    {"name": "小红", "score": 95},
-    {"name": "小刚", "score": 72}
+  {'name': 'A', 'score': 80},
+  {'name': 'B', 'score': 55},
+  {'name': 'C', 'score': 90}
 ]
-max(students, key=lambda x: x["score"])   # {"name": "小红", "score": 95}
-min(students, key=lambda x: x["score"])   # {"name": "小刚", "score": 72}
+
+passed = sum(student['score'] >= 60 for student in students)
+print(passed)  # 2
 ```
 
-**常见用法**：  
-- 算**极差**（判断分数是否波动大）：`max(scores) - min(scores)`。（自测卷 6.5）  
-- 在一组字典里按某个键找「最大/最小」的那条：用 `key=lambda x: x["字段名"]`。
+这是因为布尔值在 Python 里可以参与数值运算：
+- `True` 当成 `1`
+- `False` 当成 `0`
 
-**注意**：  
-- 空序列会报错：`max([])`、`min([])` 都会抛出 `ValueError`。  
-- 元素类型要能互相比较（不能列表和数字混在一起比）。
+所以这行代码本质上是在数“有多少个条件成立”。
 
----
+这在统计：
+- 及格人数
+- 命中次数
+- 满足条件的记录数
 
-### 1.4 `reversed()`：反向迭代（不改原数据）
+时非常常见。
 
-**一句话**：把序列**从后往前**遍历，返回一个「反向迭代器」，**不修改**原来的列表/元组/字符串。
+<span id="53-max-和-min-最大值与最小值"></span>
+### 2.3 `max()` 和 `min()`：最大值与最小值
 
-**写法**：`reversed(sequence)`
-
-**能传什么**：列表、元组、字符串、range 等**有顺序**的序列（不能是集合、字典，因为无顺序）。
-
-**返回值**：一个**迭代器**（不是列表）。若要得到列表，需要再包一层：`list(reversed(原序列))`。
+**一句话先懂**：`max()` 取最大，`min()` 取最小。
 
 ```python
-lst = [1, 2, 3, 4]
-list(reversed(lst))   # [4, 3, 2, 1]
-lst                   # [1, 2, 3, 4]  原列表没变
-
-list(reversed("hello"))   # ['o', 'l', 'l', 'e', 'h']  注意得到的是字符列表
-"".join(reversed("hello")) # "olleh"  反转字符串的常见写法
+print(max([85, 92, 78, 95, 60]))  # 95
+print(min([85, 92, 78, 95, 60]))  # 60
+print(max(1, 5, 3))               # 5
 ```
 
-**和 `sorted()` 的共同点**：都是**不修改原数据**，只产生新的结果；原序列保持原样。（自测卷 6.3）
-
-**注意**：  
-- `reversed()` 返回的是迭代器，用完就没了；想多次用要转成列表：`list(reversed(...))`。  
-- 列表还有 `.reverse()` 方法：会**原地**反转并返回 `None`，不要和 `reversed()` 搞混。
-
----
-
-### 1.5 `sorted()`：排序并返回新列表（不改原数据）
-
-**一句话**：对可迭代对象**排序**，**返回一个新的列表**，**不修改**原数据；可以用 `key` 指定「按什么排」、用 `reverse=True` 降序。
-
-**写法**：`sorted(iterable, key=None, reverse=False)`
-
-| 参数 | 含义 |
-|------|------|
-| 第一个参数 | 要排序的可迭代对象（列表、元组、字符串等） |
-| `key`（可选） | 一个函数；对每个元素先算 `key(元素)`，再按这个返回值排序。例如 `key=lambda x: x["score"]` 按分数排。 |
-| `reverse`（可选） | 默认 `False` 为升序；设为 `True` 为降序。 |
-
-**返回值**：**新的列表**（无论传入的是列表、元组还是字符串，返回的都是列表）。
+### 2.3.1 `key` 参数：按“规则”比较
 
 ```python
-sorted([3, 1, 4, 1, 5])              # [1, 1, 3, 4, 5]  升序
-sorted([3, 1, 4], reverse=True)      # [4, 3, 1]  降序
-sorted("hello")                       # ['e', 'h', 'l', 'l', 'o']  按字符排
+students = [
+  {'name': 'A', 'score': 80},
+  {'name': 'B', 'score': 95},
+  {'name': 'C', 'score': 75}
+]
 
-# 按字典的某个键排序（例如按分数）
-students = [{"name": "小明", "score": 80}, {"name": "小红", "score": 95}]
-sorted(students, key=lambda x: x["score"])               # 按分数升序
-sorted(students, key=lambda x: x["score"], reverse=True) # 按分数降序
+best = max(students, key=lambda x: x['score'])
+print(best)  # {'name': 'B', 'score': 95}
 ```
 
-**和 `.sort()` 的区别**（自测卷 6.4）：
+**一句话先懂**：`key` 不是改变元素，而是告诉 Python“按什么规则去比”。
 
-| 对比项 | `sorted(可迭代对象)` | 列表的 `.sort()` |
-|--------|----------------------|-------------------|
-| 是否改原数据 | **不改**，原数据保持原样 | **改**，只作用于列表，原地排序 |
-| 返回值 | **返回新列表**，可赋值给变量 | 返回 **None**，不要写 `a = lst.sort()` |
-| 能排序谁 | 列表、元组、字符串等都可 | **只有列表**；元组、字符串没有 `.sort()` |
+上面这段代码里：
+- 元素本身是字典
+- 字典彼此不能直接按你想要的“分数高低”比较
+- 所以用 `key=lambda x: x['score']` 指定“按分数字段比较”
 
-更详细的对比和易错点见：[内置数据结构 · 1.1.1 sorted() 与 .sort() 详解](/python/python语法手册-02-内置数据结构#111-sorted-与-sort-详解小白必读)。
+### 2.3.2 `max()` / `min()` 返回的是什么
 
-**注意**：  
-- 想得到「排好序的新列表」用 `sorted()`；想「直接把当前列表排好、不关心返回值」用 `.sort()`。  
-- 元组、字符串没有 `.sort()`，只能 `sorted(元组)` 或 `sorted(字符串)`，得到的是列表。
+返回的是：**原可迭代对象里的某个元素本身**，不是索引。
 
----
+```python
+students = [
+  {'name': 'A', 'score': 80},
+  {'name': 'B', 'score': 95}
+]
 
-### 1.6 与字符串/正则相关的内置函数与返回值（归纳）
+result = max(students, key=lambda x: x['score'])
+print(result)  # {'name': 'B', 'score': 95}
+```
 
-写字符串处理、正则替换时，常会用到**内置函数 `map`** 以及 **`re` 模块返回的 match 对象**。这里只做归纳与跳转，详细用法在「内置数据结构」和「标准库」章节。
+### 2.3.3 空序列为什么会报错
 
-#### 1.6.1 小白先记
+```python
+# max([])
+# min([])
+```
 
-- **`map(函数, 可迭代)`**：对可迭代对象里的**每一个元素**调用一次函数，得到新的迭代结果。在字符串/正则场景里，常用来对“多个键”或“多段文字”统一做处理（如对每个键做 `re.escape` 再拼成正则）。
-- **match 对象**：不是内置函数，而是 **`re` 模块**里 `re.match()`、`re.search()` 等**匹配成功时的返回值**。用 `match.group(0)` 取整段匹配串，`match.group(1)`、`match.group(2)` 取括号分组；匹配失败时得到 `None`，不能调用 `.group()`。
+默认情况下，Python 不知道“空数据里的最大值是谁”，所以会抛出 `ValueError`。
 
-#### 1.6.2 归纳表（字符串/正则场景）
+### 2.3.4 `default` 参数：空数据时给一个兜底值
 
-| 类型 | 名称 | 作用简述 | 详细说明（点击跳转） |
-|------|------|----------|----------------------|
-| **内置函数** | `map(函数, 可迭代)` | 对可迭代对象每个元素调用函数，得到新序列；常与 `re.escape`、`str` 等配合 | [内置数据结构 · re.sub 结合函数做多重替换](/python/python语法手册-02-内置数据结构#41-方式二详解resub-结合函数做多重替换小白向)（见「map(re.escape, ...)」） |
-| **re 模块返回值** | **match 对象** | `re.match` / `re.search` 成功时返回；`.group(0)` 整段，`.group(1)` 等为分组 | [标准库 · re 模块与 match 对象](/python/python语法手册-11-标准库#13-re-模块--正则表达式内置模块) |
-| **re 模块函数** | `re.sub` / `re.compile` / `re.escape` 等 | 按正则替换、编译正则、转义特殊字符等 | [标准库 · re 模块](/python/python语法手册-11-标准库#13-re-模块--正则表达式内置模块)、[内置数据结构 · 字符串替换](/python/python语法手册-02-内置数据结构#152-字符串替换详解strreplace--不可变性-resub-多重替换) |
+```python
+print(max([], default=0))   # 0
+print(min([], default=0))   # 0
+```
 
-#### 1.6.3 专业向一句话
+**一句话先懂**：`default` 主要用来处理“可迭代对象可能为空”的情况。
 
-- **map**：函数式编程常用工具，在正则场景里多用于“批量处理再拼成模式”（如 `'|'.join(map(re.escape, keys))`）。
-- **match**：一次匹配结果的封装，支持分组、起止位置（`span`），用前需判断非 `None`。
+这在下面场景很实用：
+- 过滤后可能一条记录都没有
+- 用户输入可能为空
+- 批处理结果有可能是空列表
 
----
+### 2.3.5 极差怎么写
 
-### 1.7 本章小结（对应自测卷 6.1～6.10）
-
-| 函数 | 作用 | 自测卷 |
-|------|------|--------|
-| `len(iterable)` | 返回元素个数，常用于平均分的分母 | 6.1 |
-| `sum(iterable)` | 对数值求和，常用于总分/平均分的分子 | 6.1 |
-| `max` / `min` | 最大/最小值；可用 `key` 按规则比较 | 6.2、6.5 |
-| `reversed(seq)` | 反向迭代，不改原数据，返回迭代器 | 6.3 |
-| `sorted(iterable, key=..., reverse=...)` | 排序并返回新列表，不改原数据 | 6.3、6.4 |
-
-- **平均分**：`sum(scores) / len(scores)`  
-- **极差**：`max(scores) - min(scores)`  
-- **按字典某键取最大/最小**：`max(列表, key=lambda x: x["键名"])`  
-- **排序不改原数据**：用 `sorted()`；只排列表且可接受原地修改时用 `.sort()`。
+```python
+scores = [85, 92, 78, 95, 60]
+print(max(scores) - min(scores))  # 35
+```
 
 ---
 
-**本章小结**：`len` 取个数，`sum` 求和，平均分 `sum/len`；`max`/`min` 可用 `key`；`reversed`/`sorted` 不改原数据，排序要新列表用 `sorted()`。
+## 三、顺序、排序、编号：遍历时最常用的一组函数
+
+### 3.1 `reversed()`：反向遍历，但不改原数据
+
+**一句话先懂**：`reversed(seq)` 返回一个“倒着遍历”的迭代器，不会修改原序列。
+
+```python
+nums = [1, 2, 3]
+result = reversed(nums)
+print(result)
+print(list(result))  # [3, 2, 1]
+print(nums)          # [1, 2, 3]
+```
+
+### 3.1.1 为什么很多人以为它返回的是列表
+
+因为大家经常会写：
+
+```python
+print(list(reversed([1, 2, 3])))
+```
+
+但真正返回列表的是外层的 `list()`，不是 `reversed()` 本身。
+
+### 3.1.2 `reversed()` 和切片 `[::-1]` 的区别
+
+```python
+nums = [1, 2, 3]
+print(list(reversed(nums)))
+print(nums[::-1])
+```
+
+两者都能得到反向结果，但：
+- `reversed(nums)`：得到迭代器，适合遍历
+- `nums[::-1]`：直接得到一个新列表（或新字符串、新元组切片结果）
+
+### 3.2 `sorted()`：排序并返回新列表
+
+**一句话先懂**：`sorted()` 不改原数据，而是返回一个新的排好序的列表。
+
+```python
+nums = [3, 1, 4, 2]
+new_nums = sorted(nums)
+print(new_nums)  # [1, 2, 3, 4]
+print(nums)      # [3, 1, 4, 2]
+```
+
+### 3.2.1 `sorted()` 可以排哪些对象
+
+```python
+print(sorted([3, 1, 2]))
+print(sorted((3, 1, 2)))
+print(sorted('hello'))
+```
+
+只要是可迭代对象，通常都可以交给 `sorted()`，但返回值总是**列表**。
+
+### 3.2.2 升序、降序与 `reverse=True`
+
+```python
+nums = [3, 1, 4, 2]
+print(sorted(nums))
+print(sorted(nums, reverse=True))
+```
+
+- 默认升序
+- `reverse=True` 表示降序
+
+### 3.2.3 `key` 参数：排序规则
+
+```python
+students = [
+  {'name': 'A', 'score': 80},
+  {'name': 'B', 'score': 95},
+  {'name': 'C', 'score': 75}
+]
+
+print(sorted(students, key=lambda x: x['score']))
+print(sorted(students, key=lambda x: x['score'], reverse=True))
+```
+
+### 3.2.4 `sorted()` 和 `.sort()` 的区别
+
+| 对比项 | `sorted(iterable)` | `list.sort()` |
+| --- | --- | --- |
+| 是否改原数据 | 不改 | 改原列表 |
+| 返回值 | 新列表 | `None` |
+| 适用对象 | 各类可迭代对象 | 只有列表 |
+
+更详细的说明见 `Python/docs/python/python语法手册-02-内置数据结构.md:243`。
+
+### 3.2.5 按成绩降序排，并取前 3 名
+
+```python
+students = [
+  {'name': 'A', 'score': 80},
+  {'name': 'B', 'score': 95},
+  {'name': 'C', 'score': 75},
+  {'name': 'D', 'score': 91}
+]
+
+top3 = sorted(students, key=lambda x: x['score'], reverse=True)[:3]
+print(top3)
+```
+
+这行代码是自测卷里的高频综合题：
+- 先排序
+- 再切片取前三
+
+### 3.3 `enumerate()`：给每个元素配上序号
+
+**一句话先懂**：`enumerate()` 会把“索引”和“元素”打包在一起。
+
+```python
+letters = ['a', 'b', 'c']
+print(list(enumerate(letters)))
+# [(0, 'a'), (1, 'b'), (2, 'c')]
+```
+
+### 3.3.1 `start` 参数
+
+```python
+letters = ['a', 'b', 'c']
+print(list(enumerate(letters, start=1)))
+# [(1, 'a'), (2, 'b'), (3, 'c')]
+```
+
+**一句话先懂**：`start=1` 表示编号从 1 开始，而不是默认的 0。
+
+### 3.3.2 为什么 `enumerate()` 比自己维护计数器更自然
+
+```python
+names = ['Tom', 'Alice', 'Bob']
+for index, name in enumerate(names, start=1):
+  print(index, name)
+```
+
+它适合：
+- 打印菜单序号
+- 遍历带行号的数据
+- 排行榜输出
+- “索引 + 元素”同时需要的场景
+
+### 3.4 `zip()`：把多个序列按位置打包
+
+**一句话先懂**：`zip()` 会把多个可迭代对象按相同位置配成一组。
+
+```python
+nums = [1, 2]
+chars = ['a', 'b', 'c']
+print(list(zip(nums, chars)))
+# [(1, 'a'), (2, 'b')]
+```
+
+### 3.4.1 为什么不会报错，而是按最短序列截断
+
+因为 `zip()` 的规则就是：
+- 走到最短的那个序列结束时就停
+- 后面多出来的元素直接忽略
+
+这就是上例里 `'c'` 没有出现在结果中的原因。
+
+### 3.4.2 `zip()` 的三个高频场景
+
+#### 并行遍历
+
+```python
+names = ['Tom', 'Alice']
+scores = [90, 95]
+
+for name, score in zip(names, scores):
+  print(name, score)
+```
+
+#### 快速构造字典
+
+```python
+keys = ['name', 'age']
+values = ['Tom', 18]
+print(dict(zip(keys, values)))
+```
+
+#### 行列转换的基础
+
+`zip()` 也是很多“矩阵转置”“列转行”写法的基础。
+
+---
+
+## 四、批量条件判断：`any()` 和 `all()`
+
+### 4.1 `any()`：只要有一个为真就行
+
+```python
+print(any([0, '', False, 3]))  # True
+```
+
+因为里面有 `3`，它的真值是 `True`，所以整个结果就是 `True`。
+
+### 4.2 `all()`：必须全部都为真
+
+```python
+print(all([1, 'x', True]))  # True
+print(all([1, 0, True]))    # False
+```
+
+因为第二行里有 `0`，它的真值是 `False`，所以结果是 `False`。
+
+### 4.3 它们判断的是“真值”，不是只认 `True` / `False`
+
+下面这些值在布尔上下文里通常是假：
+- `0`
+- `0.0`
+- `''`
+- `[]`
+- `{}`
+- `set()`
+- `None`
+- `False`
+
+所以：
+
+```python
+print(any(['', [], 0, None]))
+print(all([1, 'ok', [1]]))
+```
+
+### 4.4 生成器表达式是最常见搭配
+
+```python
+scores = [88, 92, 76]
+print(all(score >= 60 for score in scores))
+print(any(score >= 90 for score in scores))
+```
+
+这类写法特别适合表达：
+- 是否全部及格
+- 是否有人优秀
+- 是否存在异常值
+- 是否所有记录都合法
+
+---
+
+## 五、本章高频一行代码
+
+### 5.1 列表平均分
+
+```python
+scores = [85, 92, 78, 95, 60]
+avg = sum(scores) / len(scores)
+```
+
+### 5.2 字典列表里取最高分学生
+
+```python
+students = [{'name': 'A', 'score': 80}, {'name': 'B', 'score': 95}]
+best = max(students, key=lambda x: x['score'])
+```
+
+### 5.3 按成绩从高到低排序
+
+```python
+students = [{'name': 'A', 'score': 80}, {'name': 'B', 'score': 95}]
+result = sorted(students, key=lambda x: x['score'], reverse=True)
+```
+
+### 5.4 取前 3 名
+
+```python
+top3 = sorted(students, key=lambda x: x['score'], reverse=True)[:3]
+```
+
+### 5.5 计算及格率
+
+```python
+students = [
+  {'name': 'A', 'score': 80},
+  {'name': 'B', 'score': 55},
+  {'name': 'C', 'score': 90}
+]
+
+rate = sum(student['score'] >= 60 for student in students) / len(students)
+```
+
+如果要直接显示百分比：
+
+```python
+print(f'{rate:.1%}')
+```
+
+---
+
+## 六、本章高频问法速记
+
+- **`len(d)` 对字典返回什么**：返回键的个数。
+- **`sum([1, 2, 3], 10)` 为什么是 16**：因为 `start=10`，相当于 `10 + 1 + 2 + 3`。
+- **`max()` / `min()` 的 `key` 是做什么的**：指定比较规则。
+- **`max([], default=0)` 为什么不会报错**：因为为空时会直接返回 `default`。
+- **`reversed()` 会不会改原列表**：不会，它返回的是反向迭代器。
+- **`sorted()` 和 `.sort()` 的区别**：前者返回新列表，后者原地排序且返回 `None`。
+- **`enumerate(..., start=1)` 的作用**：从 1 开始给元素编号。
+- **`zip()` 为什么不会因长度不等报错**：它会按最短序列截断。
+- **`any()` 和 `all()` 的区别**：一个“至少一个真”，一个“必须全部真”。
+- **为什么 `sum(condition for x in data)` 可统计个数**：因为 `True` 会按 `1`、`False` 会按 `0` 参与求和。
+
+---
+
+**本章小结**：第五章最核心的目标，是把“循环里自己干的活”逐步交给更合适的内置函数：计数用 `len()`，求和用 `sum()`，极值用 `max()` / `min()`，排序用 `sorted()`，反向遍历用 `reversed()`，带编号遍历用 `enumerate()`，并行遍历用 `zip()`，批量条件判断用 `any()` / `all()`。当你开始自然地用这些函数写代码时，Python 风格就真正出来了。
