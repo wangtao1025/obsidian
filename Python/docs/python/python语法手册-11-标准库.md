@@ -212,8 +212,77 @@ print("解析后的时间:", parsed_date)
 
 ---
 
+### 1.3 `re` 模块 — 正则表达式（内置模块） {#13-re-模块-正则表达式内置模块}
+
+`re` 是 Python 的**内置标准库模块**，用于**正则表达式**：按“模式”匹配、查找、替换字符串。无需安装，`import re` 即可使用。下面先给小白一个总表，再分块说明常用函数和 **match 对象**。
+
+#### 1.3.1 小白先记
+
+- **正则**：用一串符号描述“长得像什么”的文本（如数字、邮箱、电话号），再在字符串里找或换。
+- **re 模块**：提供 `re.match`、`re.search`、`re.findall`、`re.sub`、`re.split` 等函数；很多函数返回 **match 对象**，用 `.group()` 取出匹配到的内容。
+- **match 对象**：表示“某次匹配的结果”，常用 `match.group(0)` 取整段匹配串，`match.group(1)`、`match.group(2)` 取括号分组。
+
+#### 1.3.2 re 模块常用函数总览（总结表）
+
+| 函数 / 方法 | 作用 | 返回值 | 典型场景 |
+|-------------|------|--------|----------|
+| `re.match(pattern, string)` | 从**字符串开头**尝试匹配 | 成功返回 **match 对象**，失败返回 `None` | 校验“整串是否符合格式”（如是否以数字开头） |
+| `re.search(pattern, string)` | 在字符串中**找第一个**匹配位置 | 成功返回 **match 对象**，失败返回 `None` | 找“有没有某模式”（不要求从开头） |
+| `re.findall(pattern, string)` | 找出**所有**不重叠的匹配 | **列表**，每个元素是匹配到的子串（或元组，当有分组时） | 提取所有数字、所有邮箱等 |
+| `re.sub(pattern, repl, string, count=0)` | 按模式**替换**；`repl` 可为字符串或函数 | **新字符串**，原串不变 | 掩码电话号、多词替换（配合函数），详见 [内置数据结构 · 字符串替换](/python/python语法手册-02-内置数据结构#152-字符串替换详解strreplace--不可变性-resub-多重替换) |
+| `re.split(pattern, string, maxsplit=0)` | 按模式**分割**字符串 | **列表** | 按多种分隔符（如逗号、分号）拆开，见 [1.5.6 .split()](/python/python语法手册-02-内置数据结构#156-split自测卷-319-待复习) |
+| `re.compile(pattern)` | 把正则字符串**编译**成对象 | **Pattern 对象**，可多次调用 `.match` / `.search` / `.sub` 等 | 同一正则要用很多次时，先 compile 再调用，更高效 |
+| `re.escape(string)` | 把字符串里的**正则特殊字符**转义 | **字符串**，适合作为“字面匹配”的正则 | 用户输入或字典键拼进正则时，避免 `.`、`+` 等被当语法 |
+
+#### 1.3.3 match 对象（小白向）
+
+当 `re.match()`、`re.search()` 或 `Pattern` 的 `.match()` / `.search()` 匹配成功时，返回的是 **match 对象**（不是字符串）。用这个对象可以：
+
+- **取出匹配到的文字**：`match.group(0)` 表示**整段**匹配到的字符串；若有括号分组，`match.group(1)`、`match.group(2)` 表示第 1、2 个括号里匹配到的部分。
+- **取出匹配范围**：`match.start()`、`match.end()` 表示匹配在原串中的起止索引；`match.span()` 返回 `(start, end)`。
+
+**简单示例**：
+
+```python
+import re
+
+s = "Hello 123 World 456"
+m = re.search(r"\d+", s)   # 找第一段连续数字
+if m:
+    print(m.group(0))      # "123"  整段匹配
+    print(m.span())        # (6, 9)  在 s 中的位置
+
+# 带分组的例子：提取区号和号码
+tel = "Tel: 010-12345678"
+n = re.search(r"(\d{3})-(\d{8})", tel)
+if n:
+    print(n.group(0))      # "010-12345678"  整段
+    print(n.group(1))      # "010"  第 1 个括号
+    print(n.group(2))      # "12345678"  第 2 个括号
+```
+
+#### 1.3.4 match 对象常用属性和方法（总结表）
+
+| 属性 / 方法 | 含义 | 示例 |
+|-------------|------|------|
+| `match.group(0)` | 整段匹配到的字符串 | `re.search(r'\d+', 'a12b').group(0)` → `'12'` |
+| `match.group(n)` | 第 n 个括号分组（n≥1） | 见上面 `group(1)`、`group(2)` |
+| `match.groups()` | 所有分组组成的**元组** | `('010', '12345678')` |
+| `match.start()` / `match.end()` | 匹配在原串中的起始 / 结束索引 | 见上面 `span()` |
+| `match.span()` | `(start, end)` 元组 | 用于切片：`s[m.start():m.end()]` 等价于 `m.group(0)` |
+
+**注意**：匹配失败时得到的是 `None`，不能调用 `.group()`，否则会报错。使用前建议写 `if m:` 判断。
+
+#### 1.3.5 专业向补充
+
+- **match 与 search**：`match` 只从**开头**匹配；`search` 在**整串**里找第一个匹配。若要从开头匹配，用 `match` 更明确；若找任意位置，用 `search`。
+- **正则中的 raw 字符串**：建议写 `r"..."`，避免反斜杠被 Python 转义（如 `r"\d"` 表示“数字”）。
+- **更多 API**：`re.fullmatch`（整串匹配）、`re.finditer`（返回迭代器，每项为 match）、`re.sub` 的 `repl` 为函数时的用法等，见 [内置数据结构 · re.sub 结合函数做多重替换](/python/python语法手册-02-内置数据结构#41-方式二详解resub-结合函数做多重替换小白向)；完整列表见 [Python 官方 re 文档](https://docs.python.org/zh-cn/3/library/re.html)。
+
+---
+
 **延伸**：课程（RAG/向量）中用到的标准库另有单篇详解，见 [Python 首页](/python/) 的「标准库」：math、typing、collections、random、heapq；第三方库见「第三方库（课程内）」：jieba、BeautifulSoup4。
 
 ---
 
-**本章小结**：常用标准库如 `datetime`（日期时间）、`time`（计时）、进制与数学相关；详细 API 查官方文档，本站课程相关模块见 Python 首页标准库与第三方库表格。
+**本章小结**：常用标准库如 `datetime`（日期时间）、`time`（计时）、`re`（正则匹配与替换）、进制与数学相关；`re` 做模式匹配与替换，返回的 match 对象用 `.group(0)` 取整段、`.group(1)` 等取分组；详细 API 查官方文档，本站课程相关模块见 Python 首页标准库与第三方库表格。
